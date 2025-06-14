@@ -1,0 +1,30 @@
+[
+  {
+    "id": "d7698c0f-a978-4b76-96f7-aa9cf0304bff",
+    "username": "admin",
+    "password": "password",
+    "email": "admin@gmail.com",
+    "role_id": "0da109e0-83ba-4588-8a71-6e265a434769"
+  },
+  {
+    "id": "52901c23-091a-4e4b-a722-36112ff12b4c",
+    "username": "user",
+    "password": "password",
+    "email": "user@gmail.com",
+    "role_id": "7688c0e9-78ef-4d06-b6ee-77807b526fed"
+  },
+  {
+    "id": "92a049ec-4bff-4f8d-857c-56566e5e57e2",
+    "username": "farmer",
+    "password": "password",
+    "phone_number": "1234567890",
+    "role_id": "48c322d3-a7b8-41b9-83da-a92bf9cafd3a"
+  },
+  {
+    "id": "9fbc691f-9aae-4c56-ab61-fcd865cada33",
+    "username": "courier",
+    "password": "password",
+    "phone_number": "0987654321",
+    "role_id": "8e3e7617-7501-4f9a-9d57-8adf7bbf6d99"
+  }
+]

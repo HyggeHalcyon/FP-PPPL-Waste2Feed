@@ -1,0 +1,18 @@
+[
+    {
+      "id": "0da109e0-83ba-4588-8a71-6e265a434769",
+      "name": "admin"
+    },
+    {
+      "id": "7688c0e9-78ef-4d06-b6ee-77807b526fed",
+      "name": "user"
+    },
+    {
+      "id": "48c322d3-a7b8-41b9-83da-a92bf9cafd3a",
+      "name": "farmer"
+    },
+    {
+      "id": "8e3e7617-7501-4f9a-9d57-8adf7bbf6d99",
+      "name": "courier"
+    }
+]

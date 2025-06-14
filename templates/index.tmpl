@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Waste2Feed</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #4CAF50;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        .container {
+            text-align: center;
+        }
+        .logo {
+            width: 150px;
+            height: 150px;
+            margin-bottom: 20px;
+        }
+        .title {
+            font-size: 24px;
+            color: white;
+            margin-bottom: 40px;
+        }
+        .button {
+            display: block;
+            width: 200px;
+            padding: 10px;
+            margin: 10px auto;
+            text-align: center;
+            text-decoration: none;
+            color: white;
+            background-color: #2E7D32;
+            border-radius: 5px;
+            font-size: 18px;
+        }
+        .button:hover {
+            background-color: #1B5E20;
+        }
+        .footer {
+            font-size: 14px;
+            color: white;
+            margin-top: 20px;
+        }
+        .carousel-wrapper {
+            width: 150px;
+            height: 150px;
+            overflow: hidden;
+            margin: 0 auto 10px auto;
+            border-radius: 50%;
+            background: #fff;
+            position: relative;
+        }
+        .carousel {
+            display: flex;
+            transition: transform 0.5s cubic-bezier(.4,0,.2,1);
+            width: 450px;
+            height: 150px;
+        }
+        .carousel img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+        }
+        .dots {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #bbb;
+            margin: 0 4px;
+            transition: background 0.3s;
+        }
+        .dot.active {
+            background: #388e3c;
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const carousel = document.querySelector('.carousel');
+            const dots = document.querySelectorAll('.dot');
+            let currentIndex = 0;
+            const total = 3;
+            function showSlide(index) {
+                carousel.style.transform = `translateX(-${index * 100}%)`;
+                dots.forEach((dot, i) => {
+                    dot.classList.toggle('active', i === index);
+                });
+            }
+            function nextSlide() {
+                currentIndex = (currentIndex + 1) % total;
+                showSlide(currentIndex);
+            }
+            dots.forEach((dot, i) => {
+                dot.addEventListener('click', () => {
+                    currentIndex = i;
+                    showSlide(currentIndex);
+                });
+            });
+            setInterval(nextSlide, 2500);
+            showSlide(currentIndex);
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="carousel-wrapper">
+            <div class="carousel">
+                <img src="/static/tmp.png" alt="Waste2Feed Logo 1">
+                <img src="/static/tmp.png" alt="Waste2Feed Logo 2">
+                <img src="/static/tmp.png" alt="Waste2Feed Logo 3">
+            </div>
+        </div>
+        <div class="dots">
+            <div class="dot active"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+        <div class="title">Waste2Feed</div>
+        <a href="/login" class="button">Masuk</a>
+        <div class="footer">Belum punya akun? <a href="/register" style="color: #FFEB3B; text-decoration: none;">Daftar Sekarang</a></div>
+    </div>
+</body>
+</html>

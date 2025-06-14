@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Waste2Feed</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #4CAF50;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        .container {
+            text-align: center;
+        }
+        .logo {
+            width: 150px;
+            height: 150px;
+            margin-bottom: 20px;
+        }
+        .title {
+            font-size: 24px;
+            color: white;
+            margin-bottom: 40px;
+        }
+        .input {
+            width: 90%;
+            max-width: 350px;
+            padding: 14px 16px;
+            margin: 10px auto;
+            border-radius: 10px;
+            border: none;
+            font-size: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            display: block;
+        }
+        .button {
+            display: block;
+            width: 90%;
+            max-width: 350px;
+            padding: 12px;
+            margin: 20px auto 10px auto;
+            text-align: center;
+            text-decoration: none;
+            color: white;
+            background-color: #2E7D32;
+            border-radius: 25px;
+            font-size: 18px;
+            border: 2px solid white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .button:disabled {
+            background: #A5D6A7;
+            cursor: not-allowed;
+        }
+        .footer {
+            font-size: 14px;
+            color: white;
+            margin-top: 20px;
+        }
+        .footer a {
+            color: #FFEB3B;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .error, .success {
+            margin-top: 10px;
+            font-size: 15px;
+        }
+        .error { color: #ff5252; }
+        .success { color: #fffde7; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="/static/tmp.png" alt="Waste2Feed Logo" class="logo">
+        <div class="title">Waste2Feed</div>
+        <form id="loginForm" autocomplete="off">
+            <input class="input" type="text" id="identifier" name="identifier" placeholder="Email atau nomor handphone" required>
+            <input class="input" type="password" id="password" name="password" placeholder="Kata sandi" required>
+            <button class="button" type="submit" id="loginBtn">Masuk</button>
+            <div id="message"></div>
+        </form>
+        <div class="footer">Belum punya akun? <a href="/register">Daftar Sekarang</a></div>
+    </div>
+    <script>
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const identifier = document.getElementById('identifier').value.trim();
+        const password = document.getElementById('password').value;
+        const messageDiv = document.getElementById('message');
+        messageDiv.textContent = '';
+        messageDiv.className = '';
+        let payload = { password };
+        let url = '/api/user/login';
+        if (/^\d{8,}$/.test(identifier)) {
+            payload.phone_number = identifier;
+        } else if (/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(identifier)) {
+            payload.email = identifier;
+        } else {
+            messageDiv.textContent = 'Masukkan email atau nomor handphone yang valid.';
+            messageDiv.className = 'error';
+            return;
+        }
+        document.getElementById('loginBtn').disabled = true;
+        try {
+            const res = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const data = await res.json();
+            if (data.status) {
+                if (data.data && data.data.token) {
+                    const token = data.data.token;
+                    document.cookie = `jwt=${token}; path=/; max-age=${60 * 60}; SameSite=Lax`;
+                    localStorage.setItem('token', token);
+                }
+                messageDiv.textContent = 'Login berhasil!';
+                messageDiv.className = 'success';
+                setTimeout(() => { window.location.href = '/choose-role'; }, 1200);
+            } else {
+                messageDiv.textContent = data.message || 'Login gagal.';
+                messageDiv.className = 'error';
+            }
+        } catch (err) {
+            messageDiv.textContent = 'Terjadi kesalahan. Coba lagi.';
+            messageDiv.className = 'error';
+        }
+        document.getElementById('loginBtn').disabled = false;
+    });
+    </script>
+</body>
+</html>

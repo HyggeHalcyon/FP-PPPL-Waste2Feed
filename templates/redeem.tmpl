@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redeem Poin - Waste2Feed</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: #FFF9E1;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 24px 16px 0 16px;
+        }
+        .point-box {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            padding: 16px 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .point-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: #FFEB3B;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .point-icon img {
+            width: 32px;
+            height: 32px;
+        }
+        .point-label {
+            font-size: 16px;
+            color: #2E7D32;
+            font-weight: bold;
+        }
+        .point-value {
+            font-size: 20px;
+            color: #2E7D32;
+            font-weight: bold;
+        }
+        .form-label {
+            font-size: 15px;
+            color: #8B7B3A;
+            margin-bottom: 6px;
+            margin-top: 18px;
+            font-weight: bold;
+        }
+        .input {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
+            margin-bottom: 10px;
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .button {
+            width: 100%;
+            padding: 14px;
+            background: #FFD600;
+            color: #2E7D32;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 12px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .button:disabled {
+            background: #FFF9C4;
+            color: #BDB76B;
+            cursor: not-allowed;
+        }
+        .disclaimer-title {
+            color: #BCA100;
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 32px;
+            margin-bottom: 8px;
+        }
+        .disclaimer {
+            font-size: 14px;
+            color: #7B6F2A;
+            background: #FFFDE7;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+        .error, .success {
+            margin-top: 10px;
+            font-size: 15px;
+            text-align: center;
+        }
+        .error { color: #ff5252; }
+        .success { color: #2E7D32; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/dashboard" style="position:absolute;left:18px;top:18px;text-decoration:none;color:#2E7D32;font-size:24px;background:#fff;padding:4px 10px;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,0.08);z-index:10;"><span style="font-weight:bold;">&#8592;</span></a>
+        <div class="point-box">
+            <div class="point-icon"><img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Poin"></div>
+            <div>
+                <div class="point-label">Total Poin</div>
+                <div class="point-value" id="totalPoints">-</div>
+            </div>
+        </div>
+        <form id="redeemForm" autocomplete="off">
+            <div class="form-label">Pilih Metode Redeem</div>
+            <input class="input" type="text" id="bank" name="bank" placeholder="Transfer Bank - BCA" value="BCA" required>
+            <input class="input" type="text" id="account" name="account" placeholder="masukan nomor rekening" required>
+            <div class="form-label">Nominal Poin</div>
+            <input class="input" type="number" id="nominal" name="nominal" placeholder="150.000" min="1" required>
+            <button class="button" type="submit" id="redeemBtn">Redeem</button>
+            <div id="message"></div>
+        </form>
+        <div class="disclaimer-title">Disclaimer Pencairan Poin</div>
+        <div class="disclaimer">
+            <ol style="padding-left: 18px;">
+                <li>Pencairan poin saat ini hanya dapat dilakukan melalui transfer bank, belum bisa melalui e-wallet. 1 poin Anda setara dengan Rp 1,-. Pencairan poin Anda dapat dilakukan jika Anda telah memiliki minimal 10.500 poin atau setara dengan Rp 10.500,-. Setiap Anda mencairkan poin maka akan selalu disisakan 500 poin pada aplikasi Waste2Feed Anda agar aplikasi Anda tetap berstatus aktif.</li>
+                <li>Jika Anda memilih bank Mandiri, BNI, atau BCA, maka pencairan poin Anda bebas biaya transfer. Jika Anda memilih bank lain di luar ketiga bank tersebut maka pencairan poin Anda akan dikenakan biaya transfer sesuai aturan bank yang berlaku, yang biayanya akan ditanggung oleh Anda sendiri. Apabila setelah dipotong biaya transfer jumlah poin yang akan dicairkan tidak mencukupi, maka pencairan poin tidak dapat dilakukan.</li>
+                <li>Pencairan poin yang dilakukan pada hari Senin s/d Jumat sebelum pukul 15.00 WIB akan diproses di hari yang sama. Jika dilakukan di luar waktu tersebut, maka akan diproses di hari kerja berikutnya.</li>
+            </ol>
+        </div>
+    </div>
+    <script>
+    // Fetch total points
+    function fetchUserPoints() {
+        const token = localStorage.getItem('token');
+        fetch('/api/user/me', {
+            headers: {
+                'Authorization': token ? `Bearer ${token}` : ''
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status && data.data) {
+                document.getElementById('totalPoints').textContent = data.data.points?.toLocaleString('id-ID') || '0';
+            }
+        });
+    }
+    fetchUserPoints();
+
+    // Redeem form
+    document.getElementById('redeemForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const bank = document.getElementById('bank').value.trim();
+        const account = document.getElementById('account').value.trim();
+        const nominal = parseInt(document.getElementById('nominal').value, 10);
+        const messageDiv = document.getElementById('message');
+        messageDiv.textContent = '';
+        messageDiv.className = '';
+        if (!bank || !account || !nominal || nominal < 1) {
+            messageDiv.textContent = 'Semua field harus diisi dengan benar.';
+            messageDiv.className = 'error';
+            return;
+        }
+        document.getElementById('redeemBtn').disabled = true;
+        const token = localStorage.getItem('token');
+        try {
+            const res = await fetch('/api/user/redeem', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': token ? `Bearer ${token}` : ''
+                },
+                body: JSON.stringify({ bank, account, nominal })
+            });
+            const data = await res.json();
+            if (data.status) {
+                messageDiv.textContent = 'Redeem berhasil!';
+                messageDiv.className = 'success';
+                fetchUserPoints();
+                document.getElementById('redeemForm').reset();
+            } else {
+                messageDiv.textContent = data.message || 'Redeem gagal.';
+                messageDiv.className = 'error';
+            }
+        } catch (err) {
+            messageDiv.textContent = 'Terjadi kesalahan. Coba lagi.';
+            messageDiv.className = 'error';
+        }
+        document.getElementById('redeemBtn').disabled = false;
+    });
+    </script>
+</body>
+</html>

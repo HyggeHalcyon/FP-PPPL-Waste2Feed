@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil - Waste2Feed</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: #FFF9E1;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 24px 16px 0 16px;
+        }
+        .profile-title {
+            text-align: center;
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 18px;
+            margin-top: 8px;
+        }
+        .profile-img-box {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 18px;
+        }
+        .profile-img {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #FFD600;
+        }
+        .form-label {
+            font-size: 14px;
+            color: #8B7B3A;
+            margin-bottom: 2px;
+            margin-top: 16px;
+            font-weight: bold;
+        }
+        .input {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 6px;
+            border: none;
+            font-size: 16px;
+            margin-bottom: 2px;
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .desc {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 8px;
+        }
+        .radio-group {
+            display: flex;
+            gap: 18px;
+            margin-bottom: 8px;
+            margin-top: 4px;
+        }
+        .radio-label {
+            font-size: 15px;
+            color: #444;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .readonly {
+            background: #f5f5f5;
+            color: #888;
+        }
+        .jenis-pengguna {
+            font-size: 15px;
+            color: #444;
+            margin-bottom: 8px;
+            margin-top: 8px;
+        }
+        .button {
+            width: 100%;
+            padding: 14px;
+            background: #FFD600;
+            color: #2E7D32;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 22px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .button:disabled {
+            background: #FFF9C4;
+            color: #BDB76B;
+            cursor: not-allowed;
+        }
+        .error, .success {
+            margin-top: 10px;
+            font-size: 15px;
+            text-align: center;
+        }
+        .error { color: #ff5252; }
+        .success { color: #2E7D32; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/dashboard" style="position:absolute;left:18px;top:18px;text-decoration:none;color:#2E7D32;font-size:24px;background:#fff;padding:4px 10px;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,0.08);"><span style="font-weight:bold;">&#8592;</span></a>
+        <div class="profile-title">Profil</div>
+        <div class="profile-img-box">
+            <img src="/static/tmp.png" alt="Profile" class="profile-img" id="profileImg">
+        </div>
+        <form id="profileForm" autocomplete="off">
+            <div class="form-label">NAMA PENGGUNA</div>
+            <input class="input" type="text" id="username" name="username">
+            <div class="form-label">NAMA LENGKAP</div>
+            <input class="input" type="text" id="name" name="name">
+            <div class="desc">Pastikan nama yang Anda isi sama dengan nama pada rekening bank untuk pencairan poin.</div>
+            <div class="form-label">EMAIL</div>
+            <input class="input" type="email" id="email" name="email" readonly>
+            <div class="form-label">JENIS KELAMIN</div>
+            <div class="radio-group">
+                <label class="radio-label"><input type="radio" name="gender" value="male" id="gender_male"> Pria</label>
+                <label class="radio-label"><input type="radio" name="gender" value="female" id="gender_female"> Wanita</label>
+            </div>
+            <div class="form-label">NOMOR HP</div>
+            <input class="input" type="text" id="phone_number" name="phone_number" readonly>
+            <div class="form-label">JENIS PENGGUNA</div>
+            <div class="jenis-pengguna" id="jenisPengguna">-</div>
+            <div class="form-label">ALAMAT</div>
+            <input class="input" type="text" id="address" name="address">
+            <button class="button" type="submit" id="saveBtn">Simpan Perubahan</button>
+            <div id="message"></div>
+        </form>
+    </div>
+    <script>
+    // Helper: decode JWT payload
+    function parseJwt (token) {
+        try {
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+            return JSON.parse(jsonPayload);
+        } catch (e) { return {}; }
+    }
+    // Fetch user data
+    function fetchProfile() {
+        const token = localStorage.getItem('token');
+        if (token) {
+            const payload = parseJwt(token);
+            document.getElementById('jenisPengguna').textContent = payload.role === 'farmer' ? 'Peternak' : (payload.role === 'user' ? 'Pengguna Umum' : '-');
+        }
+        fetch('/api/user/me', {
+            headers: {
+                'Authorization': token ? `Bearer ${token}` : ''
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status && data.data) {
+                document.getElementById('username').value = data.data.username || '';
+                document.getElementById('name').value = data.data.name || '';
+                document.getElementById('email').value = data.data.email || '';
+                document.getElementById('phone_number').value = data.data.phone_number || '';
+                document.getElementById('address').value = data.data.address || '';
+                if (data.data.gender === 'Pria') document.getElementById('gender_male').checked = true;
+                else if (data.data.gender === 'Wanita') document.getElementById('gender_female').checked = true;
+            }
+        });
+    }
+    fetchProfile();
+
+    // Update profile
+    document.getElementById('profileForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        document.getElementById('saveBtn').disabled = true;
+        const username = document.getElementById('username').value.trim();
+        const name = document.getElementById('name').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const phone_number = document.getElementById('phone_number').value.trim();
+        const address = document.getElementById('address').value.trim();
+        const gender = document.getElementById('gender_male').checked ? 'Pria' : (document.getElementById('gender_female').checked ? 'Wanita' : '');
+        const messageDiv = document.getElementById('message');
+        messageDiv.textContent = '';
+        messageDiv.className = '';
+        // Remove empty fields from payload
+        let payload = {};
+        if (username) payload.username = username;
+        if (name) payload.name = name;
+        if (email) payload.email = email;
+        if (phone_number) payload.phone_number = phone_number;
+        if (gender) payload.gender = gender;
+        payload.address = address;
+        const token = localStorage.getItem('token');
+        try {
+            const res = await fetch('/api/user/update', {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': token ? `Bearer ${token}` : ''
+                },
+                body: JSON.stringify(payload)
+            });
+            const data = await res.json();
+            if (data.status) {
+                messageDiv.textContent = 'Profil berhasil diperbarui!';
+                messageDiv.className = 'success';
+            } else {
+                messageDiv.textContent = data.message || 'Gagal memperbarui profil.';
+                messageDiv.className = 'error';
+            }
+        } catch (err) {
+            messageDiv.textContent = 'Terjadi kesalahan. Coba lagi.';
+            messageDiv.className = 'error';
+        }
+        document.getElementById('saveBtn').disabled = false;
+    });
+    </script>
+</body>
+</html>

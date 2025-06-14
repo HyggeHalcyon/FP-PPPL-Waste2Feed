@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pilih Peran - Waste2Feed</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #8CB97A;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        .container {
+            text-align: center;
+        }
+        .title {
+            font-size: 24px;
+            color: white;
+            margin: 40px 0 40px 0;
+            font-weight: bold;
+        }
+        .role-option {
+            margin: 32px auto;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .role-img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .role-img img {
+            width: 120px;
+            height: 120px;
+            object-fit: contain;
+        }
+        .role-label {
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .error, .success {
+            margin-top: 10px;
+            font-size: 15px;
+        }
+        .error { color: #ff5252; }
+        .success { color: #fffde7; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title">Siapa Anda?</div>
+        <div class="role-option" onclick="chooseRole('farmer')">
+            <div class="role-img">
+                <img src="/static/tmp.png" alt="Peternak">
+            </div>
+            <div class="role-label">Peternak</div>
+        </div>
+        <div class="role-option" onclick="chooseRole('user')">
+            <div class="role-img">
+                <img src="/static/tmp.png" alt="Umum">
+            </div>
+            <div class="role-label">Umum</div>
+        </div>
+        <div id="message"></div>
+    </div>
+    <script>
+    function chooseRole(role) {
+        const messageDiv = document.getElementById('message');
+        messageDiv.textContent = '';
+        messageDiv.className = '';
+        const token = localStorage.getItem('token');
+        fetch('/api/user/update', {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': token ? `Bearer ${token}` : ''
+            },
+            body: JSON.stringify({ role })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status) {
+                messageDiv.textContent = 'Peran berhasil dipilih!';
+                messageDiv.className = 'success';
+                setTimeout(() => { window.location.href = '/dashboard'; }, 1000);
+            } else {
+                messageDiv.textContent = data.message || 'Gagal memilih peran.';
+                messageDiv.className = 'error';
+            }
+        })
+        .catch(() => {
+            messageDiv.textContent = 'Terjadi kesalahan. Coba lagi.';
+            messageDiv.className = 'error';
+        });
+    }
+    </script>
+</body>
+</html>
