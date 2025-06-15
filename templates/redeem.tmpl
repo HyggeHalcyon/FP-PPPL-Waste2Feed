@@ -140,7 +140,7 @@
     <script>
     // Fetch total points
     function fetchUserPoints() {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('jwt');
         fetch('/api/user/me', {
             headers: {
                 'Authorization': token ? `Bearer ${token}` : ''
@@ -170,7 +170,7 @@
             return;
         }
         document.getElementById('redeemBtn').disabled = true;
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('jwt');
         try {
             const res = await fetch('/api/user/redeem', {
                 method: 'POST',

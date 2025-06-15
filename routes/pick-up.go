@@ -9,13 +9,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func PickUp(route *gin.Engine, pickupController controller.UserController, jwtService config.JWTService) {
+func Pickup(route *gin.Engine, pickupController controller.PickupController, jwtService config.JWTService) {
 
 	routes := route.Group("/api/pick-up")
 	{
-		routes.POST("", middleware.AuthenticateBearer(jwtService), middleware.OnlyAllow(constants.ENUM_ROLE_USER))
-		routes.GET("", middleware.AuthenticateBearer(jwtService), middleware.OnlyAllow(constants.ENUM_ROLE_USER))
+		routes.POST("", middleware.AuthenticateBearer(jwtService), middleware.OnlyAllow(constants.ENUM_ROLE_USER), pickupController.Create)
 	}
 
-	route.GET("/pick-up", middleware.AuthenticateCookies(jwtService), middleware.OnlyAllow(constants.ENUM_ROLE_USER))
+	route.GET("/pick-up", middleware.AuthenticateCookies(jwtService), middleware.OnlyAllow(constants.ENUM_ROLE_USER), pickupController.ViewPickup)
+	route.GET("/history", middleware.AuthenticateCookies(jwtService), middleware.OnlyAllow(constants.ENUM_ROLE_USER, constants.ENUM_ROLE_COURIER), pickupController.ViewHistory)
 }

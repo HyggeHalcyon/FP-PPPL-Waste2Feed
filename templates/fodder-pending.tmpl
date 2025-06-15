@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pembayaran - Waste2Feed</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: #FFF9E1;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 0 18px 24px 18px;
+        }
+        .back-btn {
+            position: absolute;
+            left: 24px;
+            top: 32px;
+            text-decoration: none;
+            color: #234B1C;
+            font-size: 24px;
+            background: #fff;
+            padding: 4px 10px;
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            z-index: 10;
+        }
+        .title {
+            text-align: center;
+            font-size: 22px;
+            font-weight: bold;
+            color: #234B1C;
+            margin-top: 56px;
+            margin-bottom: 18px;
+        }
+        .payment-item {
+            display: flex;
+            align-items: center;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            margin-bottom: 12px;
+            padding: 12px 16px;
+        }
+        .payment-info {
+            flex: 1;
+        }
+        .payment-title {
+            font-size: 15px;
+            color: #234B1C;
+            font-weight: bold;
+        }
+        .payment-price {
+            font-size: 14px;
+            color: #888;
+        }
+        .payment-status {
+            font-size: 12px;
+            color: #888;
+            margin-top: 4px;
+        }
+        .payment-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 18px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            background: #E6F2D6;
+            color: #234B1C;
+            transition: background 0.2s;
+        }
+        .payment-btn:active {
+            background: #C8E6C9;
+        }
+        .payment-btn[disabled] {
+            background: #f0f0f0;
+            color: #ccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/dashboard" class="back-btn">&#8592;</a>
+        <div class="title">Pesanan Anda</div>
+        {{range .PendingPayments}}
+        <div class="payment-item">
+            <div class="payment-info">
+                <div class="payment-title">{{.Type}}</div>
+                <div class="payment-price">Rp{{mul .Amount 10000}}</div>
+                <div class="payment-status">Status: {{if .Paid}}Sudah Dibayar{{else}}Belum Dibayar{{end}}</div>
+            </div>
+            <button class="payment-btn" onclick="location.href='/fodder/payment?id={{.ID}}'" {{if .Paid}}disabled{{end}}>Bayar</button>
+        </div>
+        {{end}}
+    </div>
+</body>
+</html>

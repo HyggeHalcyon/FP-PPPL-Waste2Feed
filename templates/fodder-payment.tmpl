@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pembayaran - Waste2Feed</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: #FFF9E1;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 0 18px 24px 18px;
+        }
+        .back-btn {
+            position: absolute;
+            left: 24px;
+            top: 32px;
+            text-decoration: none;
+            color: #234B1C;
+            font-size: 24px;
+            background: #fff;
+            padding: 4px 10px;
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            z-index: 10;
+        }
+        .title {
+            text-align: center;
+            font-size: 22px;
+            font-weight: bold;
+            color: #234B1C;
+            margin-top: 56px;
+            margin-bottom: 18px;
+        }
+        .payment-item {
+            display: flex;
+            align-items: center;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            margin-bottom: 12px;
+            padding: 12px 16px;
+        }
+        .payment-info {
+            flex: 1;
+        }
+        .payment-title {
+            font-size: 15px;
+            color: #234B1C;
+            font-weight: bold;
+        }
+        .payment-price {
+            font-size: 14px;
+            color: #888;
+        }
+        .input-box {
+            margin-top: 18px;
+        }
+        .input-label {
+            font-size: 14px;
+            color: #234B1C;
+            margin-bottom: 6px;
+        }
+        .input-field {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+        .pay-btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 18px;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            background: #FFD600;
+            color: #2E7D32;
+            transition: background 0.2s;
+        }
+        .pay-btn:active {
+            background: #FFF9C4;
+        }
+        .error, .success {
+            margin-top: 10px;
+            font-size: 15px;
+            text-align: center;
+        }
+        .error { color: #ff5252; }
+        .success { color: #2E7D32; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/fodder/pending" class="back-btn">&#8592;</a>
+        <div class="title">Pembayaran</div>
+        <div class="payment-item">
+            <div class="payment-info">
+                <div class="payment-title">{{.Details.Type}}</div>
+                <div class="payment-price">Rp{{mul .Details.Amount 10000}}</div>
+            </div>
+        </div>
+        <form id="paymentForm">
+            <div class="input-box">
+                <label class="input-label" for="bank">Bank</label>
+                <input type="text" id="bank" name="bank" class="input-field" required>
+            </div>
+            <div class="input-box">
+                <label class="input-label" for="account">Nomor Rekening</label>
+                <input type="text" id="account" name="account" class="input-field" required>
+            </div>
+            <div class="input-box">
+                <label class="input-label" for="nominal">Nominal</label>
+                <input type="number" id="nominal" name="nominal" class="input-field" value="{{mul .Details.Amount 10000}}" readonly>
+            </div>
+            <button class="pay-btn" type="submit">Bayar</button>
+            <div id="message"></div>
+        </form>
+    </div>
+    <script>
+        document.getElementById('paymentForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const bank = document.getElementById('bank').value;
+            const account = document.getElementById('account').value;
+            const nominal = document.getElementById('nominal').value;
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = '';
+            messageDiv.className = '';
+            if (!bank || !account || !nominal) {
+                messageDiv.textContent = 'Semua field wajib diisi.';
+                messageDiv.className = 'error';
+                return;
+            }
+            document.querySelector('.pay-btn').disabled = true;
+            const token = localStorage.getItem('jwt');
+            try {
+                const res = await fetch('/api/fodder/pay', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': token ? `Bearer ${token}` : ''
+                    },
+                    body: JSON.stringify({ bank, account, nominal: parseInt('{{mul .Details.Amount 10000}}'), id: '{{.Details.ID}}' })
+                });
+                const data = await res.json();
+                if (data.status) {
+                    messageDiv.textContent = 'Pembayaran berhasil!';
+                    messageDiv.className = 'success';
+                    setTimeout(() => window.location.href = '/fodder/pending', 1200);
+                } else {
+                    messageDiv.textContent = data.message || 'Gagal melakukan pembayaran.';
+                    messageDiv.className = 'error';
+                }
+            } catch (err) {
+                messageDiv.textContent = 'Terjadi kesalahan. Coba lagi.';
+                messageDiv.className = 'error';
+            }
+            document.querySelector('.pay-btn').disabled = false;
+        });
+    </script>
+</body>
+</html>

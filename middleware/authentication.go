@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -72,7 +71,6 @@ func AuthenticateCookies(jwtService config.JWTService) gin.HandlerFunc {
 			return
 		}
 
-		fmt.Println("REACHED")
 		ctx.Set(constants.CTX_KEY_TOKEN, cookieToken)
 		ctx.Set(constants.CTX_KEY_USER_ID, userID)
 		ctx.Set(constants.CTX_KEY_ROLE_NAME, userRole)

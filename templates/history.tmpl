@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Riwayat Penjemputan - Waste2Feed</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: #FFF9E1;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 420px;
+            margin: 0 auto;
+            padding: 24px 0 24px 0;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+        .back-btn {
+            text-decoration: none;
+            color: #2E7D32;
+            font-size: 24px;
+            background: #fff;
+            padding: 4px 10px;
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #2E7D32;
+        }
+        .history-list {
+            margin-top: 10px;
+        }
+        .history-item {
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            margin: 0 16px 18px 16px;
+            padding: 16px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .history-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .status {
+            font-size: 13px;
+            font-weight: bold;
+            color: #fff;
+            background: #8CB97A;
+            border-radius: 8px;
+            padding: 2px 12px;
+        }
+        .status.done { background: #2E7D32; }
+        .status.progress { background: #FFD600; color: #2E7D32; }
+        .status.cancel { background: #ff5252; }
+        .address {
+            font-size: 15px;
+            color: #234B1C;
+            margin-bottom: 2px;
+        }
+        .meta {
+            font-size: 13px;
+            color: #888;
+        }
+        .amount {
+            font-size: 15px;
+            color: #2E7D32;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="/dashboard" class="back-btn">&#8592;</a>
+            <div class="title">Riwayat Penjemputan</div>
+        </div>
+        <div class="history-list">
+            {{if .Data.Data}}
+                {{range .Data.Data}}
+                <div class="history-item">
+                    <div class="history-row">
+                        <div class="address">{{.Address}}</div>
+                        <div class="status {{.Status}}">
+                            {{if eq .Status "done"}}Selesai{{else if eq .Status "progress"}}Proses{{else if eq .Status "cancel"}}Batal{{else}}{{.Status}}{{end}}
+                        </div>
+                    </div>
+                    <div class="history-row">
+                        <div class="meta">Tanggal: {{.Date}} &bull; Jam: {{.Time}}</div>
+                        <div class="amount">{{printf "%.2f" .Amount}} Kg</div>
+                    </div>
+                </div>
+                {{end}}
+            {{else}}
+                <div style="text-align:center;color:#888;margin-top:40px;">Belum ada riwayat penjemputan.</div>
+            {{end}}
+        </div>
+    </div>
+</body>
+</html>

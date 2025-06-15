@@ -244,6 +244,48 @@
             cursor: pointer;
             z-index: 101;
         }
+        /* Courier list styles */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .courier-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #fff;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .courier-info {
+            display: flex;
+            flex-direction: column;
+        }
+        .courier-name {
+            font-size: 18px;
+            color: #234B1C;
+            font-weight: 500;
+        }
+        .courier-email {
+            font-size: 14px;
+            color: #5B7B3A;
+        }
+        .edit-btn {
+            background: #8CB97A;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 16px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .edit-btn:hover {
+            background: #A5D6A7;
+        }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -252,29 +294,18 @@
         <div class="greeting" id="greeting">Hallo! <b>User</b></div>
         <img src="/static/tmp.png" alt="Profile" class="profile-img" id="profileBtn">
     </div>
-    <div class="main">
-        <img src="/static/wallpaper-2.jpg" alt="Fodder" class="main-img">
-        <div class="menu">
-            <div class="menu-item" onclick="location.href='/fodder'">
-                <img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" alt="Pesan Pakan Ternak">
-                Pesan Pakan Ternak
+        <div class="container">
+            <h1>Daftar Kurir</h1>
+            {{range .Users}}
+            <div class="courier-item">
+                <div class="courier-info">
+                    <div class="courier-username">{{.UserName}}</div>
+                    <div class="courier-email">{{.Email}}</div>
+                    <div class="courier-phone">{{.PhoneNumber}}</div>
+                </div>
+                <button class="edit-btn" onclick="location.href='/courier?id={{.ID}}'">Edit Profil</button>
             </div>
-            <div class="menu-item" onclick="location.href='/fodder/pending'">
-                <img src="https://cdn-icons-png.flaticon.com/512/3135/3135768.png" alt="Pembayaran">
-                Pembayaran
-            </div>
-        </div>
-        <div class="section-title">Pelajari Lebih Lanjut</div>
-        <a href="/fodder/information" class="info-link">
-            <img src="/static/wallpaper.jpg" class="info-img" alt="Informasi bahan pakan">
-            <span class="info-label">Informasi bahan pakan</span>
-        </a>
-        <div class="section-title-green">Tetap Terhubung</div>
-        <div class="menu" style="margin-bottom: 24px;">
-            <div class="menu-item" onclick="location.href='/community'">
-                <img src="https://cdn-icons-png.flaticon.com/512/1380/1380338.png" alt="Komunitas">
-                Komunitas
-            </div>
+            {{end}}
         </div>
     </div>
     <!-- Sidebar Overlay -->
@@ -289,15 +320,8 @@
                 <div class="sidebar-user-phone" id="sidebarUserPhone">+628xxxxxxxxxx</div>
             </div>
         </div>
-        <div class="sidebar-section-title">Alamat</div>
-        <div class="sidebar-address-box">
-            <span class="sidebar-address-icon"><i class="fa fa-map-marker-alt"></i></span>
-            <div class="sidebar-address-content" id="sidebarAddress">-</div>
-        </div>
-        <div class="sidebar-add-address">+ Tambah Alamat</div>
         <div class="sidebar-section-title">Pengaturan</div>
         <ul class="sidebar-menu">
-            <li onclick="location.href='/profile'"><span class="sidebar-menu-icon"><i class="fa fa-user"></i></span> Profil Anda</li>
             <li onclick="location.href='/faq'"><span class="sidebar-menu-icon"><i class="fa fa-question-circle"></i></span> FAQ</li>
             <li onclick="logout()"><span class="sidebar-menu-icon"><i class="fa fa-sign-out-alt"></i></span> Logout</li>
         </ul>

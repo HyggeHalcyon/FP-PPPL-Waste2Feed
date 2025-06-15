@@ -121,11 +121,11 @@
                 if (data.data && data.data.token) {
                     const token = data.data.token;
                     document.cookie = `jwt=${token}; path=/; max-age=${60 * 60}; SameSite=Lax`;
-                    localStorage.setItem('token', token);
+                    localStorage.setItem('jwt', token);
                 }
                 messageDiv.textContent = 'Login berhasil!';
                 messageDiv.className = 'success';
-                setTimeout(() => { window.location.href = '/choose-role'; }, 1200);
+                setTimeout(() => { window.location.href = '/dashboard'; }, 1200);
             } else {
                 messageDiv.textContent = data.message || 'Login gagal.';
                 messageDiv.className = 'error';

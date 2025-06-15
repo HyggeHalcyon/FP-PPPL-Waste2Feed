@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profil - Waste2Feed</title>
+    <title>Profil Kurir - Waste2Feed</title>
     <style>
         body {
             margin: 0;
@@ -111,78 +111,37 @@
 <body>
     <div class="container">
         <a href="/dashboard" style="position:absolute;left:18px;top:18px;text-decoration:none;color:#2E7D32;font-size:24px;background:#fff;padding:4px 10px;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,0.08);"><span style="font-weight:bold;">&#8592;</span></a>
-        <div class="profile-title">Profil</div>
+        <div class="profile-title">Profil Kurir</div>
         <div class="profile-img-box">
             <img src="/static/tmp.png" alt="Profile" class="profile-img" id="profileImg">
         </div>
         <form id="profileForm" autocomplete="off">
             <div class="form-label">NAMA PENGGUNA</div>
-            <input class="input" type="text" id="username" name="username">
+            <input class="input" type="text" id="username" name="username" value="{{.Username}}">
             <div class="form-label">NAMA LENGKAP</div>
-            <input class="input" type="text" id="name" name="name">
+            <input class="input" type="text" id="name" name="name" value="{{.Name}}">
             <div class="form-label">OLD PASSWORD</div>
             <input class="input" type="text" id="old_password" name="old_password">
             <div class="form-label">NEW PASSWORD</div>
             <input class="input" type="text" id="new_password" name="new_password">
             <div class="form-label">EMAIL</div>
-            <input class="input" type="email" id="email" name="email" readonly>
+            <input class="input" type="email" id="email" name="email" value="{{.Email}}" readonly>
             <div class="form-label">JENIS KELAMIN</div>
             <div class="radio-group">
-                <label class="radio-label"><input type="radio" name="gender" value="male" id="gender_male"> Pria</label>
-                <label class="radio-label"><input type="radio" name="gender" value="female" id="gender_female"> Wanita</label>
+                <label class="radio-label"><input type="radio" id="gender_male" name="gender" value="Pria" {{if eq .Courier.Gender "Pria"}}checked{{end}}> Pria</label>
+                <label class="radio-label"><input type="radio" id="gender_female" name="gender" value="Wanita" {{if eq .Courier.Gender "Wanita"}}checked{{end}}> Wanita</label>
             </div>
             <div class="form-label">NOMOR HP</div>
-            <input class="input" type="text" id="phone_number" name="phone_number" readonly>
+            <input class="input" type="text" id="phone_number" name="phone_number" value="{{.Courier.PhoneNumber}}" readonly>
             <div class="form-label">JENIS PENGGUNA</div>
-            <div class="jenis-pengguna" id="jenisPengguna">-</div>
+            <div class="jenis-pengguna" id="jenisPengguna">Kurir</div>
             <div class="form-label">ALAMAT</div>
-            <input class="input" type="text" id="address" name="address">
+            <input class="input" type="text" id="address" name="address" value="{{.Courier.Address}}">
             <button class="button" type="submit" id="saveBtn">Simpan Perubahan</button>
             <div id="message"></div>
         </form>
     </div>
     <script>
-    let currentData = {};
-    // Helper: decode JWT payload
-    function parseJwt (token) {
-        try {
-            const base64Url = token.split('.')[1];
-            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-            }).join(''));
-            return JSON.parse(jsonPayload);
-        } catch (e) { return {}; }
-    }
-    // Fetch user data
-    function fetchProfile() {
-        const token = localStorage.getItem('jwt');
-        if (token) {
-            const payload = parseJwt(token);
-            document.getElementById('jenisPengguna').textContent = payload.role === 'farmer' ? 'Peternak' : (payload.role === 'user' ? 'Pengguna Umum' : '-');
-        }
-        fetch('/api/user/me', {
-            headers: {
-                'Authorization': token ? `Bearer ${token}` : ''
-            }
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.status && data.data) {
-                currentData = data.data;
-                document.getElementById('username').value = data.data.username || '';
-                document.getElementById('name').value = data.data.name || '';
-                document.getElementById('email').value = data.data.email || '';
-                document.getElementById('phone_number').value = data.data.phone_number || '';
-                document.getElementById('address').value = data.data.address || '';
-                if (data.data.gender === 'Pria') document.getElementById('gender_male').checked = true;
-                else if (data.data.gender === 'Wanita') document.getElementById('gender_female').checked = true;
-            }
-        });
-    }
-    fetchProfile();
-
-    // Update profile
     document.getElementById('profileForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         document.getElementById('saveBtn').disabled = true;
@@ -199,23 +158,18 @@
         messageDiv.className = '';
         // Remove empty fields from payload
         let payload = {};
-        if (username != currentData.username) payload.username = username;
-        if (name != currentData.name) payload.name = name;
-        if (email != currentData.email) payload.email = email;
-        if (phone_number != currentData.phone_number) payload.phone_number = phone_number;
-        if (gender != currentData.gender) payload.gender = gender;
+        if (username) payload.username = username;
+        if (name) payload.name = name;
+        if (email) payload.email = email;
+        if (phone_number) payload.phone_number = phone_number;
+        if (gender) payload.gender = gender;
         if (oldPassword) payload.old_password = oldPassword;
         if (newPassword) payload.new_password = newPassword;
-        if (address != currentData.address) payload.address = address;
-        if (Object.keys(payload).length === 0) {
-            messageDiv.textContent = 'Tidak ada perubahan yang dilakukan.';
-            messageDiv.className = 'error';
-            document.getElementById('saveBtn').disabled = false;
-            return;
-        }
+        if (address) payload.address = address;
         const token = localStorage.getItem('jwt');
         try {
-            const res = await fetch('/api/user/update', {
+            let id = '{{.Courier.ID}}';
+            const res = await fetch(`/api/courier?id=${id}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -225,10 +179,10 @@
             });
             const data = await res.json();
             if (data.status) {
-                messageDiv.textContent = 'Profil berhasil diperbarui!';
+                messageDiv.textContent = 'Perubahan berhasil disimpan!';
                 messageDiv.className = 'success';
             } else {
-                messageDiv.textContent = data.message || 'Gagal memperbarui profil.';
+                messageDiv.textContent = data.message || 'Gagal menyimpan perubahan.';
                 messageDiv.className = 'error';
             }
         } catch (err) {

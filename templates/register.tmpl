@@ -107,7 +107,8 @@
             return;
         }
         let payload = { password };
-        let url = '/api/user/register';
+        role = new URLSearchParams(window.location.search).get('role');
+        let url = `/api/user/register?role=${role}`;
         if (/^\d{8,}$/.test(identifier)) {
             payload.phone_number = identifier;
         } else if (/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(identifier)) {

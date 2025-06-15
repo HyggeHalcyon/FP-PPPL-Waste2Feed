@@ -80,33 +80,11 @@
     </div>
     <script>
     function chooseRole(role) {
-        const messageDiv = document.getElementById('message');
-        messageDiv.textContent = '';
-        messageDiv.className = '';
-        const token = localStorage.getItem('token');
-        fetch('/api/user/update', {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': token ? `Bearer ${token}` : ''
-            },
-            body: JSON.stringify({ role })
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.status) {
-                messageDiv.textContent = 'Peran berhasil dipilih!';
-                messageDiv.className = 'success';
-                setTimeout(() => { window.location.href = '/dashboard'; }, 1000);
-            } else {
-                messageDiv.textContent = data.message || 'Gagal memilih peran.';
-                messageDiv.className = 'error';
-            }
-        })
-        .catch(() => {
-            messageDiv.textContent = 'Terjadi kesalahan. Coba lagi.';
-            messageDiv.className = 'error';
-        });
+        if (role === 'farmer') {
+            window.location.href = '/register?role=farmer';
+        } else if (role === 'user') {
+            window.location.href = '/register?role=user';
+        }
     }
     </script>
 </body>

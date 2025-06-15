@@ -21,6 +21,11 @@ type (
 		Me(ctx *gin.Context)
 		Redeem(ctx *gin.Context)
 
+		NewCourier(ctx *gin.Context)
+		DeleteCourier(ctx *gin.Context)
+		EditCourier(ctx *gin.Context)
+
+		ViewCourier(ctx *gin.Context)
 		ViewIndex(ctx *gin.Context)
 		ViewLogin(ctx *gin.Context)
 		ViewRegister(ctx *gin.Context)
@@ -44,7 +49,7 @@ func NewUserController(us service.UserService, jwt config.JWTService) UserContro
 	}
 }
 
-func (c *userController) Register(ctx *gin.Context) {
+func (c *userController) NewCourier(ctx *gin.Context) {
 	var req dto.UserAuthRequest
 	if err := ctx.ShouldBind(&req); err != nil {
 		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_DATA_FROM_BODY, err.Error(), nil)
@@ -52,7 +57,61 @@ func (c *userController) Register(ctx *gin.Context) {
 		return
 	}
 
-	result, err := c.userService.Register(ctx.Request.Context(), req)
+	result, err := c.userService.NewCourier(ctx.Request.Context(), req)
+	if err != nil {
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_REGISTER_COURIER, err.Error(), nil)
+		ctx.JSON(http.StatusBadRequest, res)
+		return
+	}
+
+	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_REGISTER_COURIER, result)
+	ctx.JSON(http.StatusOK, res)
+}
+
+func (c *userController) DeleteCourier(ctx *gin.Context) {
+	courierID := ctx.Query("id")
+
+	if err := c.userService.DeleteCourier(ctx.Request.Context(), courierID); err != nil {
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_DELETE_COURIER, err.Error(), nil)
+		ctx.JSON(http.StatusBadRequest, res)
+		return
+	}
+
+	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_DELETE_COURIER, nil)
+	ctx.JSON(http.StatusOK, res)
+}
+
+func (c *userController) EditCourier(ctx *gin.Context) {
+	courierID := ctx.Query("id")
+
+	var req dto.UserUpdateRequest
+	if err := ctx.ShouldBind(&req); err != nil {
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_DATA_FROM_BODY, err.Error(), nil)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
+	}
+
+	if err := c.userService.EditCourier(ctx.Request.Context(), courierID, req); err != nil {
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_UPDATE_COURIER, err.Error(), nil)
+		ctx.JSON(http.StatusBadRequest, res)
+		return
+	}
+
+	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_UPDATE_COURIER, nil)
+	ctx.JSON(http.StatusOK, res)
+}
+
+func (c *userController) Register(ctx *gin.Context) {
+	role := ctx.Query("role")
+
+	var req dto.UserAuthRequest
+	if err := ctx.ShouldBind(&req); err != nil {
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_DATA_FROM_BODY, err.Error(), nil)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
+	}
+
+	result, err := c.userService.Register(ctx.Request.Context(), role, req)
 	if err != nil {
 		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_REGISTER_USER, err.Error(), nil)
 		ctx.JSON(http.StatusBadRequest, res)
@@ -151,6 +210,12 @@ func (c *userController) ViewLogin(ctx *gin.Context) {
 }
 
 func (c *userController) ViewRegister(ctx *gin.Context) {
+	role := ctx.Query("role")
+	if role == "" || (role != constants.ENUM_ROLE_USER && role != constants.ENUM_ROLE_FARMER) {
+		ctx.Redirect(http.StatusSeeOther, "/choose-role")
+		return
+	}
+
 	ctx.HTML(http.StatusOK, "register.tmpl", gin.H{})
 }
 
@@ -165,6 +230,17 @@ func (c *userController) ViewDashboard(ctx *gin.Context) {
 		ctx.HTML(http.StatusOK, "dashboard-user.tmpl", gin.H{})
 	} else if role == constants.ENUM_ROLE_FARMER {
 		ctx.HTML(http.StatusOK, "dashboard-farmer.tmpl", gin.H{})
+	} else if role == constants.ENUM_ROLE_ADMIN {
+		users, err := c.userService.GetAllByRoleID(ctx.Request.Context(), constants.ENUM_ROLE_COURIER)
+		if err != nil {
+			ctx.HTML(http.StatusInternalServerError, "error.tmpl", gin.H{
+				"Error": err.Error(),
+			})
+			return
+		}
+		ctx.HTML(http.StatusOK, "dashboard-admin.tmpl", gin.H{
+			"Users": users,
+		})
 	}
 }
 
@@ -177,11 +253,25 @@ func (c *userController) ViewProfile(ctx *gin.Context) {
 }
 
 func (c *userController) ViewFAQ(ctx *gin.Context) {
-	role := ctx.MustGet(constants.CTX_KEY_ROLE_NAME).(string)
+	ctx.HTML(http.StatusOK, "faq.tmpl", gin.H{})
+}
 
-	if role == constants.ENUM_ROLE_USER {
-		ctx.HTML(http.StatusOK, "faq-user.tmpl", gin.H{})
-	} else if role == constants.ENUM_ROLE_FARMER {
-		ctx.HTML(http.StatusOK, "faq-farmer.tmpl", gin.H{})
+func (c *userController) ViewCourier(ctx *gin.Context) {
+	id := ctx.Query("id")
+
+	if id == "" {
+		ctx.Redirect(http.StatusSeeOther, "/dashboard")
+		return
 	}
+
+	courier, err := c.userService.GetCourierByID(ctx.Request.Context(), id)
+	if err != nil {
+		ctx.HTML(http.StatusInternalServerError, "error.tmpl", gin.H{
+			"Error": err.Error(),
+		})
+	}
+
+	ctx.HTML(http.StatusOK, "courier.tmpl", gin.H{
+		"Courier": courier,
+	})
 }

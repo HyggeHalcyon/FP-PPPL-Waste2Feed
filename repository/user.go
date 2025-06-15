@@ -10,9 +10,12 @@ type (
 	UserRepository interface {
 		Create(entity.User) (entity.User, error)
 		Update(entity.User) (entity.User, error)
+		Delete(entity.User) error
+		GetAllByRoleID(string) ([]entity.User, error)
 		GetById(string) (entity.User, error)
 		GetByEmail(string) (entity.User, error)
 		GetByPhoneNumber(string) (entity.User, error)
+		GetByUsername(string) (entity.User, error)
 	}
 
 	userRepository struct {
@@ -32,6 +35,14 @@ func (r *userRepository) Create(user entity.User) (entity.User, error) {
 	}
 
 	return user, nil
+}
+
+func (r *userRepository) GetAllByRoleID(roleID string) ([]entity.User, error) {
+	var users []entity.User
+	if err := r.db.Where("role_id = ?", roleID).Find(&users).Error; err != nil {
+		return nil, err
+	}
+	return users, nil
 }
 
 func (r *userRepository) Update(user entity.User) (entity.User, error) {
@@ -63,4 +74,19 @@ func (r *userRepository) GetByPhoneNumber(phoneNumber string) (entity.User, erro
 		return entity.User{}, err
 	}
 	return user, nil
+}
+
+func (r *userRepository) GetByUsername(username string) (entity.User, error) {
+	var user entity.User
+	if err := r.db.Where("user_name = ?", username).Take(&user).Error; err != nil {
+		return entity.User{}, err
+	}
+	return user, nil
+}
+
+func (r *userRepository) Delete(user entity.User) error {
+	if err := r.db.Delete(&user).Error; err != nil {
+		return err
+	}
+	return nil
 }

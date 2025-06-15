@@ -257,7 +257,7 @@
                 <img src="https://cdn-icons-png.flaticon.com/512/992/992651.png" alt="Tukar Poin">
                 Tukar Poin
             </div>
-            <div class="menu-item" onclick="location.href='/sampah'">
+            <div class="menu-item" onclick="location.href='/pick-up'">
                 <img src="https://cdn-icons-png.flaticon.com/512/1995/1995574.png" alt="Penjemputan Sampah">
                 Penjemputan Sampah
             </div>
@@ -288,8 +288,7 @@
         <div class="sidebar-section-title">Pengaturan</div>
         <ul class="sidebar-menu">
             <li onclick="location.href='/profile'"><span class="sidebar-menu-icon"><i class="fa fa-user"></i></span> Profil Anda</li>
-            <li><span class="sidebar-menu-icon"><i class="fa fa-lock"></i></span> Ganti Sandi</li>
-            <li><span class="sidebar-menu-icon"><i class="fa fa-history"></i></span> Riwayat Penjemputan</li>
+            <li onclick="location.href='/history'"><span class="sidebar-menu-icon"><i class="fa fa-history"></i></span> Riwayat Penjemputan</li>
             <li><span class="sidebar-menu-icon"><i class="fa fa-question-circle"></i></span> FAQ</li>
             <li onclick="logout()"><span class="sidebar-menu-icon"><i class="fa fa-sign-out-alt"></i></span> Logout</li>
         </ul>
@@ -315,7 +314,7 @@
 
     // Fetch user data
     function fetchUserData() {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('jwt');
         fetch('/api/user/me', {
             headers: {
                 'Authorization': token ? `Bearer ${token}` : ''
@@ -337,7 +336,7 @@
 
     // Logout
     function logout() {
-        document.cookie = '';
+        document.cookie = "jwt=; path=/; max-age=0; SameSite=Lax";
         localStorage.removeItem('jwt');
         window.location.href = '/';
     }

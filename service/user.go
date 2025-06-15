@@ -14,7 +14,12 @@ import (
 
 type (
 	UserService interface {
-		Register(context.Context, dto.UserAuthRequest) (dto.UserResponse, error)
+		Register(context.Context, string, dto.UserAuthRequest) (dto.UserResponse, error)
+		NewCourier(context.Context, dto.UserAuthRequest) (dto.UserResponse, error)
+		DeleteCourier(context.Context, string) error
+		EditCourier(context.Context, string, dto.UserUpdateRequest) error
+		GetAllByRoleID(context.Context, string) ([]entity.User, error)
+		GetCourierByID(context.Context, string) (entity.User, error)
 		Update(context.Context, string, dto.UserUpdateRequest) error
 		Login(context.Context, dto.UserAuthRequest) (entity.User, error)
 		Me(context.Context, string) (dto.UserResponse, error)
@@ -34,13 +39,21 @@ func NewUserService(ur repository.UserRepository, rr repository.RoleRepository) 
 	}
 }
 
-func (s *userService) Register(ctx context.Context, req dto.UserAuthRequest) (dto.UserResponse, error) {
+func (s *userService) Register(ctx context.Context, _role string, req dto.UserAuthRequest) (dto.UserResponse, error) {
 	var user entity.User
+
+	if _role == "" {
+		return dto.UserResponse{}, dto.ErrMissingRole
+	}
+
+	if _role != constants.ENUM_ROLE_FARMER && _role != constants.ENUM_ROLE_USER {
+		return dto.UserResponse{}, dto.ErrInvalidRoleName
+	}
 
 	if req.Email != "" {
 		_, err := s.userRepo.GetByEmail(req.Email)
 		if err == nil && err != gorm.ErrRecordNotFound {
-			return dto.UserResponse{}, dto.ErrUsernameAlreadyExists
+			return dto.UserResponse{}, dto.ErrEmailAlreadyExists
 		}
 
 		user = entity.User{
@@ -49,7 +62,7 @@ func (s *userService) Register(ctx context.Context, req dto.UserAuthRequest) (dt
 	} else if req.PhoneNumber != "" {
 		_, err := s.userRepo.GetByPhoneNumber(req.PhoneNumber)
 		if err == nil && err != gorm.ErrRecordNotFound {
-			return dto.UserResponse{}, dto.ErrUsernameAlreadyExists
+			return dto.UserResponse{}, dto.ErrPhoneNumberAlreadyExists
 		}
 
 		user = entity.User{
@@ -59,7 +72,7 @@ func (s *userService) Register(ctx context.Context, req dto.UserAuthRequest) (dt
 		return dto.UserResponse{}, dto.ErrEmailOrPhoneNumberMissing
 	}
 
-	role, err := s.roleRepo.GetByName(constants.ENUM_ROLE_USER)
+	role, err := s.roleRepo.GetByName(_role)
 	if err != nil {
 		return dto.UserResponse{}, err
 	}
@@ -76,54 +89,59 @@ func (s *userService) Register(ctx context.Context, req dto.UserAuthRequest) (dt
 		ID:          userReg.ID.String(),
 		Email:       userReg.Email,
 		PhoneNumber: userReg.PhoneNumber,
-		Role:        constants.ENUM_ROLE_USER,
+		Role:        role.Name,
 	}, nil
 }
 
-func (s *userService) Update(ctx context.Context, userID string, req dto.UserUpdateRequest) error {
+func (s *userService) GetAllByRoleID(ctx context.Context, rolename string) ([]entity.User, error) {
+	role, err := s.roleRepo.GetByName(rolename)
+	if err != nil {
+		return nil, err
+	}
+
+	users, err := s.userRepo.GetAllByRoleID(role.ID.String())
+	if err != nil {
+		return nil, err
+	}
+
+	return users, nil
+}
+
+func (s *userService) EditCourier(ctx context.Context, userID string, req dto.UserUpdateRequest) error {
 	var data entity.User
 
 	user, err := s.userRepo.GetById(userID)
 	if err != nil {
-		return dto.ErrGetUserById
+		return err
+	}
+
+	role, err := s.roleRepo.GetbyId(user.RoleID)
+	if err != nil {
+		return err
+	}
+
+	if role.Name != constants.ENUM_ROLE_COURIER {
+		return dto.ErrUserNotCourier
 	}
 
 	var newPassword string
-	if req.OldPassword != "" {
-		hashedPassword, err := utils.HashPassword(req.OldPassword)
-		if err != nil {
-			return dto.ErrUpdateUser
-		}
-
-		if hashedPassword != user.Password {
-			return dto.ErrCredentialsNotMatched
-		}
-
+	if req.NewPassword != "" {
 		newPassword, err = utils.HashPassword(req.NewPassword)
 		if err != nil {
-			return dto.ErrUpdateUser
+			return err
 		}
+	}
+
+	if req.UserName != "" {
+		_, err := s.userRepo.GetByUsername(req.UserName)
+		if err == nil && err != gorm.ErrRecordNotFound {
+			return dto.ErrUsernameAlreadyExists
+		}
+		data.UserName = req.UserName
 	}
 
 	if req.Gender != "" && (req.Gender != "Pria" && req.Gender != "Wanita") {
 		return dto.ErrInvalidGender
-	}
-
-	var role entity.Role
-	if req.Role != "" {
-		if req.Role == "admin" || req.Role == "courier" {
-			return dto.ErrRoleNotAllowed
-		}
-
-		role, err = s.roleRepo.GetByName(req.Role)
-		if err != nil {
-			if err == gorm.ErrRecordNotFound {
-				return dto.ErrInvalidRoleName
-			} else {
-				return err
-			}
-		}
-		data.RoleID = role.ID.String()
 	}
 
 	data = entity.User{
@@ -137,7 +155,130 @@ func (s *userService) Update(ctx context.Context, userID string, req dto.UserUpd
 
 	_, err = s.userRepo.Update(data)
 	if err != nil {
-		return dto.ErrUpdateUser
+		return err
+	}
+
+	return nil
+}
+
+func (s *userService) NewCourier(ctx context.Context, req dto.UserAuthRequest) (dto.UserResponse, error) {
+	var user entity.User
+
+	if req.Email != "" {
+		_, err := s.userRepo.GetByEmail(req.Email)
+		if err == nil && err != gorm.ErrRecordNotFound {
+			return dto.UserResponse{}, dto.ErrEmailAlreadyExists
+		}
+
+		user = entity.User{
+			Email: req.Email,
+		}
+	} else if req.PhoneNumber != "" {
+		_, err := s.userRepo.GetByPhoneNumber(req.PhoneNumber)
+		if err == nil && err != gorm.ErrRecordNotFound {
+			return dto.UserResponse{}, dto.ErrPhoneNumberAlreadyExists
+		}
+
+		user = entity.User{
+			PhoneNumber: req.PhoneNumber,
+		}
+	} else {
+		return dto.UserResponse{}, dto.ErrEmailOrPhoneNumberMissing
+	}
+
+	role, err := s.roleRepo.GetByName(constants.ENUM_ROLE_COURIER)
+	if err != nil {
+		return dto.UserResponse{}, err
+	}
+
+	user.Password = req.Password
+	user.RoleID = role.ID.String()
+
+	userReg, err := s.userRepo.Create(user)
+	if err != nil {
+		return dto.UserResponse{}, dto.ErrCreateUser
+	}
+
+	return dto.UserResponse{
+		ID:          userReg.ID.String(),
+		Email:       userReg.Email,
+		PhoneNumber: userReg.PhoneNumber,
+		Role:        constants.ENUM_ROLE_COURIER,
+	}, nil
+}
+
+func (s *userService) DeleteCourier(ctx context.Context, userID string) error {
+	user, err := s.userRepo.GetById(userID)
+	if err != nil {
+		return err
+	}
+
+	role, err := s.roleRepo.GetbyId(user.RoleID)
+	if err != nil {
+		return err
+	}
+
+	if role.Name != constants.ENUM_ROLE_COURIER {
+		return dto.ErrUserNotCourier
+	}
+
+	err = s.userRepo.Delete(user)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *userService) Update(ctx context.Context, userID string, req dto.UserUpdateRequest) error {
+	var data entity.User
+
+	user, err := s.userRepo.GetById(userID)
+	if err != nil {
+		return err
+	}
+
+	var newPassword string
+	if req.OldPassword != "" && req.NewPassword != "" {
+		hashedPassword, err := utils.HashPassword(req.OldPassword)
+		if err != nil {
+			return err
+		}
+
+		if hashedPassword != user.Password {
+			return dto.ErrCredentialsNotMatched
+		}
+
+		newPassword, err = utils.HashPassword(req.NewPassword)
+		if err != nil {
+			return err
+		}
+	}
+
+	if req.UserName != "" {
+		_, err := s.userRepo.GetByUsername(req.UserName)
+		if err == nil && err != gorm.ErrRecordNotFound {
+			return dto.ErrUsernameAlreadyExists
+		}
+		data.UserName = req.UserName
+	}
+
+	if req.Gender != "" && (req.Gender != "Pria" && req.Gender != "Wanita") {
+		return dto.ErrInvalidGender
+	}
+
+	data = entity.User{
+		ID:       user.ID,
+		Name:     req.Name,
+		UserName: req.UserName,
+		Address:  req.Address,
+		Password: newPassword,
+		Gender:   req.Gender,
+	}
+
+	_, err = s.userRepo.Update(data)
+	if err != nil {
+		return err
 	}
 
 	return nil
@@ -183,7 +324,7 @@ func (s *userService) Login(ctx context.Context, req dto.UserAuthRequest) (entit
 func (s *userService) Me(ctx context.Context, userID string) (dto.UserResponse, error) {
 	user, err := s.userRepo.GetById(userID)
 	if err != nil {
-		return dto.UserResponse{}, dto.ErrGetUserById
+		return dto.UserResponse{}, err
 	}
 
 	role, err := s.roleRepo.GetbyId(user.RoleID)
@@ -208,7 +349,7 @@ func (s *userService) Me(ctx context.Context, userID string) (dto.UserResponse, 
 func (s *userService) Redeem(ctx context.Context, userID string, req dto.UserRedeemRequest) error {
 	user, err := s.userRepo.GetById(userID)
 	if err != nil {
-		return dto.ErrGetUserById
+		return err
 	}
 
 	if *user.Points <= 0 {
@@ -226,8 +367,28 @@ func (s *userService) Redeem(ctx context.Context, userID string, req dto.UserRed
 	}
 	_, err = s.userRepo.Update(_user)
 	if err != nil {
-		return dto.ErrUpdateUser
+		return err
 	}
 
 	return nil
+}
+
+func (s *userService) GetCourierByID(ctx context.Context, userID string) (entity.User, error) {
+	user, err := s.userRepo.GetById(userID)
+	if err != nil {
+		return entity.User{}, err
+	}
+
+	role, err := s.roleRepo.GetbyId(user.RoleID)
+	if err != nil {
+		return entity.User{}, err
+	}
+
+	if role.Name != constants.ENUM_ROLE_COURIER {
+		return entity.User{}, dto.ErrUserNotCourier
+	}
+
+	user.Role = &role
+
+	return user, nil
 }
