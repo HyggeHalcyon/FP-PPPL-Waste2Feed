@@ -1,135 +1,75 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Waste2Feed</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            background-color: #4CAF50;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-        }
-        .container {
-            text-align: center;
-        }
-        .logo {
-            width: 150px;
-            height: 150px;
-            margin-bottom: 20px;
-        }
-        .title {
-            font-size: 24px;
-            color: white;
-            margin-bottom: 40px;
-        }
-        .button {
-            display: block;
-            width: 200px;
-            padding: 10px;
-            margin: 10px auto;
-            text-align: center;
-            text-decoration: none;
-            color: white;
-            background-color: #2E7D32;
-            border-radius: 5px;
-            font-size: 18px;
-        }
-        .button:hover {
-            background-color: #1B5E20;
-        }
-        .footer {
-            font-size: 14px;
-            color: white;
-            margin-top: 20px;
-        }
-        .carousel-wrapper {
-            width: 150px;
-            height: 150px;
-            overflow: hidden;
-            margin: 0 auto 10px auto;
-            border-radius: 50%;
-            background: #fff;
-            position: relative;
-        }
-        .carousel {
-            display: flex;
-            transition: transform 0.5s cubic-bezier(.4,0,.2,1);
-            width: 450px;
-            height: 150px;
-        }
-        .carousel img {
-            width: 150px;
-            height: 150px;
-            object-fit: cover;
-        }
-        .dots {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-        .dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: #bbb;
-            margin: 0 4px;
-            transition: background 0.3s;
-        }
-        .dot.active {
-            background: #388e3c;
-        }
-    </style>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const carousel = document.querySelector('.carousel');
-            const dots = document.querySelectorAll('.dot');
-            let currentIndex = 0;
-            const total = 3;
-            function showSlide(index) {
-                carousel.style.transform = `translateX(-${index * 100}%)`;
-                dots.forEach((dot, i) => {
-                    dot.classList.toggle('active', i === index);
-                });
-            }
-            function nextSlide() {
-                currentIndex = (currentIndex + 1) % total;
-                showSlide(currentIndex);
-            }
-            dots.forEach((dot, i) => {
-                dot.addEventListener('click', () => {
-                    currentIndex = i;
-                    showSlide(currentIndex);
-                });
-            });
-            setInterval(nextSlide, 2500);
-            showSlide(currentIndex);
-        });
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
-<body>
-    <div class="container">
-        <div class="carousel-wrapper">
-            <div class="carousel">
-                <img src="/static/tmp.png" alt="Waste2Feed Logo 1">
-                <img src="/static/tmp.png" alt="Waste2Feed Logo 2">
-                <img src="/static/tmp.png" alt="Waste2Feed Logo 3">
+<body class="[background-color:#558B57] flex items-center justify-center h-screen text-white font-[Poppins]">
+    
+    <div class="text-center flex flex-col items-center">
+        
+        <!-- Carousel -->
+        <div class="w-36 h-36 overflow-hidden bg-transparent flex items-center justify-center mb-4 relative">
+            <div class="flex transition-transform duration-500 ease-in-out h-36" id="carousel">
+                <img src="/static/carousel-1.png" class="w-36 h-36 object-cover" alt="Logo 1">
+                <img src="/static/carousel-2.png" class="w-36 h-36 object-cover" alt="Logo 2">
+                <img src="/static/carousel-3.png" class="w-36 h-36 object-cover" alt="Logo 3">
             </div>
         </div>
-        <div class="dots">
-            <div class="dot active"></div>
-            <div class="dot"></div>
-            <div class="dot"></div>
+
+        <!-- Title -->
+        <h1 class="text-2xl font-bold mb-4">Waste2Feed</h1>
+
+        <!-- Pagination Dots -->
+        <div class="flex justify-center mb-8 space-x-2">
+            <div class="w-2 h-2 rounded-full bg-white/50 active-dot"></div>
+            <div class="w-2 h-2 rounded-full bg-white/50"></div>
+            <div class="w-2 h-2 rounded-full bg-white/50"></div>
         </div>
-        <div class="title">Waste2Feed</div>
-        <a href="/login" class="button">Masuk</a>
-        <div class="footer">Belum punya akun? <a href="/choose-role" style="color: #FFEB3B; text-decoration: none;">Daftar Sekarang</a></div>
+
+        <!-- Button -->
+        <a href="/login" class="block w-full max-w-[300px] text-center text-white [background-color:#0B4619] rounded-full py-2 mb-4 uppercase font-semibold hover:bg-[#03210A] transition">
+            Masuk
+        </a>
+
+        <!-- Footer -->
+        <div class="text-sm">
+            Belum punya akun? <a href="/choose-role" class="font-bold text-yellow-300">Daftar Sekarang</a>
+        </div>
+
     </div>
+
+    <script>
+        const carousel = document.getElementById('carousel');
+        const dots = document.querySelectorAll('.active-dot, .active-dot ~ div');
+        let currentIndex = 0;
+
+        function showSlide(index) {
+            carousel.style.transform = `translateX(-${index * 100}%)`;
+            dots.forEach((dot, i) => {
+                dot.classList.toggle('bg-white', i === index);
+                dot.classList.toggle('bg-white/50', i !== index);
+            });
+        }
+
+        function nextSlide() {
+            currentIndex = (currentIndex + 1) % 3;
+            showSlide(currentIndex);
+        }
+
+        dots.forEach((dot, i) => {
+            dot.addEventListener('click', () => {
+                currentIndex = i;
+                showSlide(currentIndex);
+            });
+        });
+
+        setInterval(nextSlide, 2500);
+        showSlide(currentIndex);
+    </script>
+
 </body>
 </html>
