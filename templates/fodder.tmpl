@@ -4,82 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pesan Sekarang - Waste2Feed</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            background: #FFF9E1;
-            min-height: 100vh;
-        }
-        .container {
-            max-width: 400px;
-            margin: 0 auto;
-            padding: 0 18px 24px 18px;
-        }
-        .back-btn {
-            position: absolute;
-            left: 24px;
-            top: 32px;
-            text-decoration: none;
-            color: #234B1C;
-            font-size: 24px;
-            background: #fff;
-            padding: 4px 10px;
-            border-radius: 50%;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            z-index: 10;
-        }
-        .title {
-            text-align: center;
-            font-size: 22px;
-            font-weight: bold;
-            color: #234B1C;
-            margin-top: 56px;
-            margin-bottom: 18px;
-        }
-        .fodder-item {
-            margin-bottom: 24px;
-            text-align: center;
-        }
-        .fodder-img {
-            display: block;
-            margin: 0 auto 12px auto;
-            width: 90%;
-            max-width: 320px;
-            border-radius: 12px;
-            object-fit: cover;
-            height: 120px;
-        }
-        .fodder-btn {
-            width: 100%;
-            padding: 14px;
-            border: none;
-            border-radius: 18px;
-            font-size: 17px;
-            font-weight: bold;
-            cursor: pointer;
-            background: #fff;
-            color: #234B1C;
-            transition: background 0.2s;
-        }
-        .fodder-btn:active {
-            background: #d0e6b6;
-        }
-    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
-<body>
-    <div class="container">
-        <a href="/dashboard" class="back-btn">&#8592;</a>
-        <div class="title">Pesan Sekarang</div>
-        <div class="fodder-item">
-            <img src="/static/wallpaper.jpg" alt="Pakan Ayam" class="fodder-img">
-            <button class="fodder-btn" onclick="location.href='/fodder/order?type=chicken'">Pesan Pakan Ayam</button>
+<body class="bg-[#E8E8CC] min-h-screen font-[Poppins]">
+
+    <div class="max-w-[350px] mx-auto px-4 pb-6 relative">
+
+        <div class="text-center text-lg font-bold text-[#0B4619] mt-14 mb-5 flex items-center">
+            <a href="/dashboard" class="left-6 top-8 text-[#0B4619] text-2xl bg-white px-2 py-1 rounded-full shadow-md z-10">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <div class="mx-[20px]">
+                Pesan Pakan Ternak
+            </div>
         </div>
-        <div class="fodder-item">
-            <img src="/static/tmp.png" alt="Pakan Ikan" class="fodder-img">
-            <button class="fodder-btn" onclick="location.href='/fodder/order?type=fish'">Pesan Pakan Ikan</button>
+
+        <div class="mb-6 text-center">
+            <img src="/static/pakan-ayam.png" alt="Pakan Ayam" class="mx-auto mb-3 w-full h-[180px] rounded-lg object-cover shadow-lg">
+            <button onclick="location.href='/fodder/order?type=chicken'" class="w-full py-3.5 rounded-xl text-lg font-bold bg-white text-[#0B4619] shadow-lg active:bg-[#d0e6b6] transition">Pesan Pakan Ayam</button>
         </div>
+
+        <div class="mb-6 text-center">
+            <img src="/static/pakan-ikan.png" alt="Pakan Ikan" class="mx-auto mb-3 w-full h-[180px] rounded-lg object-cover shadow-lg">
+            <button onclick="location.href='/fodder/order?type=fish'" class="w-full py-3.5 rounded-xl text-lg font-bold bg-white text-[#0B4619] active:bg-[#d0e6b6] transition shadow-lg">Pesan Pakan Ikan</button>
+        </div>
+
     </div>
+
 </body>
 </html>
