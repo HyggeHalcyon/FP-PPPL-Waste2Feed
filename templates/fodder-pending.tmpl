@@ -4,101 +4,47 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pembayaran - Waste2Feed</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            background: #FFF9E1;
-            min-height: 100vh;
-        }
-        .container {
-            max-width: 400px;
-            margin: 0 auto;
-            padding: 0 18px 24px 18px;
-        }
-        .back-btn {
-            position: absolute;
-            left: 24px;
-            top: 32px;
-            text-decoration: none;
-            color: #234B1C;
-            font-size: 24px;
-            background: #fff;
-            padding: 4px 10px;
-            border-radius: 50%;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            z-index: 10;
-        }
-        .title {
-            text-align: center;
-            font-size: 22px;
-            font-weight: bold;
-            color: #234B1C;
-            margin-top: 56px;
-            margin-bottom: 18px;
-        }
-        .payment-item {
-            display: flex;
-            align-items: center;
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-            margin-bottom: 12px;
-            padding: 12px 16px;
-        }
-        .payment-info {
-            flex: 1;
-        }
-        .payment-title {
-            font-size: 15px;
-            color: #234B1C;
-            font-weight: bold;
-        }
-        .payment-price {
-            font-size: 14px;
-            color: #888;
-        }
-        .payment-status {
-            font-size: 12px;
-            color: #888;
-            margin-top: 4px;
-        }
-        .payment-btn {
-            padding: 8px 12px;
-            border: none;
-            border-radius: 18px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            background: #E6F2D6;
-            color: #234B1C;
-            transition: background 0.2s;
-        }
-        .payment-btn:active {
-            background: #C8E6C9;
-        }
-        .payment-btn[disabled] {
-            background: #f0f0f0;
-            color: #ccc;
-            cursor: not-allowed;
-        }
-    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
-<body>
-    <div class="container">
-        <a href="/dashboard" class="back-btn">&#8592;</a>
-        <div class="title">Pesanan Anda</div>
-        {{range .PendingPayments}}
-        <div class="payment-item">
-            <div class="payment-info">
-                <div class="payment-title">{{.Type}}</div>
-                <div class="payment-price">Rp{{mul .Amount 10000}}</div>
-                <div class="payment-status">Status: {{if .Paid}}Sudah Dibayar{{else}}Belum Dibayar{{end}}</div>
+<body class="min-h-screen bg-[#FFF9E1] font-sans">
+
+    <div class="max-w-[350px] mx-auto px-4 pb-6 relative">
+
+        <!-- Tombol Kembali -->
+        <div class="text-center text-lg font-bold text-[#0B4619] mt-14 mb-5 flex items-center">
+            <a href="/dashboard" class="left-6 top-8 text-[#0B4619] text-2xl bg-white px-2 py-1 rounded-full shadow-md z-10">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <div class="mx-[20px]">
+                Pesanan Anda
             </div>
-            <button class="payment-btn" onclick="location.href='/fodder/payment?id={{.ID}}'" {{if .Paid}}disabled{{end}}>Bayar</button>
+        </div>
+
+        <!-- List Pembayaran -->
+        {{range .PendingPayments}}
+        <div class="flex items-center bg-white rounded-xl shadow-md mb-3 p-4">
+
+            <div class="flex-1">
+                <div class="text-base font-semibold text-[#234B1C]">{{.Type}}</div>
+                <div class="text-sm text-gray-500">Rp{{mul .Amount 10000}}</div>
+                <div class="text-xs text-gray-500 mt-1">
+                    Status: {{if .Paid}}<span class="text-green-700 font-semibold">Sudah Dibayar</span>{{else}}Belum Dibayar{{end}}
+                </div>
+            </div>
+
+            <button onclick="location.href='/fodder/payment?id={{.ID}}'" 
+                class="text-sm font-semibold rounded-full px-4 pt-1 pb-2 ml-2 transition
+                {{if .Paid}} bg-gray-100 text-gray-400 cursor-not-allowed {{else}} bg-[#E6F2D6] text-[#234B1C] hover:bg-green-100 {{end}}"
+                {{if .Paid}} disabled {{end}}>
+                Bayar
+            </button>
+
         </div>
         {{end}}
+
     </div>
+
 </body>
 </html>

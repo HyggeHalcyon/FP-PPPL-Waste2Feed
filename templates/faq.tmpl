@@ -3,151 +3,108 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <title>Bantuan dan Dukungan - Waste2Feed</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            background: #FFF9E1;
-            min-height: 100vh;
-        }
-        .container {
-            max-width: 400px;
-            margin: 0 auto;
-            padding: 0 18px 24px 18px;
-        }
-        .back-btn {
-            position: absolute;
-            left: 24px;
-            top: 32px;
-            text-decoration: none;
-            color: #234B1C;
-            font-size: 24px;
-            background: #fff;
-            padding: 4px 10px;
-            border-radius: 50%;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            z-index: 10;
-        }
-        .title {
-            text-align: center;
-            font-size: 22px;
-            font-weight: bold;
-            color: #234B1C;
-            margin-top: 56px;
-            margin-bottom: 18px;
-        }
-        .description {
-            text-align: center;
-            font-size: 15px;
-            color: #234B1C;
-            margin-bottom: 18px;
-        }
-        .search-box {
-            display: flex;
-            align-items: center;
-            background: #fff;
-            border-radius: 18px;
-            padding: 8px 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-            margin-bottom: 18px;
-        }
-        .search-box input {
-            border: none;
-            outline: none;
-            flex: 1;
-            font-size: 15px;
-            color: #234B1C;
-        }
-        .search-box i {
-            font-size: 18px;
-            color: #888;
-        }
-        .faq-section {
-            margin-bottom: 18px;
-        }
-        .faq-item {
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-            margin-bottom: 12px;
-            padding: 12px 16px;
-            cursor: pointer;
-        }
-        .faq-item-title {
-            font-size: 15px;
-            color: #234B1C;
-            font-weight: bold;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .faq-item-content {
-            font-size: 14px;
-            color: #888;
-            margin-top: 8px;
-            display: none;
-        }
-        .faq-item.open .faq-item-content {
-            display: block;
-        }
-        .faq-item.open .faq-item-title i {
-            transform: rotate(45deg);
-        }
-        .report-btn {
-            width: 100%;
-            padding: 14px;
-            border: none;
-            border-radius: 18px;
-            font-size: 17px;
-            font-weight: bold;
-            cursor: pointer;
-            background: #FFD600;
-            color: #2E7D32;
-            transition: background 0.2s;
-        }
-        .report-btn:active {
-            background: #FFF9C4;
-        }
-    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
     <script>
         function toggleFaqItem(event) {
             const item = event.currentTarget;
             item.classList.toggle('open');
         }
     </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
-<body>
-    <div class="container">
-        <a href="/dashboard" class="back-btn">&#8592;</a>
-        <div class="title">Bantuan dan Dukungan</div>
-        <div class="description">
-            Kami di sini untuk membantu Anda dengan kebutuhan apa pun di Waste2Feed. Waste2Feed selalu siap membantu Anda menjadi lebih baik dan lebih bahagia hari ini dari kemarin. Sampaikan kekhawatiran Anda atau hubungi kami untuk informasi lebih lanjut.
-        </div>
-        <div class="search-box">
-            <i class="fa fa-search"></i>
-            <input type="text" placeholder="Cari Bantuan">
-        </div>
-        <div class="faq-section">
-            <div class="faq-item" onclick="toggleFaqItem(event)">
-                <div class="faq-item-title">Apa itu aplikasi Waste2Feed? <i class="fa fa-plus"></i></div>
-                <div class="faq-item-content">Aplikasi Waste2Feed adalah aplikasi yang membantu pengolahan limbah makanan dengan pengumpulan limbah makanan. Pengguna dapat menukarkan poin dari pengumpulan limbah makanan untuk aktivitas lainnya.</div>
-            </div>
-            <div class="faq-item" onclick="toggleFaqItem(event)">
-                <div class="faq-item-title">Bagaimana cara menggunakan aplikasi Waste2Feed? <i class="fa fa-plus"></i></div>
-                <div class="faq-item-content">Pengguna dapat menggunakan aplikasi Waste2Feed untuk mengatur penjemputan limbah makanan, menukarkan poin, dan memesan produk pakan ternak.</div>
-            </div>
-            <div class="faq-item" onclick="toggleFaqItem(event)">
-                <div class="faq-item-title">Apa saja manfaat menggunakan aplikasi Waste2Feed? <i class="fa fa-plus"></i></div>
-                <div class="faq-item-content">Aplikasi Waste2Feed membantu mengurangi limbah makanan, mendukung keberlanjutan lingkungan, dan memberikan manfaat ekonomi bagi pengguna.</div>
-            </div>
-            <div class="faq-item" onclick="toggleFaqItem(event)">
-                <div class="faq-item-title">Bagaimana cara mendapatkan produk unggas dan ikan dari aplikasi Waste2Feed? <i class="fa fa-plus"></i></div>
-                <div class="faq-item-content">Pengguna dapat memesan produk unggas dan ikan melalui fitur pemesanan di aplikasi Waste2Feed.</div>
+<body class="bg-[#FFF9E1] min-h-screen font-[Poppins]">
+
+    <div class="max-w-[350px] mx-auto px-4 pb-6 relative">
+        <!-- Tombol Kembali -->
+        <div class="text-center text-lg font-bold text-[#0B4619] mt-14 mb-5 flex items-center">
+            <a href="/dashboard" class="left-6 top-8 text-[#0B4619] text-2xl bg-white px-2 py-1 rounded-full shadow-md z-10">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <div class="mx-[20px]">
+                Bantuan dan Dukungan
             </div>
         </div>
-        <button class="report-btn" onclick="location.href='/report'">Laporkan Masalah</button>
+
+        <div class="text-left text-[20px] font-semibold text-black mb-5">
+            Kami di sini untuk membantu Anda dengan kebutuhan apa pun di Waste2Feed.
+        </div>
+        <div class="text-left text-[14px] text-gray-600 mb-5">
+            Waste2Feed selalu siap membantu Anda menjadi lebih baik dan lebih bahagia hari ini dari kemarin. Sampaikan kekhawatiran Anda atau hubungi kami untuk informasi lebih lanjut.
+        </div>
+
+        <div class="flex items-center bg-white rounded-full shadow px-4 py-2 mb-5">
+            <i class="fa fa-search text-gray-400 mr-3"></i>
+            <input type="text" placeholder="Cari Bantuan" class="flex-1 outline-none text-[#234B1C] placeholder:text-gray-400 bg-transparent text-sm">
+        </div>
+
+        <div class="space-y-3">
+            <div class="bg-white rounded-xl shadow p-4 cursor-pointer" onclick="toggleFaqItem(event)">
+                <div class="flex justify-between items-center text-[#234B1C] font-bold text-sm">
+                    <div class="w-[90%]">
+                        Apa itu aplikasi Waste2Feed?
+                    </div>
+                    <i class="fa fa-plus"></i>
+                </div>
+                <div class="text-sm text-gray-500 mt-2 hidden">Aplikasi Waste2Feed adalah aplikasi yang membantu pengolahan limbah makanan dengan pengumpulan limbah makanan. Pengguna dapat menukarkan poin dari pengumpulan limbah makanan untuk aktivitas lainnya.</div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow p-4 cursor-pointer" onclick="toggleFaqItem(event)">
+                <div class="flex justify-between items-center text-[#234B1C] font-bold text-sm">
+                    <div class="w-[90%]">
+                        Bagaimana cara menggunakan aplikasi Waste2Feed?
+                    </div>
+                    <i class="fa fa-plus"></i>
+                </div>
+                <div class="text-sm text-gray-500 mt-2 hidden">Pengguna dapat menggunakan aplikasi Waste2Feed untuk mengatur penjemputan limbah makanan, menukarkan poin, dan memesan produk pakan ternak.</div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow p-4 cursor-pointer" onclick="toggleFaqItem(event)">
+                <div class="flex justify-between items-center text-[#234B1C] font-bold text-sm">
+                    <div class="w-[90%]">
+                        Apa saja manfaat menggunakan aplikasi Waste2Feed?
+                    </div>
+                    <i class="fa fa-plus"></i>
+                </div>
+                <div class="text-sm text-gray-500 mt-2 hidden">Aplikasi Waste2Feed membantu mengurangi limbah makanan, mendukung keberlanjutan lingkungan, dan memberikan manfaat ekonomi bagi pengguna.</div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow p-4 cursor-pointer" onclick="toggleFaqItem(event)">
+                <div class="flex justify-between items-center text-[#234B1C] font-bold text-sm">
+                    <div class="w-[90%]">
+                        Bagaimana cara mendapatkan produk unggas dan ikan dari aplikasi Waste2Feed?
+                    </div>
+                    <i class="fa fa-plus"></i>
+                </div>
+                <div class="text-sm text-gray-500 mt-2 hidden">Pengguna dapat memesan produk unggas dan ikan melalui fitur pemesanan di aplikasi Waste2Feed.</div>
+            </div>
+        </div>
+
+        <!--
+        <button onclick="location.href='/report'" class="w-full mt-6 py-3 bg-[#FFD600] text-[#2E7D32] font-bold rounded-full hover:bg-yellow-300">
+            Laporkan Masalah
+        </button>
+        -->
+
     </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <script>
+        function toggleFaqItem(event) {
+            const item = event.currentTarget;
+            const content = item.querySelector('div.text-sm.text-gray-500');
+            const icon = item.querySelector('i');
+
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                icon.classList.add('rotate-45');
+            } else {
+                content.classList.add('hidden');
+                icon.classList.remove('rotate-45');
+            }
+        }
+    </script>
 </body>
 </html>
