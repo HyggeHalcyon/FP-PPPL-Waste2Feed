@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Waste2Feed</title>
-    <style>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script
+            src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4">
+        </script>
+        <title>Dashboard - Waste2Feed</title>
+        <style>
         body {
             margin: 0;
             padding: 0;
@@ -52,19 +55,6 @@
             align-items: center;
             gap: 12px;
         }
-        .stat-icon {
-            width: 38px;
-            height: 38px;
-            border-radius: 8px;
-            background: #F7F7F7;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .stat-icon img {
-            width: 28px;
-            height: 28px;
-        }
         .stat-label {
             font-size: 14px;
             color: #5B7B3A;
@@ -105,14 +95,8 @@
             transition: background 0.2s;
         }
         .menu-item:hover {
-            background: #A5D6A7;
+            background: #7da37a;
         }
-        .menu-item img {
-            width: 38px;
-            height: 38px;
-            margin-bottom: 10px;
-        }
-        /* Sidebar styles */
         .sidebar {
             position: fixed;
             top: 0;
@@ -142,6 +126,7 @@
             border-radius: 50%;
             object-fit: cover;
             border: 2px solid #8CB97A;
+            margin-left:48px;
         }
         .sidebar-user-info {
             display: flex;
@@ -213,7 +198,7 @@
         }
         .sidebar-close {
             position: absolute;
-            left: -18px;
+            left: 10px;
             top: 32px;
             background: #fff;
             border-radius: 50%;
@@ -226,74 +211,178 @@
             cursor: pointer;
             z-index: 101;
         }
+        swiper-container::part(button-prev),
+        swiper-container::part(button-next) {
+            color: #005eff; /* Tailwind gray-400 */
+        }
+
+        swiper-container::part(pagination) {
+            position: absolute;
+            bottom: -3px; /* atau 50px atau 100px sesuai kebutuhan */
+            text-align: center;
+        }
+
+
+        swiper-container::part(bullet) {
+            background-color: white;
+            box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
+            opacity: 1;
+            width: 10px;
+            height: 10px;
+            margin: 0px 0px 1px 6px;
+            border-radius: 9999px;
+            transition: background-color 1s ease;
+        }
+
+        swiper-container::part(bullet-active) {
+            background-color: whitesmoke;
+            border: 2px solid white;
+            box-shadow: 0 0 4px rgba(0, 0, 0, 0.405);
+            transform: scale(1);
+            border-radius: 9999px;
+        }
+
+
     </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body>
-    <div class="header">
-        <div class="greeting" id="greeting">Hallo! <b>User</b></div>
-        <img src="/static/tmp.png" alt="Profile" class="profile-img" id="profileBtn">
-    </div>
-    <div class="main">
-        <div class="stats">
-            <div class="stat-box">
-                <div class="stat-icon"><img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Poin"></div>
-                <div>
-                    <div class="stat-label">Total Poin</div>
-                    <div class="stat-value" id="totalPoints">-</div>
+        <link rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    </head>
+    <body>
+        <div
+            class="absolute top-0 align-center w-full h-36 bg-[#0B4619] z-0 rounded-b-2xl" />
+        <div class="relative z-10 mt-6">
+            <div class="header">
+                <div class="text-white text-xl" id="greeting">Hallo!
+                    <b>User</b></div>
+                <img src="/static/tmp.png" alt="Profile" class="profile-img"
+                    id="profileBtn">
+            </div>
+            <div class="main">
+                <div class="stats">
+                    <div class="stat-box">
+                        <img src="/static/coin 2.png" alt="Poin" height="40px"
+                            width="40px">
+                        <div class="w-full">
+                            <div class="text-right">Total Poin</div>
+                            <div class="text-right stat-value"
+                                id="totalPoints">-</div>
+                        </div>
+                    </div>
+                    <div class="stat-box">
+                        <img src="/static/recycling-bag 1.png" alt="Sampah"
+                            height="40px" width="40px">
+                        <div>
+                            <div class="stat-label">Total Sampah</div>
+                            <div class="stat-value">100 Kg</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-full flex justify-center items-center py-8">
+                    <swiper-container
+                        slides-per-view="1"
+                        pagination="true"
+                        loop="true"
+                        autoplay="true"
+                        autoplay-delay="4000"
+                        class="rounded-xl"
+                        style="width: 100%; max-width: 600px; height: 180px;"
+                        id="swiperTarget"></swiper-container>
+                </div>
+
+                <div class="menu">
+                    <div>
+                        <div class="menu-item"
+                            onclick="location.href='/pick-up'">
+                            <img
+                                src="/static/truck-kun.png"
+                                alt="Pick-Up Sampah">
+                        </div>
+                        <div
+                            class="text-sm text-[#0B4619] font-bold text-center">Pick-Up
+                            Sampah</div>
+                    </div>
+                    <div>
+                        <div class="menu-item"
+                            onclick="location.href='/history'">
+                            <img
+                                src="/static/pick-up-history.png"
+                                alt="Komunitas"
+                                class="translate-x-1">
+                        </div>
+                        <div
+                            class="text-sm text-[#0B4619] font-bold text-center">Riwayat
+                            Pick-Up</div>
+                    </div>
+                    <div>
+                        <div class="menu-item"
+                            onclick="location.href='/history'">
+                            <img
+                                src="/static/achievement-icon.png"
+                                alt="Komunitas"
+                                class="translate-x-1">
+                        </div>
+                        <div
+                            class="text-sm text-[#0B4619] font-bold text-center">Riwayat
+                            Pick-Up</div>
+                    </div>
+                    <div>
+                        <div class="menu-item"
+                            onclick="location.href='/redeem'">
+                            <img
+                                src="/static/exchange-poin.png"
+                                alt="Komunitas"
+                                class="translate-x-1">
+                        </div>
+                        <div
+                            class="text-sm text-[#0B4619] font-bold text-center">Tukar
+                            Poin</div>
+                    </div>
+
                 </div>
             </div>
-            <div class="stat-box">
-                <div class="stat-icon"><img src="https://cdn-icons-png.flaticon.com/512/1049/1049230.png" alt="Sampah"></div>
-                <div>
-                    <div class="stat-label">Total Sampah</div>
-                    <div class="stat-value">100 Kg</div>
+            <!-- Sidebar Overlay -->
+            <div id="sidebarOverlay"
+                style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.08);z-index:99;"></div>
+            <!-- Sidebar -->
+            <div class="sidebar" id="sidebar">
+                <div class="sidebar-close" id="sidebarClose"><i
+                        class="fa fa-arrow-left"></i></div>
+                <div class>
+                    <div class="flex justify-between px-8 ml-8 mt-8">
+                        <div class="flex-col text-[#2B580C] text-md">
+                            <div class="font-bold" >User</div>
+                            <div class>+628xxxxxxxxxx</div>
+                        </div>
+                        <img src="/static/tmp.png" alt="Profile"
+                            class="w-10 h-10 rounded-full border-4 border-[#0B4619]">
+                    </div>
                 </div>
+                <div class="sidebar-section-title">Alamat</div>
+                <div class="sidebar-address-box">
+                    <span class="sidebar-address-icon"><i
+                            class="fa fa-map-marker-alt"></i></span>
+                    <div class="sidebar-address-content"
+                        id="sidebarAddress">-</div>
+                </div>
+                <div class="sidebar-add-address">+ Tambah Alamat</div>
+                <div class="sidebar-section-title">Pengaturan</div>
+                <ul class="sidebar-menu">
+                    <li onclick="location.href='/profile'"><span
+                            class="sidebar-menu-icon"><i
+                                class="fa fa-user"></i></span> Profil Anda</li>
+                    <li onclick="location.href='/'"><span
+                            class="sidebar-menu-icon"><i
+                                class="fa fa-solid fa-lock"></i></span> Ganti Kata Sandi</li>
+                    <li><span class="sidebar-menu-icon"><i
+                                class="fa fa-question-circle"></i></span>
+                        Frequently Asked Questions</li>
+                    <li onclick="logout()"><span class="sidebar-menu-icon"><i
+                                class="fa fa-sign-out-alt"></i></span>
+                        Logout</li>
+                </ul>
             </div>
         </div>
-        <img src="/static/tmp.png" alt="Food Waste" class="main-img">
-        <div class="menu">
-            <div class="menu-item" onclick="location.href='/redeem'">
-                <img src="https://cdn-icons-png.flaticon.com/512/992/992651.png" alt="Tukar Poin">
-                Tukar Poin
-            </div>
-            <div class="menu-item" onclick="location.href='/pick-up'">
-                <img src="https://cdn-icons-png.flaticon.com/512/1995/1995574.png" alt="Penjemputan Sampah">
-                Penjemputan Sampah
-            </div>
-            <div class="menu-item" onclick="location.href='/community'">
-                <img src="https://cdn-icons-png.flaticon.com/512/1380/1380338.png" alt="Komunitas">
-                Komunitas
-            </div>
-        </div>
-    </div>
-    <!-- Sidebar Overlay -->
-    <div id="sidebarOverlay" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.08);z-index:99;"></div>
-    <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-close" id="sidebarClose"><i class="fa fa-arrow-left"></i></div>
-        <div class="sidebar-header">
-            <img src="/static/tmp.png" alt="Profile" class="sidebar-profile-img" id="sidebarProfileImg">
-            <div class="sidebar-user-info">
-                <div class="sidebar-user-name" id="sidebarUserName">User</div>
-                <div class="sidebar-user-phone" id="sidebarUserPhone">+628xxxxxxxxxx</div>
-            </div>
-        </div>
-        <div class="sidebar-section-title">Alamat</div>
-        <div class="sidebar-address-box">
-            <span class="sidebar-address-icon"><i class="fa fa-map-marker-alt"></i></span>
-            <div class="sidebar-address-content" id="sidebarAddress">-</div>
-        </div>
-        <div class="sidebar-add-address">+ Tambah Alamat</div>
-        <div class="sidebar-section-title">Pengaturan</div>
-        <ul class="sidebar-menu">
-            <li onclick="location.href='/profile'"><span class="sidebar-menu-icon"><i class="fa fa-user"></i></span> Profil Anda</li>
-            <li onclick="location.href='/history'"><span class="sidebar-menu-icon"><i class="fa fa-history"></i></span> Riwayat Penjemputan</li>
-            <li><span class="sidebar-menu-icon"><i class="fa fa-question-circle"></i></span> FAQ</li>
-            <li onclick="logout()"><span class="sidebar-menu-icon"><i class="fa fa-sign-out-alt"></i></span> Logout</li>
-        </ul>
-    </div>
-    <script>
+        <script>
     // Sidebar logic
     const sidebar = document.getElementById('sidebar');
     const profileBtn = document.getElementById('profileBtn');
@@ -340,6 +429,49 @@
         localStorage.removeItem('jwt');
         window.location.href = '/';
     }
+
+
+    const elemen = [
+        {
+            title: "Bagaimana Cara Mengolah Sampah yang Benar?",
+            source: "Waste2Feed",
+            img: "/static/food-waste-wasted-fruit-and-vegetables.jpg",
+            url: "https://www.google.com"
+        },
+        {
+            title: "Bagaimana Cara Yapping pada matkul PAI yang Benar?",
+            source: "Waste2Feed",
+            img: "/static/vegetable.png",
+            url: "https://www.google.com"
+        },
+        {
+            title: "Get the popular gun Now",
+            source: "Steam",
+            img: "/static/wallpaper.jpg",
+            url: "https://store.steampowered.com/app/730/CounterStrike_2/"
+        },
+        ];
+
+        const swiper = document.getElementById("swiperTarget");
+
+        elemen.forEach(({ title, source, img, url }) => {
+        const slide = document.createElement("swiper-slide");
+        slide.innerHTML = `
+                <div class="relative flex bg-white rounded-xl overflow-hidden w-full h-40">
+                    <img
+                    class="absolute inset-0 w-full h-full object-cover mask-t-from-10% opacity-90 z-10"
+                    src="${img}" alt="${title}" />
+                    <div class="relative z-20 p-4 text-white">
+                    <div class="text-xl text-[#0B4619] font-bold">${title}</div>
+                    <a href="${url}" target="_blank" rel="noopener noreferrer"class="text-xs text-black hover:underline inline-flex items-center gap-1">${source}<i class="fa fa-external-link text-[10px] relative top-[1px]" aria-hidden="true"></i></a>
+
+                </div>
+                `;
+                swiper.appendChild(slide);
+            });
+            
     </script>
-</body>
+        <script
+            src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-element-bundle.min.js"></script>
+    </body>
 </html>

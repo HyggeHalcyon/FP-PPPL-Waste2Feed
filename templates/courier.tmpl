@@ -3,60 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profil Kurir - Waste2Feed</title>
+    <title>Edit Data Kurir</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
+        /* Custom CSS to match the requested original input styles and specific elements */
         body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            background: #FFF9E1;
+            font-family: 'Poppins', sans-serif;
+            background: #FFF9E1; /* Main background color */
             min-height: 100vh;
         }
-        .container {
-            max-width: 400px;
-            margin: 0 auto;
-            padding: 24px 16px 0 16px;
-        }
-        .profile-title {
-            text-align: center;
-            font-size: 22px;
-            font-weight: bold;
-            margin-bottom: 18px;
-            margin-top: 8px;
-        }
-        .profile-img-box {
+        .header {
             display: flex;
-            justify-content: center;
-            margin-bottom: 18px;
+            align-items: center;
+            justify-content: center; /* Center the title */
+            padding: 16px; /* Adjusted padding */
+            position: relative;
+            background: #FFF9E1; /* Same as body for seamless look */
+            color: #2E7D32; /* Green text for title */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* Subtle shadow */
+            z-index: 10;
         }
-        .profile-img {
-            width: 90px;
-            height: 90px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid #FFD600;
+        .back-arrow {
+            position: absolute;
+            left: 1rem; /* Align with container padding */
+            font-size: 24px;
+            color: #2E7D32;
+            text-decoration: none;
         }
+        .header-title {
+            font-size: 20px; /* Adjust font size */
+            font-weight: 700; /* Bold */
+            color: #2E7D32; /* Green text */
+        }
+        .container {
+            max-width: 400px; /* Constrain width */
+            margin: 0 auto;
+            padding: 20px 16px; /* Padding top for spacing, horizontal for content */
+        }
+
+        /* REVERTED FORM-SPECIFIC STYLES from your very first snippet */
         .form-label {
             font-size: 14px;
             color: #8B7B3A;
             margin-bottom: 2px;
-            margin-top: 16px;
+            margin-top: 16px; /* Original margin-top */
             font-weight: bold;
         }
         .input {
             width: 100%;
-            padding: 10px 12px;
-            border-radius: 6px;
+            padding: 10px 12px; /* Original padding */
+            border-radius: 6px; /* Original border-radius */
             border: none;
             font-size: 16px;
-            margin-bottom: 2px;
+            margin-bottom: 2px; /* Original margin-bottom for inputs */
             background: #fff;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04); /* Original shadow */
+            box-sizing: border-box; /* Ensure padding is included in width */
+            color: #333;
         }
-        .desc {
-            font-size: 12px;
+        .input[readonly] { /* Style for readonly inputs */
+            background: #f5f5f5;
             color: #888;
-            margin-bottom: 8px;
+            cursor: not-allowed;
         }
         .radio-group {
             display: flex;
@@ -71,21 +81,17 @@
             align-items: center;
             gap: 4px;
         }
-        .readonly {
-            background: #f5f5f5;
-            color: #888;
-        }
         .jenis-pengguna {
             font-size: 15px;
             color: #444;
             margin-bottom: 8px;
             margin-top: 8px;
         }
-        .button {
+        .button { /* Original submit button style */
             width: 100%;
             padding: 14px;
-            background: #FFD600;
-            color: #2E7D32;
+            background: #FFD600; /* Yellow button */
+            color: #2E7D32; /* Green text */
             border: none;
             border-radius: 8px;
             font-size: 18px;
@@ -93,52 +99,102 @@
             margin-top: 22px;
             cursor: pointer;
             box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            transition: background 0.2s ease;
+        }
+        .button:hover {
+            background: #FFEA00; /* Slightly darker yellow on hover */
         }
         .button:disabled {
             background: #FFF9C4;
             color: #BDB76B;
             cursor: not-allowed;
         }
-        .error, .success {
+.delete-button {
+            width: 100%;
+            padding: 14px;
+            background: none; /* No background */
+            color: #D32F2F; /* Red text */
+            border: 1px solid #D32F2F; /* Red border */
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 12px; /* Space from button above */
+            margin-bottom: 24px; /* Space below button at the bottom of the form */
+            cursor: pointer;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+        .delete-button:hover {
+            background: #FFEBEE; /* Light red background on hover */
+            color: #B71C1C; /* Darker red text on hover */
+        }
+
+        /* Message styles (kept from recent versions, for consistency) */
+        .message {
             margin-top: 10px;
             font-size: 15px;
             text-align: center;
         }
-        .error { color: #ff5252; }
+        .error { color: #D32F2F; }
         .success { color: #2E7D32; }
+
+        /* Remove default browser styling for form elements */
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="number"],
+        select,
+        textarea {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
     </style>
 </head>
-<body>
+<body class="bg-[#FFF9E1] min-h-screen">
+    <div class="header">
+        <a href="/courier" class="back-arrow">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <div class="header-title">Edit Data Kurir</div>
+    </div>
+
     <div class="container">
-        <a href="/dashboard" style="position:absolute;left:18px;top:18px;text-decoration:none;color:#2E7D32;font-size:24px;background:#fff;padding:4px 10px;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,0.08);"><span style="font-weight:bold;">&#8592;</span></a>
-        <div class="profile-title">Profil Kurir</div>
-        <div class="profile-img-box">
-            <img src="/static/tmp.png" alt="Profile" class="profile-img" id="profileImg">
-        </div>
         <form id="profileForm" autocomplete="off">
             <div class="form-label">NAMA PENGGUNA</div>
-            <input class="input" type="text" id="username" name="username" value="{{.Username}}">
+            <input class="input" type="text" id="username" name="username" value="{{.Courier.UserName}}">
+
             <div class="form-label">NAMA LENGKAP</div>
-            <input class="input" type="text" id="name" name="name" value="{{.Name}}">
+            <input class="input" type="text" id="name" name="name" value="{{.Courier.Name}}">
+
             <div class="form-label">OLD PASSWORD</div>
-            <input class="input" type="text" id="old_password" name="old_password">
+            <input class="input" type="password" id="old_password" name="old_password">
+
             <div class="form-label">NEW PASSWORD</div>
-            <input class="input" type="text" id="new_password" name="new_password">
+            <input class="input" type="password" id="new_password" name="new_password">
+
             <div class="form-label">EMAIL</div>
-            <input class="input" type="email" id="email" name="email" value="{{.Email}}" readonly>
+            <input class="input" type="email" id="email" name="email" value="{{.Courier.Email}}" readonly>
+
             <div class="form-label">JENIS KELAMIN</div>
             <div class="radio-group">
                 <label class="radio-label"><input type="radio" id="gender_male" name="gender" value="Pria" {{if eq .Courier.Gender "Pria"}}checked{{end}}> Pria</label>
                 <label class="radio-label"><input type="radio" id="gender_female" name="gender" value="Wanita" {{if eq .Courier.Gender "Wanita"}}checked{{end}}> Wanita</label>
             </div>
+
             <div class="form-label">NOMOR HP</div>
             <input class="input" type="text" id="phone_number" name="phone_number" value="{{.Courier.PhoneNumber}}" readonly>
+
             <div class="form-label">JENIS PENGGUNA</div>
             <div class="jenis-pengguna" id="jenisPengguna">Kurir</div>
+
             <div class="form-label">ALAMAT</div>
             <input class="input" type="text" id="address" name="address" value="{{.Courier.Address}}">
+
             <button class="button" type="submit" id="saveBtn">Simpan Perubahan</button>
-            <div id="message"></div>
+
+            <button class="delete-button" type="button" id="deleteCourierBtn">Hapus Kurir</button>
+
+            <div id="message" class="message"></div>
         </form>
     </div>
     <script>
@@ -190,7 +246,45 @@
             messageDiv.className = 'error';
         }
         document.getElementById('saveBtn').disabled = false;
+
     });
+    deleteCourierBtn.addEventListener('click', async function() {
+            if (!confirm('Apakah Anda yakin ingin menghapus kurir ini? Tindakan ini tidak dapat dibatalkan.')) {
+                return;
+            }
+            const messageDiv = document.getElementById('message');
+
+            deleteCourierBtn.disabled = true;
+            messageDiv.textContent = '';
+            messageDiv.className = '';
+
+            const token = localStorage.getItem('jwt');
+            try {
+                let id = '{{.Courier.ID}}';
+                const res = await fetch(`/api/courier/delete?id=${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': token ? `Bearer ${token}` : ''
+                    }
+                });
+                const data = await res.json();
+
+                if (data.status) {
+                    messageDiv.textContent = 'Kurir berhasil dihapus!';
+                    messageDiv.className = 'success';
+                    alert('Kurir berhasil dihapus!');
+                    window.location.href = '/courier';
+                } else {
+                    messageDiv.textContent = data.message || 'Gagal menghapus kurir.';
+                    messageDiv.className = 'error';
+                }
+            } catch (err) {
+                messageDiv.textContent = 'Terjadi kesalahan saat menghapus kurir.';
+                messageDiv.className = 'error';
+                console.error('Error deleting courier:', err);
+            }
+            deleteCourierBtn.disabled = false;
+        });
     </script>
 </body>
 </html>

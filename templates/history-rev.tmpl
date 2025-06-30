@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <script src="https://cdn.tailwindcss.com"></script>
+        <title>Logout - Waste2Feed</title>
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    </head>
+    <body
+        class="w-screen h-screen flex flex-col justify-between"
+        style="background: linear-gradient(to bottom, #CCCC95 5%, #E8E8CC 30%, #E8E8CC 70%, #CCCC95 95%)">
+        <div class="p-6">
+            <div class="flex justify-center mb-4">
+                <img
+                    class="w-44 h-44 border-[16px] border-[#0B4619] rounded-full"
+                    src="/static/tmp.png"
+                    alt="user-profile" />
+            </div>
+            <div class="text-2xl font-bold text-[#0B4619] text-center mb-6">
+                Riwayat Penjemputan
+            </div>
+            <div id="historyContainer"></div>
+        </div>
+
+        <!-- Tombol di bawah -->
+        <div class="fixed bottom-8 left-0 w-full p-4">
+            <button id="pickupButton"
+                class="w-full py-4 text-xl font-bold text-white bg-[#0B4619] rounded-lg">
+                Pick-Up
+            </button>
+        </div>
+
+        <script>
+    const history_data = [
+    //   {
+    //     "pickup-type": "Bike",
+    //     "status": "Proses",
+    //     "address": "Jl. Bumi Marina Emas Selatan V No E40",
+    //     "date": "30/06/2025"
+    //   },
+    //   {
+    //     "pickup-type": "Truck",
+    //     "status": "Selesai",
+    //     "address": "Jl. Bumi Marina Emas Selatan V No E40",
+    //     "date": "30/06/2025"
+    //   },
+    //   {
+    //     "pickup-type": "Truck",
+    //     "status": "Selesai",
+    //     "address": "Jl. Bumi Marina Emas Selatan V No E40",
+    //     "date": "29/06/2025"
+    //   },
+    //   {
+    //     "pickup-type": "Bike",
+    //     "status": "Batal",
+    //     "address": "Jl. Bumi Marina Emas Selatan V No E40",
+    //     "date": "28/06/2025"
+    //   },
+    ];
+
+    const container = document.getElementById("historyContainer");
+    const pickupBtn = document.getElementById("pickupButton");
+
+    const today = new Date();
+    const dateToLabel = (strDate) => {
+      const [d, m, y] = strDate.split("/");
+      const targetDate = new Date(`${y}-${m}-${d}`);
+      const diff = Math.floor((today - targetDate) / (1000 * 60 * 60 * 24));
+
+      if (diff === 0) return "Hari Ini";
+      if (diff === 1) return "Kemarin";
+
+      return targetDate.toLocaleDateString("id-ID", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      });
+    };
+
+    if (history_data.length === 0) {
+      // Tampilkan jika kosong
+      container.innerHTML = `
+        <div class="flex w-full justify-center items-center mt-20">
+            <img class="" src="/static/history-pickup-null.png" />
+        </div>
+      `;
+      pickupBtn.textContent = "Pick-Up Sekarang";
+    } else {
+      pickupBtn.textContent = "Pick-Up Lagi!";
+      // Group berdasarkan tanggal
+      const grouped = {};
+      for (const item of history_data) {
+        if (!grouped[item.date]) grouped[item.date] = [];
+        grouped[item.date].push(item);
+      }
+
+      // Render berdasarkan tanggal
+      Object.keys(grouped)
+        .sort((a, b) => {
+          const [da, ma, ya] = a.split("/").map(Number);
+          const [db, mb, yb] = b.split("/").map(Number);
+          return new Date(yb, mb - 1, db) - new Date(ya, ma - 1, da);
+        })
+        .forEach((dateStr) => {
+          const section = document.createElement("div");
+          section.innerHTML = `
+            <div class="flex items-center gap-4 w-full my-6">
+              <div class="flex-grow h-px bg-[#0B4619]"></div>
+              <div class="text-[#0B4619] text-lg font-bold">${dateToLabel(dateStr)}</div>
+              <div class="flex-grow h-px bg-[#0B4619]"></div>
+            </div>
+          `;
+
+          grouped[dateStr].forEach((item) => {
+            const statusClass = {
+              Proses: "bg-[#C2A732]",
+              Batal: "bg-[#B42929]",
+              Selesai: "bg-[#0B4619]",
+            }[item.status] || "bg-gray-300";
+
+            const iconSrc =
+              item["pickup-type"] === "Bike"
+                ? "/static/bike-pickup.png"
+                : "/static/truck-pickup.png";
+
+            section.innerHTML += `
+              <div class="flex flex-row mx-4 mb-4 items-start">
+                <div class="bg-[#90AB79] w-14 h-14 rounded-xl flex justify-center items-center mr-4">
+                  <img class="p-2" src="${iconSrc}" alt="">
+                </div>
+                <div class="flex flex-col mr-8 flex-grow">
+                  <div class="text-md font-bold">Pick-Up ${item["pickup-type"]}</div>
+                  <div class="text-xs text-slate-800">${item.address}</div>
+                </div>
+                <div>
+                  <div class="text-white text-xs text-center ${statusClass} font-bold px-2 rounded-md mt-1">
+                    ${item.status}
+                  </div>
+                </div>
+              </div>
+            `;
+          });
+
+          container.appendChild(section);
+        });
+    }
+  </script>
+    </body>
+</html>
