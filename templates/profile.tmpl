@@ -1,10 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profil - Waste2Feed</title>
-    <style>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+        <title>Profil - Waste2Feed</title>
+        <style>
         body {
             margin: 0;
             padding: 0;
@@ -35,23 +40,6 @@
             border-radius: 50%;
             object-fit: cover;
             border: 3px solid #FFD600;
-        }
-        .form-label {
-            font-size: 14px;
-            color: #8B7B3A;
-            margin-bottom: 2px;
-            margin-top: 16px;
-            font-weight: bold;
-        }
-        .input {
-            width: 100%;
-            padding: 10px 12px;
-            border-radius: 6px;
-            border: none;
-            font-size: 16px;
-            margin-bottom: 2px;
-            background: #fff;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
         }
         .desc {
             font-size: 12px;
@@ -107,41 +95,157 @@
         .error { color: #ff5252; }
         .success { color: #2E7D32; }
     </style>
-</head>
-<body>
-    <div class="container">
-        <a href="/dashboard" style="position:absolute;left:18px;top:18px;text-decoration:none;color:#2E7D32;font-size:24px;background:#fff;padding:4px 10px;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,0.08);"><span style="font-weight:bold;">&#8592;</span></a>
-        <div class="profile-title">Profil</div>
-        <div class="profile-img-box">
-            <img src="/static/tmp.png" alt="Profile" class="profile-img" id="profileImg">
-        </div>
-        <form id="profileForm" autocomplete="off">
-            <div class="form-label">NAMA PENGGUNA</div>
-            <input class="input" type="text" id="username" name="username">
-            <div class="form-label">NAMA LENGKAP</div>
-            <input class="input" type="text" id="name" name="name">
-            <div class="form-label">OLD PASSWORD</div>
-            <input class="input" type="text" id="old_password" name="old_password">
-            <div class="form-label">NEW PASSWORD</div>
-            <input class="input" type="text" id="new_password" name="new_password">
-            <div class="form-label">EMAIL</div>
-            <input class="input" type="email" id="email" name="email" readonly>
-            <div class="form-label">JENIS KELAMIN</div>
-            <div class="radio-group">
-                <label class="radio-label"><input type="radio" name="gender" value="male" id="gender_male"> Pria</label>
-                <label class="radio-label"><input type="radio" name="gender" value="female" id="gender_female"> Wanita</label>
+    </head>
+    <body
+        class="bg-[linear-gradient(to_bottom,_#FDEF96_0%,_#FFFFFF_10%,_#FFFFFF_90%,_#FDEF96_100%)]">
+        <div class="max-w-sm mx-auto px-4 pt-6 pb-16 relative">
+            <a href="/dashboard"
+                class="absolute left-4 top-8 text-xl bg-white p-2 rounded-full w-10 h-10 shadow flex items-center justify-center"><i class="fa-solid fa-arrow-left"></i></a>
+
+            <div class="text-center font-bold text-xl mb-4">Profil</div>
+
+            <div class="flex justify-center mb-4 relative">
+                <img src="/static/tmp.png" alt="Profile"
+                class="w-24 h-24 rounded-full border-4 border-gray-300 object-cover" />
+                <div class="absolute bottom-0 translate-x-8 flex items-center justify-center 
+              rounded-full bg-gradient-to-r from-[#FDF09A] to-[#FDC603] 
+              w-8 h-8 shadow-md cursor-pointer">
+              <i class="fa-solid fa-camera text-[#0B4619] text-lg text-white"></i>
             </div>
-            <div class="form-label">NOMOR HP</div>
-            <input class="input" type="text" id="phone_number" name="phone_number" readonly>
-            <div class="form-label">JENIS PENGGUNA</div>
-            <div class="jenis-pengguna" id="jenisPengguna">-</div>
-            <div class="form-label">ALAMAT</div>
-            <input class="input" type="text" id="address" name="address">
-            <button class="button" type="submit" id="saveBtn">Simpan Perubahan</button>
-            <div id="message"></div>
-        </form>
-    </div>
-    <script>
+        </div>
+            <form id="profileForm" class="space-y-4">
+                <div>
+                    <label for="username" class="text-sm text-gray-500">NAMA
+                        PENGGUNA*</label>
+                    <input type="text" id="username" name="username"
+                        class="w-full border-b text-lg p-1 focus:outline-none bg-transparent">
+                </div>
+
+                <div>
+                    <label for="name" class="text-sm text-gray-500">NAMA
+                        LENGKAP*</label>
+                    <input type="text" id="name" name="name"
+                        class="w-full border-b text-lg p-1 focus:outline-none bg-transparent">
+                    <p class="text-xs text-gray-500 mt-1">Pastikan nama yang
+                        Anda isi sama dengan nama pada rekening bank untuk
+                        pencairan poin.</p>
+                </div>
+
+                <div>
+                    <label for="email"
+                        class="text-sm text-gray-500">EMAIL*</label>
+                    <input type="email" id="email" name="email" readonly
+                        class="w-full border-b text-lg p-1 text-gray-400">
+                </div>
+
+                <div>
+                    <label class="text-sm text-gray-500">JENIS KELAMIN*</label>
+                    <div class="flex space-x-6 mt-1">
+                        <label class="flex items-center space-x-1">
+                            <input type="radio" name="gender" value="Pria"
+                                id="gender_male">
+                            <span>Pria</span>
+                        </label>
+                        <label class="flex items-center space-x-1">
+                            <input type="radio" name="gender" value="Wanita"
+                                id="gender_female">
+                            <span>Wanita</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="phone_number"
+                        class="text-sm text-gray-500">NOMOR HP*</label>
+                    <div class="flex items-center w-full">
+                        <span class="text-lg pr-1">+62</span>
+                        <input type="text" id="phone_number" name="phone_number"
+                            readonly
+                            class="w-full border-b text-lg p-1 text-gray-400 ">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="text-sm text-gray-500">JENIS PENGGUNA</label>
+                    <div id="jenisPengguna"
+                        class="text-base font-medium">Pengguna Umum</div>
+                </div>
+
+                <div class="flex flex-col">
+                    <label for="address"
+                        class="text-sm text-gray-500">ALAMAT*</label>
+                    <button class="relative">
+                        <i
+                            class="fa-solid fa-location-dot absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500"></i>
+                        <input
+                            type="text"
+                            id="address"
+                            name="address"
+                            placeholder="Cari Lokasi Alamat"
+                            class="w-full pl-10 pr-3 text-sm py-2 rounded-lg bg-gray-100 border text-lg focus:outline-none placeholder-gray-500" />
+                    </button>
+                </div>
+                <div class="flex flex-col justify-center items-center w-full gap-3 mt-6">            
+                    <button type="button" 
+                        class="w-36 py-2 rounded-full bg-transparent text-gray-700 border-4 border-gray-300 font-bold text-sm shadow-sm hover:bg-gray-300 transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-circle-xmark text-base"></i>BATALKAN</button>
+                    </button>
+                    <button type="button" id="openPopup"
+                    class="w-36 py-2 rounded-full bg-gradient-to-r from-[#FDF09A] to-[#FDC603] text-[#FFFFFF] font-bold text-sm shadow-sm hover:opacity-90 transition">
+                    <i class="fa-solid fa-bookmark mr-1"></i> SIMPAN
+                    </button>
+                </div>
+
+                <div id="message" class="text-center text-sm mt-2"></div>
+            </form>
+        </div>
+        <!-- Popup Konfirmasi -->
+        <div id="popupOverlay"
+            class="fixed inset-0 z-50 hidden bg-black/20 backdrop-blur-sm flex items-center justify-center">
+        <div class="bg-white rounded-2xl shadow-xl px-8 py-6 w-[85%] max-w-sm">
+            <h2 class="font-bold text-base text-gray-900 mb-1">Anda yakin ingin menyimpan perubahan ini?</h2>
+            <p class="text-sm text-gray-500 mb-5">Jika Anda tekan simpan, data diri Anda akan tersimpan di dalam aplikasi</p>
+            
+            <div class="flex justify-center gap-4 mt-8">
+                <div class="flex flex-col gap-4">
+
+                    <button id="cancelPopup"
+                        class="flex items-center gap-2 py-2 px-4 bg-gray-100 text-gray-700 text-sm font-semibold rounded-full shadow hover:bg-gray-200 transition">
+                        <i class="fa-solid fa-circle-xmark text-base"></i> BATALKAN
+                    </button>
+                    <button id="confirmSave"
+                        class="flex items-center gap-2 py-2 px-4 bg-gradient-to-r from-[#FDF09A] to-[#FDC603] text-white text-sm font-bold rounded-full shadow hover:opacity-90 transition">
+                        <i class="fa-solid fa-bookmark text-base"></i> SIMPAN
+                    </button>
+                </div>
+            </div>
+        </div>
+        </div>
+
+        <script>
+            // Popup handler
+const popupOverlay = document.getElementById('popupOverlay');
+const openPopup = document.getElementById('openPopup');
+const cancelPopup = document.getElementById('cancelPopup');
+const confirmSave = document.getElementById('confirmSave');
+const profileForm = document.getElementById('profileForm');
+
+// Tampilkan popup saat klik "Simpan"
+openPopup.addEventListener('click', () => {
+  popupOverlay.classList.remove('hidden');
+});
+
+// Tutup popup saat klik "BATALKAN"
+cancelPopup.addEventListener('click', () => {
+  popupOverlay.classList.add('hidden');
+});
+
+// Submit form jika klik "SIMPAN" di popup
+confirmSave.addEventListener('click', () => {
+  popupOverlay.classList.add('hidden');
+  profileForm.requestSubmit();
+});
+
     let currentData = {};
     // Helper: decode JWT payload
     function parseJwt (token) {
@@ -238,5 +342,5 @@
         document.getElementById('saveBtn').disabled = false;
     });
     </script>
-</body>
+    </body>
 </html>
