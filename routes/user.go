@@ -23,9 +23,9 @@ func User(route *gin.Engine, userController controller.UserController, jwtServic
 
 	routes = route.Group("/api/courier")
 	{
-		routes.POST("/add", middleware.AuthenticateBearer(jwtService), middleware.OnlyAllow(constants.ENUM_ROLE_ADMIN), userController.NewCourier)
-		routes.PATCH("/", middleware.AuthenticateBearer(jwtService), middleware.OnlyAllow(constants.ENUM_ROLE_ADMIN), userController.EditCourier)
-		routes.DELETE("/", middleware.AuthenticateBearer(jwtService), middleware.OnlyAllow(constants.ENUM_ROLE_ADMIN), userController.DeleteCourier)
+		routes.POST("", middleware.AuthenticateBearer(jwtService), middleware.OnlyAllow(constants.ENUM_ROLE_ADMIN), userController.NewCourier)
+		routes.PATCH("", middleware.AuthenticateBearer(jwtService), middleware.OnlyAllow(constants.ENUM_ROLE_ADMIN), userController.EditCourier)
+		routes.DELETE("", middleware.AuthenticateBearer(jwtService), middleware.OnlyAllow(constants.ENUM_ROLE_ADMIN), userController.DeleteCourier)
 	}
 
 	route.GET("/", userController.ViewIndex)
@@ -37,5 +37,4 @@ func User(route *gin.Engine, userController controller.UserController, jwtServic
 	route.GET("/profile", middleware.AuthenticateCookies(jwtService), userController.ViewProfile)
 	route.GET("/faq", middleware.AuthenticateCookies(jwtService), middleware.OnlyAllow(constants.ENUM_ROLE_USER, constants.ENUM_ROLE_FARMER), userController.ViewFAQ)
 	route.GET("/courier", middleware.AuthenticateCookies(jwtService), middleware.OnlyAllow(constants.ENUM_ROLE_ADMIN), userController.ViewCourier)
-	route.GET("/add-courier", middleware.AuthenticateCookies(jwtService), middleware.OnlyAllow(constants.ENUM_ROLE_ADMIN), userController.RenderAddCourierPage)
 }

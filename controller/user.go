@@ -34,7 +34,6 @@ type (
 		ViewRedeem(ctx *gin.Context)
 		ViewProfile(ctx *gin.Context)
 		ViewFAQ(ctx *gin.Context)
-		RenderAddCourierPage(c *gin.Context)
 	}
 
 	userController struct {
@@ -274,11 +273,5 @@ func (c *userController) ViewCourier(ctx *gin.Context) {
 
 	ctx.HTML(http.StatusOK, "courier.tmpl", gin.H{
 		"Courier": courier,
-	})
-}
-
-func (c *userController) RenderAddCourierPage(ctx *gin.Context) {
-	ctx.HTML(http.StatusOK, "courier-add.tmpl", gin.H{
-		"Title": "Add Courier",
 	})
 }
