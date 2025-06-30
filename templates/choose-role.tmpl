@@ -1,91 +1,51 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pilih Peran - Waste2Feed</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            background-color: #8CB97A;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-        }
-        .container {
-            text-align: center;
-        }
-        .title {
-            font-size: 24px;
-            color: white;
-            margin: 40px 0 40px 0;
-            font-weight: bold;
-        }
-        .role-option {
-            margin: 32px auto;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .role-img {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            background: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        }
-        .role-img img {
-            width: 120px;
-            height: 120px;
-            object-fit: contain;
-        }
-        .role-label {
-            color: white;
-            font-size: 18px;
-            font-weight: bold;
-        }
-        .error, .success {
-            margin-top: 10px;
-            font-size: 15px;
-        }
-        .error { color: #ff5252; }
-        .success { color: #fffde7; }
+        body { font-family: 'Poppins', sans-serif; }
     </style>
 </head>
-<body>
-    <div class="container">
-        <div class="title">Siapa Anda?</div>
-        <div class="role-option" onclick="chooseRole('farmer')">
-            <div class="role-img">
-                <img src="/static/tmp.png" alt="Peternak">
+<body class="[background-color:#83AF7F] flex justify-center items-center h-screen">
+
+    <div class="text-center w-11/12 max-w-sm p-5 box-border">
+        <div class="text-white text-2xl font-bold mb-8">Siapa Anda?</div>
+
+        <div class="flex flex-wrap justify-center gap-y-5 gap-x-10">
+            
+            <div class="flex flex-col items-center w-24 sm:w-28 cursor-pointer" onclick="chooseRole('farmer')">
+                <div class="w-24 h-24 sm:w-28 sm:h-28 bg-transparent rounded-full flex items-center justify-center shadow-md mb-2 overflow-hidden">
+                    <img src="/static/icon_peternak.png" alt="Peternak" class="w-full h-full object-contain">
+                </div>
+                <div class="text-white text-base font-bold text-center">Peternak</div>
             </div>
-            <div class="role-label">Peternak</div>
-        </div>
-        <div class="role-option" onclick="chooseRole('user')">
-            <div class="role-img">
-                <img src="/static/tmp.png" alt="Umum">
+
+            <div class="flex flex-col items-center w-24 sm:w-28 cursor-pointer" onclick="chooseRole('courier')">
+                <div class="w-24 h-24 sm:w-28 sm:h-28 bg-transparent rounded-full flex items-center justify-center shadow-md mb-2 overflow-hidden">
+                    <img src="/static/icon_kurir.png" alt="Kurir" class="w-full h-full object-contain">
+                </div>
+                <div class="text-white text-base font-bold text-center">Kurir</div>
             </div>
-            <div class="role-label">Umum</div>
+
+            <div class="flex flex-col items-center w-24 sm:w-28 cursor-pointer" onclick="chooseRole('user')">
+                <div class="w-24 h-24 sm:w-28 sm:h-28 bg-transparent rounded-full flex items-center justify-center shadow-md mb-2 overflow-hidden">
+                    <img src="/static/icon_umum.png" alt="Umum" class="w-full h-full object-contain">
+                </div>
+                <div class="text-white text-base font-bold text-center">Umum</div>
+            </div>
+
         </div>
-        <div id="message"></div>
     </div>
+
     <script>
     function chooseRole(role) {
-        if (role === 'farmer') {
-            window.location.href = '/register?role=farmer';
-        } else if (role === 'user') {
-            window.location.href = '/register?role=user';
-        }
+        window.location.href = `/register?role=${role}`;
     }
     </script>
+
 </body>
 </html>
