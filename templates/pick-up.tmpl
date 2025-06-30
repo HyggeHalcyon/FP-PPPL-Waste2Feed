@@ -1,299 +1,242 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pick-up - Waste2Feed</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            background: #FFF9E1;
-            min-height: 100vh;
-        }
-        .container {
-            max-width: 420px;
-            margin: 0 auto;
-            padding: 0 0 24px 0;
-            background: #FFF9E1;
-        }
-        .map-box {
-            width: 100%;
-            height: 180px;
-            background: #e0e0e0;
-            border-radius: 0 0 32px 32px;
-            position: relative;
-            overflow: hidden;
-        }
-        .map-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .info-btn {
-            position: absolute;
-            top: 18px;
-            right: 18px;
-            background: #fff;
-            border-radius: 50%;
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            color: #8CB97A;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        }
-        .pin {
-            position: absolute;
-            left: 50%;
-            top: 60px;
-            transform: translateX(-50%);
-            z-index: 2;
-            width: 48px;
-            height: 48px;
-        }
-        .section {
-            background: #fff;
-            border-radius: 18px;
-            margin: -32px 16px 0 16px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-            padding: 18px 18px 12px 18px;
-        }
-        .section-title {
-            font-size: 18px;
-            font-weight: bold;
-            color: #222;
-            margin-bottom: 8px;
-        }
-        .address-box {
-            background: #E6F2D6;
-            border-radius: 8px;
-            padding: 12px 16px;
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-        .address-icon {
-            color: #E53935;
-            font-size: 22px;
-            margin-top: 2px;
-        }
-        .address-content {
-            font-size: 14px;
-            color: #234B1C;
-        }
-        .address-detail {
-            background: #FFF9C4;
-            border-radius: 8px;
-            padding: 12px 16px;
-            color: #A5A500;
-            font-size: 15px;
-            margin-bottom: 10px;
-            border: none;
-            width: 100%;
-        }
-        .row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin: 12px 0 0 0;
-        }
-        .col {
-            flex: 1;
-            text-align: center;
-        }
-        .amount-btn {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: #8CB97A;
-            color: #fff;
-            font-size: 22px;
-            border: none;
-            cursor: pointer;
-        }
-        .amount-value {
-            font-size: 22px;
-            font-weight: bold;
-            margin: 0 10px;
-        }
-        .date-time-box {
-            display: flex;
-            gap: 18px;
-            margin-top: 10px;
-        }
-        .date-time-col {
-            flex: 1;
-            background: #F5F7E7;
-            border-radius: 8px;
-            padding: 10px 8px;
-            text-align: center;
-        }
-        .date-label, .time-label {
-            font-size: 13px;
-            color: #888;
-        }
-        .date-value, .time-value {
-            font-size: 15px;
-            color: #222;
-            font-weight: bold;
-        }
-        .summary-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin: 18px 0 0 0;
-        }
-        .summary-col {
-            flex: 1;
-            text-align: center;
-            font-size: 16px;
-            color: #2E7D32;
-            font-weight: bold;
-        }
-        .summary-col img {
-            width: 22px;
-            vertical-align: middle;
-            margin-right: 4px;
-        }
-        .pickup-btn {
-            width: 100%;
-            padding: 16px;
-            background: #FFD600;
-            color: #2E7D32;
-            border: none;
-            border-radius: 0 0 18px 18px;
-            font-size: 20px;
-            font-weight: bold;
-            margin-top: 18px;
-            cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-        }
-        .pickup-btn:disabled {
-            background: #FFF9C4;
-            color: #BDB76B;
-            cursor: not-allowed;
-        }
-        .error, .success {
-            margin-top: 10px;
-            font-size: 15px;
-            text-align: center;
-        }
-        .error { color: #ff5252; }
-        .success { color: #2E7D32; }
-    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
-<body>
-    <div class="map-box">
-        <img src="/static/tmp.png" alt="Map" class="map-img">
-        <img src="https://cdn-icons-png.flaticon.com/512/684/684908.png" class="pin" alt="Pin">
-        <div class="info-btn"><i class="fa fa-info"></i></div>
+<body class="bg-[#FFF9E1] min-h-screen font-[Poppins]">
+
+    <!-- MAP AREA -->
+    <div id="mapContainer" class="fixed inset-0 z-10">
+        <div id="map" class="w-full h-full relative"></div>
+
+        <div id="mapSearchInputWrapper" class="absolute bottom-24 w-full flex justify-center px-4 z-[999] hidden">
+            <input type="text" id="mapSearchInput" placeholder="Cari alamat..." class="w-full max-w-md p-3 rounded-md shadow-md outline-none text-gray-800 text-sm">
+            <button id="mapSearchBtn" class="ml-2 bg-[#2B580C] text-white px-4 py-2 rounded-md shadow-md text-sm">Cari</button>
+        </div>
+
+        <img id="mapPin" src="https://cdn-icons-png.flaticon.com/512/684/684908.png" class="w-12 h-12 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-full z-[999] pointer-events-none hidden" alt="Pin">
+
+        <div id="confirmButtonWrapper" class="absolute bottom-6 w-full flex justify-center z-[999] hidden">
+            <button id="confirmLocation" class="bg-[#2B580C] text-white px-5 py-2 rounded-md shadow-md">Terapkan Lokasi</button>
+        </div>
     </div>
-    <div class="container">
+
+    <div class="max-w-[400px] mx-auto px-4 pb-6 relative z-30">
+        <div class="text-center text-lg font-bold text-[#0B4619] mt-14 mb-5 flex items-center">
+            <a href="/dashboard" class="left-6 top-8 text-[#0B4619] text-2xl bg-white px-2 py-1 rounded-full shadow-md z-10">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+        </div>
+    </div>
+
+    <div id="formSection" class="fixed z-20 w-full pt-40 bottom-0">    
         <form id="pickupForm" autocomplete="off">
-            <div class="section">
-                <div class="section-title">Atur Lokasi Penjemputan <button type="button" style="float:right;background:#fff;border:1px solid #8CB97A;color:#2E7D32;border-radius:8px;padding:2px 12px;cursor:pointer;font-size:14px;" onclick="alert('Edit alamat coming soon')">Edit</button></div>
-                <div class="address-box">
-                    <span class="address-icon"><i class="fa fa-map-marker-alt"></i></span>
-                    <div class="address-content" id="mainAddress">Jl. Sistem Informasi ITS, Keputih, Kec. Sukolilo, Kota Surabaya, Jawa Timur 60111</div>
+            <div class="bg-white rounded-2xl shadow p-4 -mt-8">
+                <div class="flex justify-between items-center mb-3">
+                    <div class="text-black font-semibold text-base">Atur Lokasi Penjemputan</div>
+                    <button type="button" class="border border-[#234B1C] text-[#234B1C] px-4 py-1 rounded-md text-sm" id="editBtn">Edit</button>
                 </div>
-                <input class="address-detail" id="addressDetail" name="addressDetail" placeholder="Tambah detail alamat ex. Blok, RT/RW, Nama Perusahaan">
-                <div class="row">
-                    <div class="col">
-                        <div style="font-size:14px;color:#888;">Jumlah Sampah (Kg)</div>
-                        <button type="button" class="amount-btn" onclick="changeAmount(-1)">-</button>
-                        <span class="amount-value" id="amountValue">1</span>
-                        <button type="button" class="amount-btn" onclick="changeAmount(1)">+</button>
-                        <div style="font-size:13px;color:#888;margin-top:2px;">+ 0,25</div>
+
+                <div class="bg-[#E6F2D6] rounded-md pb-3 pl-3 pr-3 pt-2.5 flex items-start gap-2 mb-3 min-h-[70px]">
+                    <span class="text-red-600 text-xl mt-1"><i class="fa fa-map-marker-alt"></i></span>
+                    <div class="text-sm text-[#234B1C] flex-1 mt-1" id="mainAddress">Mendapatkan lokasi...</div>
+                </div>
+
+                <div class="mb-4">
+                    <div class="text-sm text-gray-600 mb-1">Detail Alamat</div>
+                    <input id="addressDetail" name="addressDetail" placeholder="Tambah detail alamat ex. Blok, RT/RW, Nama Perusahaan" class="w-full bg-[#FFF9C4] rounded-md p-3 text-[#A5A500] text-sm outline-none" />
+                </div>
+
+                <div class="flex items-start gap-4 mb-4">
+                    <div class="flex-1 text-center">
+                        <div class="text-sm text-gray-600 mb-2">Jumlah Sampah (Kg)</div>
+                        <div class="flex justify-center items-center mb-1">
+                            <button type="button" class="w-9 h-9 rounded-full bg-[#8CB97A] text-white text-xl" onclick="changeAmount(-1)">-</button>
+                            <span class="mx-3 text-xl font-bold" id="amountValue">1</span>
+                            <button type="button" class="w-9 h-9 rounded-full bg-[#8CB97A] text-white text-xl" onclick="changeAmount(1)">+</button>
+                        </div>
+                        <div class="flex flex-col text-sm">
+                            <span class="text-gray-600">Poin yang Diterima</span>
+                            <span id="pointSummary" class="font-bold text-[#2B580C]">Rp 625</span>
+                        </div>
                     </div>
-                    <div class="col">
-                        <div style="font-size:14px;color:#888;">Jadwal Penjemputan</div>
-                        <div class="date-time-box">
-                            <div class="date-time-col">
-                                <div class="date-label">Tanggal</div>
-                                <input type="date" id="dateInput" class="input" style="width:100%;margin:0;" required>
+                    
+                    <div class="flex-1 text-center">
+                        <div class="text-sm text-gray-600 mb-2">Jadwal Penjemputan</div>
+                        <div class="flex flex-col gap-2">
+                            <div class="bg-[#F5F7E7] rounded-md p-2">
+                                <div class="flex items-center justify-center text-sm text-gray-600">
+                                    <i class="fa fa-calendar mr-1"></i>
+                                    <input type="date" id="dateInput" class="w-full bg-transparent text-center text-sm font-bold outline-none">
+                                </div>
                             </div>
-                            <div class="date-time-col">
-                                <div class="time-label">Pukul</div>
-                                <input type="time" id="timeInput" class="input" style="width:100%;margin:0;" required>
+                            <div class="bg-[#F5F7E7] rounded-md p-2">
+                                <div class="flex items-center justify-center text-sm text-gray-600">
+                                    <i class="fa fa-clock mr-3"></i>
+                                    <input type="time" id="timeInput" class="w-full bg-transparent text-center text-sm font-bold outline-none">
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="summary-row">
-                    <div class="summary-col"><span id="amountSummary">1,25 Kg</span></div>
-                    <div class="summary-col"><img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"> <span id="pointSummary">2500</span></div>
-                </div>
-                <button class="pickup-btn" type="submit" id="pickupBtn">Pick-up</button>
-                <div id="message"></div>
+
+                <button id="pickupBtn" type="submit" class="w-full bg-[#83AF7F] text-white rounded-md py-3 text-base font-semibold">Pick-Up</button>
+            <div id="message" class="mt-2 text-center text-sm"></div>
             </div>
         </form>
     </div>
-    <script>
-    let amount = 1.25;
-    function changeAmount(delta) {
-        let step = 0.25;
-        amount = Math.max(0.25, Math.round((amount + delta * step) * 100) / 100);
-        document.getElementById('amountValue').textContent = amount;
-        document.getElementById('amountSummary').textContent = amount.toLocaleString('id-ID', {minimumFractionDigits:2}) + ' Kg';
-        document.getElementById('pointSummary').textContent = Math.round(amount * 2000);
+
+<script>
+let amount = 1.25;
+let map;
+let currentLat = -7.2825;
+let currentLng = 112.7931;
+
+function changeAmount(delta) {
+    const step = 0.25;
+    amount = Math.max(0.25, Math.round((amount + delta * step) * 100) / 100);
+    document.getElementById('amountValue').textContent = amount.toLocaleString('id-ID', {minimumFractionDigits:2});
+    document.getElementById('pointSummary').textContent = Math.round(amount * 2000);
+}
+changeAmount(0);
+
+window.onload = function() {
+    const now = new Date();
+    document.getElementById('dateInput').value = now.toISOString().slice(0,10);
+    document.getElementById('timeInput').value = now.toTimeString().slice(0,5);
+};
+
+document.getElementById('pickupForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const address = document.getElementById('mainAddress').textContent + (document.getElementById('addressDetail').value ? (', ' + document.getElementById('addressDetail').value) : '');
+    const date = document.getElementById('dateInput').value;
+    const time = document.getElementById('timeInput').value;
+    const messageDiv = document.getElementById('message');
+    messageDiv.textContent = '';
+
+    if (!address || !date || !time || !amount) {
+        messageDiv.textContent = 'Semua field wajib diisi.';
+        messageDiv.className = 'text-red-500';
+        return;
     }
-    changeAmount(0);
+    document.getElementById('pickupBtn').disabled = true;
+    const token = localStorage.getItem('jwt');
 
-    // Prefill date and time
-    window.onload = function() {
-        const now = new Date();
-        document.getElementById('dateInput').value = now.toISOString().slice(0,10);
-        document.getElementById('timeInput').value = now.toTimeString().slice(0,5);
-    };
+    try {
+        const res = await fetch('/api/pick-up', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': token ? `Bearer ${token}` : ''
+            },
+            body: JSON.stringify({ address, amount, date, time })
+        });
 
-    // Fetch address (replace with real API/user data as needed)
-    // document.getElementById('mainAddress').textContent = ...
-
-    document.getElementById('pickupForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const address = document.getElementById('mainAddress').textContent + (document.getElementById('addressDetail').value ? (', ' + document.getElementById('addressDetail').value) : '');
-        const date = document.getElementById('dateInput').value;
-        const time = document.getElementById('timeInput').value;
-        const messageDiv = document.getElementById('message');
-        messageDiv.textContent = '';
-        messageDiv.className = '';
-        if (!address || !date || !time || !amount) {
-            messageDiv.textContent = 'Semua field wajib diisi.';
-            messageDiv.className = 'error';
-            return;
+        const data = await res.json();
+        if (data.status) {
+            messageDiv.textContent = 'Pick-up berhasil dibuat!';
+            messageDiv.className = 'text-green-600';
+            setTimeout(() => window.location.href = '/dashboard', 1200);
+        } else {
+            messageDiv.textContent = data.message || 'Gagal membuat pick-up.';
+            messageDiv.className = 'text-red-500';
         }
-        document.getElementById('pickupBtn').disabled = true;
-        const token = localStorage.getItem('jwt');
-        try {
-            const res = await fetch('/api/pick-up', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': token ? `Bearer ${token}` : ''
-                },
-                body: JSON.stringify({ address, amount, date, time })
-            });
-            const data = await res.json();
-            if (data.status) {
-                messageDiv.textContent = 'Pick-up berhasil dibuat!';
-                messageDiv.className = 'success';
-                setTimeout(() => window.location.href = '/dashboard', 1200);
-            } else {
-                messageDiv.textContent = data.message || 'Gagal membuat pick-up.';
-                messageDiv.className = 'error';
-            }
-        } catch (err) {
-            messageDiv.textContent = 'Terjadi kesalahan. Coba lagi.';
-            messageDiv.className = 'error';
-        }
-        document.getElementById('pickupBtn').disabled = false;
+    } catch (err) {
+        messageDiv.textContent = 'Terjadi kesalahan. Coba lagi.';
+        messageDiv.className = 'text-red-500';
+    }
+    document.getElementById('pickupBtn').disabled = false;
+});
+
+function updateAddress(lat, lng) {
+    fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById('mainAddress').textContent = data.display_name || 'Lokasi tidak ditemukan';
     });
-    </script>
+}
+
+function searchAddress() {
+    const query = document.getElementById('mapSearchInput').value.trim();
+    if (!query) return;
+
+    // Viewbox for Surabaya: min_lon,min_lat,max_lon,max_lat
+    // Approx coordinates for Surabaya region: 112.6,-7.35,112.85,-7.15
+    // Add countrycodes=id to bias results to Indonesia
+    fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1&viewbox=112.6,-7.35,112.85,-7.15&countrycodes=id`)
+    .then(res => res.json())
+    .then(data => {
+        if (data && data.length > 0) {
+            const lat = parseFloat(data[0].lat);
+            const lng = parseFloat(data[0].lon);
+            map.setView([lat, lng], 16);
+            currentLat = lat;
+            currentLng = lng;
+            updateAddress(currentLat, currentLng);
+        } else {
+            alert('Alamat tidak ditemukan.');
+        }
+    })
+    .catch(error => {
+        console.error('Error searching address:', error);
+        alert('Terjadi kesalahan saat mencari alamat.');
+    });
+}
+
+window.onload = function() {
+    const now = new Date();
+    document.getElementById('dateInput').value = now.toISOString().slice(0,10);
+    document.getElementById('timeInput').value = now.toTimeString().slice(0,5);
+
+    map = L.map('map').setView([currentLat, currentLng], 16);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
+
+    updateAddress(currentLat, currentLng);
+
+    map.on('moveend', () => {
+        const center = map.getCenter();
+        currentLat = center.lat;
+        currentLng = center.lng;
+        updateAddress(currentLat, currentLng);
+    });
+
+    changeAmount(0);
+};
+
+document.getElementById('editBtn').addEventListener('click', () => {
+    document.getElementById('mapContainer').classList.add('z-[9999]');
+    document.getElementById('formSection').classList.add('hidden');
+    document.getElementById('mapPin').classList.remove('hidden');
+    document.getElementById('confirmButtonWrapper').classList.remove('hidden');
+    document.getElementById('mapSearchInputWrapper').classList.remove('hidden');
+    
+    setTimeout(() => { map.invalidateSize(); }, 100);
+});
+
+document.getElementById('confirmLocation').addEventListener('click', () => {
+    document.getElementById('mapContainer').classList.remove('z-[9999]');
+    document.getElementById('formSection').classList.remove('hidden');
+    document.getElementById('mapPin').classList.add('hidden');
+    document.getElementById('confirmButtonWrapper').classList.add('hidden');
+    document.getElementById('mapSearchInputWrapper').classList.add('hidden');
+    
+});
+
+document.getElementById('mapSearchBtn').addEventListener('click', searchAddress);
+document.getElementById('mapSearchInput').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        searchAddress();
+    }
+});
+</script>
+
 </body>
 </html>
