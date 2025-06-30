@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pick-up - Waste2Feed</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body {
             margin: 0;
@@ -11,25 +15,31 @@
             font-family: Arial, sans-serif;
             background: #FFF9E1;
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
         .container {
             max-width: 420px;
             margin: 0 auto;
             padding: 0 0 24px 0;
             background: #FFF9E1;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
         }
         .map-box {
             width: 100%;
-            height: 180px;
+            height: 300px; /* Tinggi peta */
             background: #e0e0e0;
             border-radius: 0 0 32px 32px;
-            position: relative;
+            position: relative; /* Penting untuk posisi absolut tombol */
             overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
         }
-        .map-img {
+        #map {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            z-index: 1;
         }
         .info-btn {
             position: absolute;
@@ -45,12 +55,31 @@
             font-size: 18px;
             color: #8CB97A;
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            z-index: 10;
         }
-        .pin {
+        /* Styling untuk tombol kembali yang sekarang di atas peta */
+        .back-button-on-map {
+            position: absolute;
+            top: 16px; /* top-4 Tailwind */
+            left: 16px; /* left-4 Tailwind */
+            color: #0B4619; /* text-[#0B4619] Tailwind */
+            font-size: 24px; /* text-2xl Tailwind */
+            background-color: white; /* bg-white Tailwind */
+            padding: 8px 12px; /* px-2 py-1 Tailwind (disesuaikan untuk ikon) */
+            border-radius: 9999px; /* rounded-full Tailwind */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md Tailwind */
+            z-index: 10; /* Pastikan di atas peta dan elemen lain */
+            display: flex; /* Untuk menengahkan ikon */
+            align-items: center;
+            justify-content: center;
+            text-decoration: none; /* Hapus underline default dari link */
+        }
+
+        .pin { /* This is now mostly handled by Leaflet custom icon */
             position: absolute;
             left: 50%;
-            top: 60px;
-            transform: translateX(-50%);
+            top: 50%;
+            transform: translate(-50%, -100%);
             z-index: 2;
             width: 48px;
             height: 48px;
@@ -61,12 +90,27 @@
             margin: -32px 16px 0 16px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.04);
             padding: 18px 18px 12px 18px;
+            position: relative;
+            z-index: 1;
         }
         .section-title {
             font-size: 18px;
             font-weight: bold;
             color: #222;
             margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .section-title button {
+            background:#fff;
+            border:1px solid #8CB97A;
+            color:#2E7D32;
+            border-radius:8px;
+            padding:2px 12px;
+            cursor:pointer;
+            font-size:14px;
+            float: none;
         }
         .address-box {
             background: #E6F2D6;
@@ -95,6 +139,7 @@
             margin-bottom: 10px;
             border: none;
             width: 100%;
+            box-sizing: border-box;
         }
         .row {
             display: flex;
@@ -105,6 +150,7 @@
         .col {
             flex: 1;
             text-align: center;
+            padding: 0 5px;
         }
         .amount-btn {
             width: 36px;
@@ -115,15 +161,18 @@
             font-size: 22px;
             border: none;
             cursor: pointer;
+            vertical-align: middle;
         }
         .amount-value {
             font-size: 22px;
             font-weight: bold;
             margin: 0 10px;
+            display: inline-block;
+            vertical-align: middle;
         }
         .date-time-box {
             display: flex;
-            gap: 18px;
+            gap: 10px;
             margin-top: 10px;
         }
         .date-time-col {
@@ -132,15 +181,20 @@
             border-radius: 8px;
             padding: 10px 8px;
             text-align: center;
+            box-sizing: border-box;
         }
         .date-label, .time-label {
             font-size: 13px;
             color: #888;
+            margin-bottom: 4px;
         }
-        .date-value, .time-value {
-            font-size: 15px;
-            color: #222;
-            font-weight: bold;
+        .date-input, .time-input {
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 6px;
+            box-sizing: border-box;
+            font-size: 14px;
         }
         .summary-row {
             display: flex;
@@ -185,22 +239,116 @@
         }
         .error { color: #ff5252; }
         .success { color: #2E7D32; }
+
+        /* Modal/Popup Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5); /* Semi-transparent black overlay */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000; /* Ensure it's on top of everything */
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 380px;
+            transform: translateY(-20px);
+            transition: transform 0.3s ease;
+        }
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .modal-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #2E7D32;
+        }
+        .modal-close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #888;
+            cursor: pointer;
+            line-height: 1; /* Adjust to prevent extra space */
+        }
+        .modal-input {
+            width: 100%;
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            box-sizing: border-box;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+        .modal-button {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+        .modal-confirm-btn {
+            background: #8BC34A;
+            color: white;
+            border: none;
+            margin-bottom: 10px;
+        }
+        .modal-confirm-btn:hover {
+            background: #7CB342;
+        }
+        .modal-cancel-btn {
+            background: #f0f0f0;
+            color: #555;
+            border: 1px solid #ccc;
+        }
+        .modal-cancel-btn:hover {
+            background: #e0e0e0;
+        }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 <body>
     <div class="map-box">
-        <img src="/static/tmp.png" alt="Map" class="map-img">
-        <img src="https://cdn-icons-png.flaticon.com/512/684/684908.png" class="pin" alt="Pin">
+        <a href="/dashboard" class="back-button-on-map">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <div id="map"></div>
         <div class="info-btn"><i class="fa fa-info"></i></div>
     </div>
     <div class="container">
         <form id="pickupForm" autocomplete="off">
             <div class="section">
-                <div class="section-title">Atur Lokasi Penjemputan <button type="button" style="float:right;background:#fff;border:1px solid #8CB97A;color:#2E7D32;border-radius:8px;padding:2px 12px;cursor:pointer;font-size:14px;" onclick="alert('Edit alamat coming soon')">Edit</button></div>
+                <div class="section-title">
+                    Atur Lokasi Penjemputan
+                    <button type="button" id="editLocationBtn">Edit</button>
+                </div>
                 <div class="address-box">
                     <span class="address-icon"><i class="fa fa-map-marker-alt"></i></span>
-                    <div class="address-content" id="mainAddress">Jl. Sistem Informasi ITS, Keputih, Kec. Sukolilo, Kota Surabaya, Jawa Timur 60111</div>
+                    <div class="address-content" id="mainAddress">Mendapatkan lokasi...</div>
                 </div>
                 <input class="address-detail" id="addressDetail" name="addressDetail" placeholder="Tambah detail alamat ex. Blok, RT/RW, Nama Perusahaan">
                 <div class="row">
@@ -216,11 +364,11 @@
                         <div class="date-time-box">
                             <div class="date-time-col">
                                 <div class="date-label">Tanggal</div>
-                                <input type="date" id="dateInput" class="input" style="width:100%;margin:0;" required>
+                                <input type="date" id="dateInput" class="date-input" required>
                             </div>
                             <div class="date-time-col">
                                 <div class="time-label">Pukul</div>
-                                <input type="time" id="timeInput" class="input" style="width:100%;margin:0;" required>
+                                <input type="time" id="timeInput" class="time-input" required>
                             </div>
                         </div>
                     </div>
@@ -234,7 +382,256 @@
             </div>
         </form>
     </div>
+
+    <div id="locationModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Cari & Atur Lokasi</div>
+                <button class="modal-close-btn" id="closeModalBtn">&times;</button>
+            </div>
+            <input type="text" id="modalSearchInput" class="modal-input" placeholder="Cari alamat...">
+            <button class="modal-button modal-confirm-btn" id="confirmLocationBtn">Terapkan Lokasi Ini</button>
+            <button class="modal-button modal-cancel-btn" id="cancelModalBtn">Batal</button>
+        </div>
+    </div>
+
     <script>
+    let map;
+    let marker;
+    let currentLatLng; // To store current location
+    let currentAddressText = 'Mendapatkan lokasi...'; // Store human-readable address
+
+    // Custom icon for Leaflet marker
+    const customPinIcon = L.icon({
+        iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
+        iconSize: [48, 48],    // size of the icon
+        iconAnchor: [24, 48],  // point of the icon which will correspond to marker's location
+        popupAnchor: [0, -48] // point from which the popup should open relative to the iconAnchor
+    });
+
+    // Debounce function
+    function debounce(func, delay) {
+        let timeout;
+        return function(...args) {
+            const context = this;
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func.apply(context, args), delay);
+        };
+    }
+
+    // Function to perform reverse geocoding using Nominatim
+    async function reverseGeocode(latLng) {
+        document.getElementById('mainAddress').textContent = 'Mencari alamat...'; // Show loading message
+        const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latLng.lat}&lon=${latLng.lng}&zoom=18&addressdetails=1`;
+        
+        try {
+            const response = await fetch(url, {
+                headers: {
+                    'User-Agent': 'Waste2Feed-App/1.0 (your-contact-email@example.com)' 
+                }
+            });
+            if (!response.ok) {
+                if (response.status === 429) {
+                    throw new Error('Too many requests to Nominatim (rate limit exceeded). Please wait.');
+                }
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+
+            if (data && data.display_name) {
+                currentAddressText = data.display_name; // Store the full address
+                document.getElementById('mainAddress').textContent = currentAddressText;
+            } else {
+                currentAddressText = `Alamat tidak ditemukan (Lat: ${latLng.lat.toFixed(6)}, Lng: ${latLng.lng.toFixed(6)})`;
+                document.getElementById('mainAddress').textContent = currentAddressText;
+            }
+        } catch (error) {
+            console.error('Error during reverse geocoding:', error);
+            currentAddressText = `Gagal mendapatkan alamat (Lat: ${latLng.lat.toFixed(6)}, Lng: ${latLng.lng.toFixed(6)})`;
+            document.getElementById('mainAddress').textContent = currentAddressText;
+            document.getElementById('message').textContent = `Error geocoding: ${error.message}`;
+            document.getElementById('message').className = 'error';
+        }
+    }
+
+    // Function to perform forward geocoding (search by address)
+    async function searchAddress(query) {
+        if (query.length < 3) {
+            document.getElementById('mainAddress').textContent = 'Mendapatkan lokasi...'; // Reset if query too short
+            return;
+        }
+        document.getElementById('mainAddress').textContent = 'Mencari lokasi...';
+        const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&q=${encodeURIComponent(query)}&limit=1&countrycodes=ID`; // Added countrycodes=ID
+        
+        try {
+            const response = await fetch(url, {
+                headers: {
+                    'User-Agent': 'Waste2Feed-App/1.0 (your-contact-email@example.com)'
+                }
+            });
+            if (!response.ok) {
+                if (response.status === 429) {
+                    throw new Error('Too many requests to Nominatim (rate limit exceeded). Please wait.');
+                }
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+
+            if (data && data.length > 0) {
+                const firstResult = data[0];
+                const pos = { lat: parseFloat(firstResult.lat), lng: parseFloat(firstResult.lon) };
+                currentLatLng = pos;
+                map.setView([pos.lat, pos.lng], 16);
+                addMarker([pos.lat, pos.lng]);
+                currentAddressText = firstResult.display_name; // Store the found address
+                document.getElementById('mainAddress').textContent = currentAddressText;
+            } else {
+                currentAddressText = `Alamat "${query}" tidak ditemukan.`;
+                document.getElementById('mainAddress').textContent = currentAddressText;
+                document.getElementById('message').textContent = 'Alamat tidak ditemukan.';
+                document.getElementById('message').className = 'error';
+            }
+        } catch (error) {
+            console.error('Error during forward geocoding:', error);
+            currentAddressText = `Gagal mencari alamat "${query}".`;
+            document.getElementById('mainAddress').textContent = currentAddressText;
+            document.getElementById('message').textContent = `Error pencarian: ${error.message}`;
+            document.getElementById('message').className = 'error';
+        }
+    }
+
+
+    // Initialize the Leaflet map
+    function initMap() {
+        const mapDiv = document.getElementById('map');
+        if (!mapDiv) {
+            console.error('Map div not found!');
+            return;
+        }
+
+        const defaultLatLng = [-7.2758, 112.7963]; // Approximate center of Surabaya
+
+        map = L.map('map', {
+            zoomControl: false,
+            attributionControl: false
+        }).setView(defaultLatLng, 15);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const pos = { lat: position.coords.latitude, lng: position.coords.longitude };
+                    currentLatLng = pos;
+                    map.setView([pos.lat, pos.lng], 16);
+                    addMarker([pos.lat, pos.lng]);
+                    reverseGeocode(pos);
+                },
+                (error) => {
+                    handleLocationError(true, map.getCenter(), error);
+                    currentLatLng = { lat: defaultLatLng[0], lng: defaultLatLng[1] };
+                    addMarker(defaultLatLng);
+                    reverseGeocode(currentLatLng);
+                }
+            );
+        } else {
+            handleLocationError(false, map.getCenter());
+            currentLatLng = { lat: defaultLatLng[0], lng: defaultLatLng[1] };
+            addMarker(defaultLatLng);
+            reverseGeocode(currentLatLng);
+        }
+
+        map.on('moveend', debounce(() => {
+            const newCenter = map.getCenter();
+            currentLatLng = { lat: newCenter.lat, lng: newCenter.lng };
+            if (marker) {
+                marker.setLatLng(newCenter);
+            } else {
+                 addMarker([newCenter.lat, newCenter.lng]);
+            }
+            reverseGeocode(currentLatLng);
+        }, 1000));
+    }
+
+    function addMarker(location) {
+        if (marker) {
+            marker.setLatLng(location);
+        } else {
+            marker = L.marker(location, { icon: customPinIcon, draggable: false }).addTo(map);
+        }
+    }
+
+    function handleLocationError(browserHasGeolocation, pos, error = null) {
+        let message = browserHasGeolocation
+            ? 'Error: Izin lokasi ditolak atau tidak tersedia.'
+            : 'Error: Browser Anda tidak mendukung geolokasi.';
+        if (error) {
+            console.error('Geolocation error:', error.message);
+        }
+        currentAddressText = message + " Menggunakan lokasi default.";
+        document.getElementById('mainAddress').textContent = currentAddressText;
+    }
+
+
+    document.addEventListener('DOMContentLoaded', initMap);
+
+    // --- Modal/Popup Control JavaScript ---
+    const locationModal = document.getElementById('locationModal');
+    const editLocationBtn = document.getElementById('editLocationBtn');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const cancelModalBtn = document.getElementById('cancelModalBtn');
+    const confirmLocationBtn = document.getElementById('confirmLocationBtn');
+    const modalSearchInput = document.getElementById('modalSearchInput');
+
+    function openModal() {
+        locationModal.classList.add('active');
+        // Pre-fill search input with current address if available
+        if (currentAddressText && currentAddressText !== 'Mendapatkan lokasi...') {
+            modalSearchInput.value = currentAddressText;
+        } else {
+            modalSearchInput.value = '';
+        }
+        // Invalidate map size to ensure it renders correctly within the modal after being hidden
+        if (map) {
+             map.invalidateSize();
+             // Center map on current location when opening modal
+             if (currentLatLng) {
+                map.setView([currentLatLng.lat, currentLatLng.lng], map.getZoom());
+             }
+        }
+        modalSearchInput.focus(); // Focus the search input
+    }
+
+    function closeModal() {
+        locationModal.classList.remove('active');
+    }
+
+    editLocationBtn.addEventListener('click', openModal);
+    locationModal.addEventListener('click', (e) => { // Close modal by clicking overlay
+        if (e.target === locationModal) {
+            closeModal();
+        }
+    });
+    closeModalBtn.addEventListener('click', closeModal);
+    cancelModalBtn.addEventListener('click', closeModal);
+
+    confirmLocationBtn.addEventListener('click', () => {
+        // When confirm is clicked, the mainAddress should already be updated by search/drag
+        // We just close the modal.
+        closeModal();
+    });
+
+    // Debounced search for the modal input
+    modalSearchInput.addEventListener('input', debounce((e) => {
+        searchAddress(e.target.value);
+    }, 1500)); // 1.5 second debounce for search
+
+
+    // --- Existing JavaScript Logic (remaining) ---
+
     let amount = 1.25;
     function changeAmount(delta) {
         let step = 0.25;
@@ -245,26 +642,31 @@
     }
     changeAmount(0);
 
-    // Prefill date and time
-    window.onload = function() {
+    document.addEventListener('DOMContentLoaded', function() {
         const now = new Date();
         document.getElementById('dateInput').value = now.toISOString().slice(0,10);
         document.getElementById('timeInput').value = now.toTimeString().slice(0,5);
-    };
+    });
 
-    // Fetch address (replace with real API/user data as needed)
-    // document.getElementById('mainAddress').textContent = ...
 
     document.getElementById('pickupForm').addEventListener('submit', async function(e) {
         e.preventDefault();
-        const address = document.getElementById('mainAddress').textContent + (document.getElementById('addressDetail').value ? (', ' + document.getElementById('addressDetail').value) : '');
+        const addressDetail = document.getElementById('addressDetail').value ? (', ' + document.getElementById('addressDetail').value) : '';
+        const finalAddress = currentAddressText + addressDetail; // Use currentAddressText from JS
+
         const date = document.getElementById('dateInput').value;
         const time = document.getElementById('timeInput').value;
         const messageDiv = document.getElementById('message');
         messageDiv.textContent = '';
         messageDiv.className = '';
-        if (!address || !date || !time || !amount) {
-            messageDiv.textContent = 'Semua field wajib diisi.';
+
+        if (!currentLatLng) {
+            messageDiv.textContent = 'Tidak dapat menentukan lokasi. Mohon izinkan akses lokasi atau coba lagi.';
+            messageDiv.className = 'error';
+            return;
+        }
+        if (!date || !time || !amount) {
+            messageDiv.textContent = 'Tanggal, Pukul, dan Jumlah Sampah wajib diisi.';
             messageDiv.className = 'error';
             return;
         }
@@ -277,7 +679,14 @@
                     'Content-Type': 'application/json',
                     'Authorization': token ? `Bearer ${token}` : ''
                 },
-                body: JSON.stringify({ address, amount, date, time })
+                body: JSON.stringify({
+                    address: finalAddress,
+                    latitude: currentLatLng.lat,
+                    longitude: currentLatLng.lng,
+                    amount: amount,
+                    date: date,
+                    time: time
+                })
             });
             const data = await res.json();
             if (data.status) {
