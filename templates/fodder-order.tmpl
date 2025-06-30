@@ -7,23 +7,32 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 </head>
 
 <body class="min-h-screen font-[Poppins] overflow-hidden bg-[#FFF9E1]">
 
-    <!-- BANNER SUKSES -->
     <div id="successBanner" class="fixed top-0 left-0 w-full bg-[#83AF7F] text-white text-center py-3 text-sm font-semibold z-30 hidden rounded-b-xl shadow-md">
         Pesanan Berhasil Dimasukkan Keranjang Pembayaran!
     </div>
 
-    <!-- MAP FULLSCREEN DI BELAKANG -->
-    <div class="fixed inset-0 z-0">
-        <img src="/static/map.png" alt="Map" class="w-full h-full object-cover">
-        <img src="https://cdn-icons-png.flaticon.com/512/684/684908.png" class="w-12 h-12 absolute left-1/2 top-[80px] -translate-x-1/2 z-10" alt="Pin">
+    <div id="mapContainer" class="fixed inset-0 z-10">
+        <div id="map" class="w-full h-full relative"></div>
+
+        <div id="mapSearchInputWrapper" class="absolute bottom-24 w-full flex justify-center px-4 z-[999] hidden">
+            <input type="text" id="mapSearchInput" placeholder="Cari alamat..." class="w-full max-w-md p-3 rounded-md shadow-md outline-none text-gray-800 text-sm">
+            <button id="mapSearchBtn" class="ml-2 bg-[#2B580C] text-white px-4 py-2 rounded-md shadow-md text-sm">Cari</button>
+        </div>
+
+        <img id="mapPin" src="https://cdn-icons-png.flaticon.com/512/684/684908.png" class="w-12 h-12 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-full z-[999] pointer-events-none hidden" alt="Pin">
+
+        <div id="confirmButtonWrapper" class="absolute bottom-6 w-full flex justify-center z-[999] hidden">
+            <button id="confirmLocation" class="bg-[#2B580C] text-white px-5 py-2 rounded-md shadow-md">Terapkan Lokasi</button>
+        </div>
     </div>
 
-    <!-- TOMBOL KEMBALI -->
-    <div class="max-w-[400px] mx-auto px-4 pb-6 relative z-50">
+    <div class="max-w-[400px] mx-auto px-4 pb-6 relative z-30">
         <div class="text-center text-lg font-bold text-[#0B4619] mt-14 mb-5 flex items-center">
             <a href="/dashboard" class="left-6 top-8 text-[#0B4619] text-2xl bg-white px-2 py-1 rounded-full shadow-md z-10">
                 <i class="fas fa-arrow-left"></i>
@@ -31,70 +40,63 @@
         </div>
     </div>
 
-    <!-- FORM SECTION -->
-    <div class="fixed z-20 w-full pt-40 bottom-0">
+    <div id="formSection" class="fixed z-20 w-full pt-40 bottom-0">
         <form id="orderForm" autocomplete="off">
         <div class="bg-white/90 backdrop-blur-md rounded-t-2xl shadow-xl w-full p-4">
 
-            <!-- Lokasi -->
             <div class="flex justify-between items-center mb-3">
-            <div class="text-black font-semibold text-base">Atur Lokasi Pengiriman</div>
-            <button type="button" class="border border-[#234B1C] text-[#234B1C] px-4 py-1 rounded-md text-sm" onclick="alert('Edit alamat coming soon')">Edit</button>
+                <div class="text-black font-semibold text-base">Atur Lokasi Pengiriman</div>
+                <button type="button" class="border border-[#234B1C] text-[#234B1C] px-4 py-1 rounded-md text-sm" id="editBtn">Edit</button>
             </div>
 
             <div class="bg-[#E6F2D6] rounded-md pb-3 pl-3 pr-3 pt-2.5 flex items-start gap-2 mb-3 min-h-[70px]">
-            <span class="text-red-600 text-xl mt-1"><i class="fa fa-map-marker-alt"></i></span>
-            <div class="text-sm text-[#234B1C] flex-1 mt-1" id="mainAddress">Jl. Sistem Informasi ITS, Keputih, Kec. Sukolilo, Kota Surabaya, Jawa Timur 60111</div>
+                <span class="text-red-600 text-xl mt-1"><i class="fa fa-map-marker-alt"></i></span>
+                <div class="text-sm text-[#234B1C] flex-1 mt-1" id="mainAddress">Mendapatkan lokasi...</div>
             </div>
 
             <div class="mb-4">
-            <div class="text-sm text-gray-600 mb-1">Detail Alamat</div>
-            <input id="addressDetail" name="addressDetail" placeholder="Tambah detail alamat ex. Blok, RT/RW, Nama Perusahaan" class="w-full bg-[#FFF9C4] rounded-md p-3 text-[#A5A500] text-sm outline-none" />
+                <div class="text-sm text-gray-600 mb-1">Detail Alamat</div>
+                <input id="addressDetail" name="addressDetail" placeholder="Tambah detail alamat ex. Blok, RT/RW, Nama Perusahaan" class="w-full bg-[#FFF9C4] rounded-md p-3 text-[#A5A500] text-sm outline-none" />
             </div>
 
-            <!-- Jumlah & Jadwal -->
             <div class="flex items-start gap-4 mb-4">
-            <!-- Jumlah -->
-            <div class="flex-1 text-center">
-                <div class="text-sm text-gray-600 mb-2">Jumlah Pakan (Kg)</div>
-                <div class="flex justify-between items-center mb-1">
-                <button type="button" class="w-9 h-9 rounded-full bg-[#2B580C] text-white text-xl" onclick="changeAmount(-1)">-</button>
-                <span id="amountValue" class="mx-3 text-xl font-bold">1</span>
-                <button type="button" class="w-9 h-9 rounded-full bg-[#2B580C] text-white text-xl" onclick="changeAmount(1)">+</button>
+                <div class="flex-1 text-center">
+                    <div class="text-sm text-gray-600 mb-2">Jumlah Pakan (Kg)</div>
+                    <div class="flex justify-between items-center mb-1">
+                        <button type="button" class="w-9 h-9 rounded-full bg-[#2B580C] text-white text-xl" onclick="changeAmount(-1)">-</button>
+                        <span id="amountValue" class="mx-3 text-xl font-bold">1.25</span>
+                        <button type="button" class="w-9 h-9 rounded-full bg-[#2B580C] text-white text-xl" onclick="changeAmount(1)">+</button>
+                    </div>
+                    <div class="flex flex-col text-sm">
+                        <span class="text-gray-600">Ongkos Kirim</span>
+                        <span id="shippingCost" class="font-bold text-[#2B580C]">Rp 625</span>
+                    </div>
                 </div>
-                <div class="flex flex-col text-sm">
-                    <span class="text-gray-600">Ongkos Kirim</span>
-                    <span id="shippingCost" class="font-bold text-[#2B580C]">Rp 0</span>
+
+                <div class="flex-1 text-center">
+                    <div class="text-sm text-gray-600 mb-2">Jadwal Pengiriman</div>
+                    <div class="flex flex-col gap-2">
+                        <div class="bg-[#F5F7E7] rounded-md p-2">
+                            <div class="flex items-center justify-center text-sm text-gray-600">
+                                <i class="fa fa-calendar mr-1"></i>
+                                <input type="date" id="dateInput" class="w-full bg-transparent text-center text-sm font-bold outline-none">
+                            </div>
+                        </div>
+                        <div class="bg-[#F5F7E7] rounded-md p-2">
+                            <div class="flex items-center justify-center text-sm text-gray-600">
+                                <i class="fa fa-clock mr-3"></i>
+                                <input type="time" id="timeInput" class="w-full bg-transparent text-center text-sm font-bold outline-none">
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Jadwal -->
-            <div class="flex-1 text-center">
-                <div class="text-sm text-gray-600 mb-2">Jadwal Pengiriman</div>
-                <div class="flex flex-col gap-2">
-                <div class="bg-[#F5F7E7] rounded-md p-2">
-                    <div class="flex items-center justify-center text-sm text-gray-600">
-                    <i class="fa fa-calendar mr-1"></i>
-                    <input type="date" id="dateInput" class="w-full bg-transparent text-center text-sm font-bold outline-none">
-                    </div>
-                </div>
-                <div class="bg-[#F5F7E7] rounded-md p-2">
-                    <div class="flex items-center justify-center text-sm text-gray-600">
-                    <i class="fa fa-clock mr-3"></i>
-                    <input type="time" id="timeInput" class="w-full bg-transparent text-center text-sm font-bold outline-none">
-                    </div>
-                </div>
-                </div>
-            </div>
-            </div>
-
-            <!-- Harga -->
             <div class="flex flex-row items-center justify-between mb-4">
                 <span class="bg-[#E0F0D5] rounded-md px-2 py-1 text-sm text-[#2B580C] font-bold">Total Harga</span>
-                <span id="totalPrice" class="font-bold text-lg text-[#2B580C]">Rp 0</span>
+                <span id="totalPrice" class="font-bold text-lg text-[#2B580C]">Rp 12500</span>
             </div>
 
-            <!-- Tombol -->
             <button id="orderBtn" type="submit" class="w-full bg-[#83AF7F] text-white rounded-md py-3 text-base font-semibold">Masukkan ke Keranjang</button>
             <div id="message" class="mt-2 text-center text-sm"></div>
 
@@ -103,7 +105,11 @@
     </div>
 
 <script>
+let map;
+let currentLat = -7.2825;
+let currentLng = 112.7931;
 let amount = 1.25;
+
 function changeAmount(delta) {
     const step = 0.25;
     amount = Math.max(0.25, Math.round((amount + delta * step) * 100) / 100);
@@ -111,17 +117,93 @@ function changeAmount(delta) {
     document.getElementById('shippingCost').textContent = `Rp ${Math.round(amount * 500)}`;
     document.getElementById('totalPrice').textContent = `Rp ${Math.round(amount * 10000)}`;
 }
-changeAmount(0);
+
+function updateAddress(lat, lng) {
+    fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById('mainAddress').textContent = data.display_name || 'Lokasi tidak ditemukan';
+    });
+}
+
+function searchAddress() {
+    const query = document.getElementById('mapSearchInput').value.trim();
+    if (!query) return;
+
+    // Viewbox for Surabaya: min_lon,min_lat,max_lon,max_lat
+    // Approx coordinates for Surabaya region: 112.6,-7.35,112.85,-7.15
+    // Add countrycodes=id to bias results to Indonesia
+    fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1&viewbox=112.6,-7.35,112.85,-7.15&countrycodes=id`)
+    .then(res => res.json())
+    .then(data => {
+        if (data && data.length > 0) {
+            const lat = parseFloat(data[0].lat);
+            const lng = parseFloat(data[0].lon);
+            map.setView([lat, lng], 16);
+            currentLat = lat;
+            currentLng = lng;
+            updateAddress(currentLat, currentLng);
+        } else {
+            alert('Alamat tidak ditemukan.');
+        }
+    })
+    .catch(error => {
+        console.error('Error searching address:', error);
+        alert('Terjadi kesalahan saat mencari alamat.');
+    });
+}
 
 window.onload = function() {
     const now = new Date();
     document.getElementById('dateInput').value = now.toISOString().slice(0,10);
     document.getElementById('timeInput').value = now.toTimeString().slice(0,5);
+
+    map = L.map('map').setView([currentLat, currentLng], 16);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
+
+    updateAddress(currentLat, currentLng);
+
+    map.on('moveend', () => {
+        const center = map.getCenter();
+        currentLat = center.lat;
+        currentLng = center.lng;
+        updateAddress(currentLat, currentLng);
+    });
+
+    changeAmount(0);
 };
+
+document.getElementById('editBtn').addEventListener('click', () => {
+    document.getElementById('mapContainer').classList.add('z-[9999]');
+    document.getElementById('formSection').classList.add('hidden');
+    document.getElementById('mapPin').classList.remove('hidden');
+    document.getElementById('confirmButtonWrapper').classList.remove('hidden');
+    document.getElementById('mapSearchInputWrapper').classList.remove('hidden');
+    
+    setTimeout(() => { map.invalidateSize(); }, 100);
+});
+
+document.getElementById('confirmLocation').addEventListener('click', () => {
+    document.getElementById('mapContainer').classList.remove('z-[9999]');
+    document.getElementById('formSection').classList.remove('hidden');
+    document.getElementById('mapPin').classList.add('hidden');
+    document.getElementById('confirmButtonWrapper').classList.add('hidden');
+    document.getElementById('mapSearchInputWrapper').classList.add('hidden');
+    
+});
+
+document.getElementById('mapSearchBtn').addEventListener('click', searchAddress);
+document.getElementById('mapSearchInput').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        searchAddress();
+    }
+});
 
 document.getElementById('orderForm').addEventListener('submit', async function(e) {
     e.preventDefault();
-    const address = document.getElementById('mainAddress').textContent + (document.getElementById('addressDetail').value ? (', ' + document.getElementById('addressDetail').value) : '');
+    const address = document.getElementById('mainAddress').textContent + 
+        (document.getElementById('addressDetail').value ? ', ' + document.getElementById('addressDetail').value : '');
     const date = document.getElementById('dateInput').value;
     const time = document.getElementById('timeInput').value;
     const messageDiv = document.getElementById('message');
@@ -136,7 +218,7 @@ document.getElementById('orderForm').addEventListener('submit', async function(e
 
     document.getElementById('orderBtn').disabled = true;
     const token = localStorage.getItem('jwt');
-    
+
     try {
         const type = new URLSearchParams(window.location.search).get('type');
         const res = await fetch(`/api/fodder?type=${type}`, {
@@ -150,11 +232,9 @@ document.getElementById('orderForm').addEventListener('submit', async function(e
 
         const data = await res.json();
         if (data.status) {
-            const banner = document.getElementById('successBanner');
-            banner.classList.remove('hidden');
-
+            document.getElementById('successBanner').classList.remove('hidden');
             setTimeout(() => {
-                banner.classList.add('hidden');
+                document.getElementById('successBanner').classList.add('hidden');
                 window.location.href = '/fodder/pending';
             }, 1500);
         } else {
@@ -165,7 +245,6 @@ document.getElementById('orderForm').addEventListener('submit', async function(e
         messageDiv.textContent = 'Terjadi kesalahan. Coba lagi.';
         messageDiv.className = 'text-red-500';
     }
-
     document.getElementById('orderBtn').disabled = false;
 });
 </script>

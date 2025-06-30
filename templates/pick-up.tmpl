@@ -1,708 +1,240 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pick-up - Waste2Feed</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            background: #FFF9E1;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-        .container {
-            max-width: 420px;
-            margin: 0 auto;
-            padding: 0 0 24px 0;
-            background: #FFF9E1;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-        }
-        .map-box {
-            width: 100%;
-            height: 300px; /* Tinggi peta */
-            background: #e0e0e0;
-            border-radius: 0 0 32px 32px;
-            position: relative; /* Penting untuk posisi absolut tombol */
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-        }
-        #map {
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-        }
-        .info-btn {
-            position: absolute;
-            top: 18px;
-            right: 18px;
-            background: #fff;
-            border-radius: 50%;
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            color: #8CB97A;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            z-index: 10;
-        }
-        /* Styling untuk tombol kembali yang sekarang di atas peta */
-        .back-button-on-map {
-            position: absolute;
-            top: 16px; /* top-4 Tailwind */
-            left: 16px; /* left-4 Tailwind */
-            color: #0B4619; /* text-[#0B4619] Tailwind */
-            font-size: 24px; /* text-2xl Tailwind */
-            background-color: white; /* bg-white Tailwind */
-            padding: 8px 12px; /* px-2 py-1 Tailwind (disesuaikan untuk ikon) */
-            border-radius: 9999px; /* rounded-full Tailwind */
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md Tailwind */
-            z-index: 10; /* Pastikan di atas peta dan elemen lain */
-            display: flex; /* Untuk menengahkan ikon */
-            align-items: center;
-            justify-content: center;
-            text-decoration: none; /* Hapus underline default dari link */
-        }
-
-        .pin { /* This is now mostly handled by Leaflet custom icon */
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -100%);
-            z-index: 2;
-            width: 48px;
-            height: 48px;
-        }
-        .section {
-            background: #fff;
-            border-radius: 18px;
-            margin: -32px 16px 0 16px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-            padding: 18px 18px 12px 18px;
-            position: relative;
-            z-index: 1;
-        }
-        .section-title {
-            font-size: 18px;
-            font-weight: bold;
-            color: #222;
-            margin-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .section-title button {
-            background:#fff;
-            border:1px solid #8CB97A;
-            color:#2E7D32;
-            border-radius:8px;
-            padding:2px 12px;
-            cursor:pointer;
-            font-size:14px;
-            float: none;
-        }
-        .address-box {
-            background: #E6F2D6;
-            border-radius: 8px;
-            padding: 12px 16px;
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-        .address-icon {
-            color: #E53935;
-            font-size: 22px;
-            margin-top: 2px;
-        }
-        .address-content {
-            font-size: 14px;
-            color: #234B1C;
-        }
-        .address-detail {
-            background: #FFF9C4;
-            border-radius: 8px;
-            padding: 12px 16px;
-            color: #A5A500;
-            font-size: 15px;
-            margin-bottom: 10px;
-            border: none;
-            width: 100%;
-            box-sizing: border-box;
-        }
-        .row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin: 12px 0 0 0;
-        }
-        .col {
-            flex: 1;
-            text-align: center;
-            padding: 0 5px;
-        }
-        .amount-btn {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: #8CB97A;
-            color: #fff;
-            font-size: 22px;
-            border: none;
-            cursor: pointer;
-            vertical-align: middle;
-        }
-        .amount-value {
-            font-size: 22px;
-            font-weight: bold;
-            margin: 0 10px;
-            display: inline-block;
-            vertical-align: middle;
-        }
-        .date-time-box {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-        }
-        .date-time-col {
-            flex: 1;
-            background: #F5F7E7;
-            border-radius: 8px;
-            padding: 10px 8px;
-            text-align: center;
-            box-sizing: border-box;
-        }
-        .date-label, .time-label {
-            font-size: 13px;
-            color: #888;
-            margin-bottom: 4px;
-        }
-        .date-input, .time-input {
-            width: 100%;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            padding: 6px;
-            box-sizing: border-box;
-            font-size: 14px;
-        }
-        .summary-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin: 18px 0 0 0;
-        }
-        .summary-col {
-            flex: 1;
-            text-align: center;
-            font-size: 16px;
-            color: #2E7D32;
-            font-weight: bold;
-        }
-        .summary-col img {
-            width: 22px;
-            vertical-align: middle;
-            margin-right: 4px;
-        }
-        .pickup-btn {
-            width: 100%;
-            padding: 16px;
-            background: #FFD600;
-            color: #2E7D32;
-            border: none;
-            border-radius: 0 0 18px 18px;
-            font-size: 20px;
-            font-weight: bold;
-            margin-top: 18px;
-            cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-        }
-        .pickup-btn:disabled {
-            background: #FFF9C4;
-            color: #BDB76B;
-            cursor: not-allowed;
-        }
-        .error, .success {
-            margin-top: 10px;
-            font-size: 15px;
-            text-align: center;
-        }
-        .error { color: #ff5252; }
-        .success { color: #2E7D32; }
-
-        /* Modal/Popup Styles */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5); /* Semi-transparent black overlay */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000; /* Ensure it's on top of everything */
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-        }
-        .modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-        .modal-content {
-            background: #fff;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            width: 90%;
-            max-width: 380px;
-            transform: translateY(-20px);
-            transition: transform 0.3s ease;
-        }
-        .modal-overlay.active .modal-content {
-            transform: translateY(0);
-        }
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        .modal-title {
-            font-size: 20px;
-            font-weight: bold;
-            color: #2E7D32;
-        }
-        .modal-close-btn {
-            background: none;
-            border: none;
-            font-size: 24px;
-            color: #888;
-            cursor: pointer;
-            line-height: 1; /* Adjust to prevent extra space */
-        }
-        .modal-input {
-            width: 100%;
-            padding: 10px 15px;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-            box-sizing: border-box;
-            font-size: 16px;
-            margin-bottom: 15px;
-        }
-        .modal-button {
-            width: 100%;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.2s ease;
-        }
-        .modal-confirm-btn {
-            background: #8BC34A;
-            color: white;
-            border: none;
-            margin-bottom: 10px;
-        }
-        .modal-confirm-btn:hover {
-            background: #7CB342;
-        }
-        .modal-cancel-btn {
-            background: #f0f0f0;
-            color: #555;
-            border: 1px solid #ccc;
-        }
-        .modal-cancel-btn:hover {
-            background: #e0e0e0;
-        }
-    </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
-<body>
-    <div class="map-box">
-        <a href="/dashboard" class="back-button-on-map">
-            <i class="fas fa-arrow-left"></i>
-        </a>
-        <div id="map"></div>
-        <div class="info-btn"><i class="fa fa-info"></i></div>
+<body class="bg-[#FFF9E1] min-h-screen font-[Poppins]">
+
+    <!-- MAP AREA -->
+    <div id="mapContainer" class="fixed inset-0 z-10">
+        <div id="map" class="w-full h-full relative"></div>
+
+        <div id="mapSearchInputWrapper" class="absolute bottom-24 w-full flex justify-center px-4 z-[999] hidden">
+            <input type="text" id="mapSearchInput" placeholder="Cari alamat..." class="w-full max-w-md p-3 rounded-md shadow-md outline-none text-gray-800 text-sm">
+            <button id="mapSearchBtn" class="ml-2 bg-[#2B580C] text-white px-4 py-2 rounded-md shadow-md text-sm">Cari</button>
+        </div>
+
+        <img id="mapPin" src="https://cdn-icons-png.flaticon.com/512/684/684908.png" class="w-12 h-12 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-full z-[999] pointer-events-none hidden" alt="Pin">
+
+        <div id="confirmButtonWrapper" class="absolute bottom-6 w-full flex justify-center z-[999] hidden">
+            <button id="confirmLocation" class="bg-[#2B580C] text-white px-5 py-2 rounded-md shadow-md">Terapkan Lokasi</button>
+        </div>
     </div>
-    <div class="container">
+
+    <div class="max-w-[400px] mx-auto px-4 pb-6 relative z-30">
+        <div class="text-center text-lg font-bold text-[#0B4619] mt-14 mb-5 flex items-center">
+            <a href="/dashboard" class="left-6 top-8 text-[#0B4619] text-2xl bg-white px-2 py-1 rounded-full shadow-md z-10">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+        </div>
+    </div>
+
+    <div id="formSection" class="fixed z-20 w-full pt-40 bottom-0">    
         <form id="pickupForm" autocomplete="off">
-            <div class="section">
-                <div class="section-title">
-                    Atur Lokasi Penjemputan
-                    <button type="button" id="editLocationBtn">Edit</button>
+            <div class="bg-white rounded-2xl shadow p-4 -mt-8">
+                <div class="flex justify-between items-center mb-3">
+                    <div class="text-black font-semibold text-base">Atur Lokasi Penjemputan</div>
+                    <button type="button" class="border border-[#234B1C] text-[#234B1C] px-4 py-1 rounded-md text-sm" id="editBtn">Edit</button>
                 </div>
-                <div class="address-box">
-                    <span class="address-icon"><i class="fa fa-map-marker-alt"></i></span>
-                    <div class="address-content" id="mainAddress">Mendapatkan lokasi...</div>
+
+                <div class="bg-[#E6F2D6] rounded-md pb-3 pl-3 pr-3 pt-2.5 flex items-start gap-2 mb-3 min-h-[70px]">
+                    <span class="text-red-600 text-xl mt-1"><i class="fa fa-map-marker-alt"></i></span>
+                    <div class="text-sm text-[#234B1C] flex-1 mt-1" id="mainAddress">Mendapatkan lokasi...</div>
                 </div>
-                <input class="address-detail" id="addressDetail" name="addressDetail" placeholder="Tambah detail alamat ex. Blok, RT/RW, Nama Perusahaan">
-                <div class="row">
-                    <div class="col">
-                        <div style="font-size:14px;color:#888;">Jumlah Sampah (Kg)</div>
-                        <button type="button" class="amount-btn" onclick="changeAmount(-1)">-</button>
-                        <span class="amount-value" id="amountValue">1</span>
-                        <button type="button" class="amount-btn" onclick="changeAmount(1)">+</button>
-                        <div style="font-size:13px;color:#888;margin-top:2px;">+ 0,25</div>
-                    </div>
-                    <div class="col">
-                        <div style="font-size:14px;color:#888;">Jadwal Penjemputan</div>
-                        <div class="date-time-box">
-                            <div class="date-time-col">
-                                <div class="date-label">Tanggal</div>
-                                <input type="date" id="dateInput" class="date-input" required>
+
+                <div class="mb-4">
+                    <div class="text-sm text-gray-600 mb-1">Detail Alamat</div>
+                    <input id="addressDetail" name="addressDetail" placeholder="Tambah detail alamat ex. Blok, RT/RW, Nama Perusahaan" class="w-full bg-[#FFF9C4] rounded-md p-3 text-[#A5A500] text-sm outline-none" />
+                </div>
+
+                <div class="flex items-start gap-4 mb-4">
+                    <div class="flex-1 text-center">
+                        <div class="text-sm text-gray-600 mb-2">Jumlah Sampah (Kg)</div>
+                        <div class="flex justify-center items-center mb-1">
+                            <button type="button" class="w-9 h-9 rounded-full bg-[#8CB97A] text-white text-xl" onclick="changeAmount(-1)">-</button>
+                            <span class="mx-3 text-xl font-bold" id="amountValue">1</span>
+                            <button type="button" class="w-9 h-9 rounded-full bg-[#8CB97A] text-white text-xl" onclick="changeAmount(1)">+</button>
+                        </div>
+                        <div class="flex flex-col text-sm">
+                            <span class="text-gray-600">Poin yang Diterima</span>
+                            <span id="pointSummary" class="font-bold text-[#2B580C]">Rp 625</span>
+                        </div>
+                    </div>                    
+                    <div class="flex-1 text-center">
+                        <div class="text-sm text-gray-600 mb-2">Jadwal Penjemputan</div>
+                        <div class="flex flex-col gap-2">
+                            <div class="bg-[#F5F7E7] rounded-md p-2">
+                                <div class="flex items-center justify-center text-sm text-gray-600">
+                                    <i class="fa fa-calendar mr-1"></i>
+                                    <input type="date" id="dateInput" class="w-full bg-transparent text-center text-sm font-bold outline-none">
+                                </div>
                             </div>
-                            <div class="date-time-col">
-                                <div class="time-label">Pukul</div>
-                                <input type="time" id="timeInput" class="time-input" required>
+                            <div class="bg-[#F5F7E7] rounded-md p-2">
+                                <div class="flex items-center justify-center text-sm text-gray-600">
+                                    <i class="fa fa-clock mr-3"></i>
+                                    <input type="time" id="timeInput" class="w-full bg-transparent text-center text-sm font-bold outline-none">
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="summary-row">
-                    <div class="summary-col"><span id="amountSummary">1,25 Kg</span></div>
-                    <div class="summary-col"><img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"> <span id="pointSummary">2500</span></div>
-                </div>
-                <button class="pickup-btn" type="submit" id="pickupBtn">Pick-up</button>
-                <div id="message"></div>
+
+                <button id="pickupBtn" type="submit" class="w-full bg-[#83AF7F] text-white rounded-md py-3 text-base font-semibold">Pick-Up</button>
+            <div id="message" class="mt-2 text-center text-sm"></div>
             </div>
         </form>
     </div>
 
-    <div id="locationModal" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="modal-title">Cari & Atur Lokasi</div>
-                <button class="modal-close-btn" id="closeModalBtn">&times;</button>
-            </div>
-            <input type="text" id="modalSearchInput" class="modal-input" placeholder="Cari alamat...">
-            <button class="modal-button modal-confirm-btn" id="confirmLocationBtn">Terapkan Lokasi Ini</button>
-            <button class="modal-button modal-cancel-btn" id="cancelModalBtn">Batal</button>
-        </div>
-    </div>
+<script>
+let amount = 1.25;
+let map;
+let currentLat = -7.2825;
+let currentLng = 112.7931;
 
-    <script>
-    let map;
-    let marker;
-    let currentLatLng; // To store current location
-    let currentAddressText = 'Mendapatkan lokasi...'; // Store human-readable address
+function changeAmount(delta) {
+    const step = 0.25;
+    amount = Math.max(0.25, Math.round((amount + delta * step) * 100) / 100);
+    document.getElementById('amountValue').textContent = amount.toLocaleString('id-ID', {minimumFractionDigits:2});
+    document.getElementById('pointSummary').textContent = Math.round(amount * 2000);
+}
+changeAmount(0);
 
-    // Custom icon for Leaflet marker
-    const customPinIcon = L.icon({
-        iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
-        iconSize: [48, 48],    // size of the icon
-        iconAnchor: [24, 48],  // point of the icon which will correspond to marker's location
-        popupAnchor: [0, -48] // point from which the popup should open relative to the iconAnchor
+window.onload = function() {
+    const now = new Date();
+    document.getElementById('dateInput').value = now.toISOString().slice(0,10);
+    document.getElementById('timeInput').value = now.toTimeString().slice(0,5);
+};
+
+document.getElementById('pickupForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const address = document.getElementById('mainAddress').textContent + (document.getElementById('addressDetail').value ? (', ' + document.getElementById('addressDetail').value) : '');
+    const date = document.getElementById('dateInput').value;
+    const time = document.getElementById('timeInput').value;
+    const messageDiv = document.getElementById('message');
+    messageDiv.textContent = '';
+
+    if (!address || !date || !time || !amount) {
+        messageDiv.textContent = 'Semua field wajib diisi.';
+        messageDiv.className = 'text-red-500';
+        return;
+    }
+    document.getElementById('pickupBtn').disabled = true;
+    const token = localStorage.getItem('jwt');
+
+    try {
+        const res = await fetch('/api/pick-up', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': token ? `Bearer ${token}` : ''
+            },
+            body: JSON.stringify({ address, amount, date, time })
+        });
+
+        const data = await res.json();
+        if (data.status) {
+            messageDiv.textContent = 'Pick-up berhasil dibuat!';
+            messageDiv.className = 'text-green-600';
+            setTimeout(() => window.location.href = '/dashboard', 1200);
+        } else {
+            messageDiv.textContent = data.message || 'Gagal membuat pick-up.';
+            messageDiv.className = 'text-red-500';
+        }
+    } catch (err) {
+        messageDiv.textContent = 'Terjadi kesalahan. Coba lagi.';
+        messageDiv.className = 'text-red-500';
+    }
+    document.getElementById('pickupBtn').disabled = false;
+});
+
+function updateAddress(lat, lng) {
+    fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById('mainAddress').textContent = data.display_name || 'Lokasi tidak ditemukan';
+    });
+}
+
+function searchAddress() {
+    const query = document.getElementById('mapSearchInput').value.trim();
+    if (!query) return;
+
+    // Viewbox for Surabaya: min_lon,min_lat,max_lon,max_lat
+    // Approx coordinates for Surabaya region: 112.6,-7.35,112.85,-7.15
+    // Add countrycodes=id to bias results to Indonesia
+    fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1&viewbox=112.6,-7.35,112.85,-7.15&countrycodes=id`)
+    .then(res => res.json())
+    .then(data => {
+        if (data && data.length > 0) {
+            const lat = parseFloat(data[0].lat);
+            const lng = parseFloat(data[0].lon);
+            map.setView([lat, lng], 16);
+            currentLat = lat;
+            currentLng = lng;
+            updateAddress(currentLat, currentLng);
+        } else {
+            alert('Alamat tidak ditemukan.');
+        }
+    })
+    .catch(error => {
+        console.error('Error searching address:', error);
+        alert('Terjadi kesalahan saat mencari alamat.');
+    });
+}
+
+window.onload = function() {
+    const now = new Date();
+    document.getElementById('dateInput').value = now.toISOString().slice(0,10);
+    document.getElementById('timeInput').value = now.toTimeString().slice(0,5);
+
+    map = L.map('map').setView([currentLat, currentLng], 16);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
+
+    updateAddress(currentLat, currentLng);
+
+    map.on('moveend', () => {
+        const center = map.getCenter();
+        currentLat = center.lat;
+        currentLng = center.lng;
+        updateAddress(currentLat, currentLng);
     });
 
-    // Debounce function
-    function debounce(func, delay) {
-        let timeout;
-        return function(...args) {
-            const context = this;
-            clearTimeout(timeout);
-            timeout = setTimeout(() => func.apply(context, args), delay);
-        };
-    }
-
-    // Function to perform reverse geocoding using Nominatim
-    async function reverseGeocode(latLng) {
-        document.getElementById('mainAddress').textContent = 'Mencari alamat...'; // Show loading message
-        const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latLng.lat}&lon=${latLng.lng}&zoom=18&addressdetails=1`;
-        
-        try {
-            const response = await fetch(url, {
-                headers: {
-                    'User-Agent': 'Waste2Feed-App/1.0 (your-contact-email@example.com)' 
-                }
-            });
-            if (!response.ok) {
-                if (response.status === 429) {
-                    throw new Error('Too many requests to Nominatim (rate limit exceeded). Please wait.');
-                }
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const data = await response.json();
-
-            if (data && data.display_name) {
-                currentAddressText = data.display_name; // Store the full address
-                document.getElementById('mainAddress').textContent = currentAddressText;
-            } else {
-                currentAddressText = `Alamat tidak ditemukan (Lat: ${latLng.lat.toFixed(6)}, Lng: ${latLng.lng.toFixed(6)})`;
-                document.getElementById('mainAddress').textContent = currentAddressText;
-            }
-        } catch (error) {
-            console.error('Error during reverse geocoding:', error);
-            currentAddressText = `Gagal mendapatkan alamat (Lat: ${latLng.lat.toFixed(6)}, Lng: ${latLng.lng.toFixed(6)})`;
-            document.getElementById('mainAddress').textContent = currentAddressText;
-            document.getElementById('message').textContent = `Error geocoding: ${error.message}`;
-            document.getElementById('message').className = 'error';
-        }
-    }
-
-    // Function to perform forward geocoding (search by address)
-    async function searchAddress(query) {
-        if (query.length < 3) {
-            document.getElementById('mainAddress').textContent = 'Mendapatkan lokasi...'; // Reset if query too short
-            return;
-        }
-        document.getElementById('mainAddress').textContent = 'Mencari lokasi...';
-        const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&q=${encodeURIComponent(query)}&limit=1&countrycodes=ID`; // Added countrycodes=ID
-        
-        try {
-            const response = await fetch(url, {
-                headers: {
-                    'User-Agent': 'Waste2Feed-App/1.0 (your-contact-email@example.com)'
-                }
-            });
-            if (!response.ok) {
-                if (response.status === 429) {
-                    throw new Error('Too many requests to Nominatim (rate limit exceeded). Please wait.');
-                }
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const data = await response.json();
-
-            if (data && data.length > 0) {
-                const firstResult = data[0];
-                const pos = { lat: parseFloat(firstResult.lat), lng: parseFloat(firstResult.lon) };
-                currentLatLng = pos;
-                map.setView([pos.lat, pos.lng], 16);
-                addMarker([pos.lat, pos.lng]);
-                currentAddressText = firstResult.display_name; // Store the found address
-                document.getElementById('mainAddress').textContent = currentAddressText;
-            } else {
-                currentAddressText = `Alamat "${query}" tidak ditemukan.`;
-                document.getElementById('mainAddress').textContent = currentAddressText;
-                document.getElementById('message').textContent = 'Alamat tidak ditemukan.';
-                document.getElementById('message').className = 'error';
-            }
-        } catch (error) {
-            console.error('Error during forward geocoding:', error);
-            currentAddressText = `Gagal mencari alamat "${query}".`;
-            document.getElementById('mainAddress').textContent = currentAddressText;
-            document.getElementById('message').textContent = `Error pencarian: ${error.message}`;
-            document.getElementById('message').className = 'error';
-        }
-    }
-
-
-    // Initialize the Leaflet map
-    function initMap() {
-        const mapDiv = document.getElementById('map');
-        if (!mapDiv) {
-            console.error('Map div not found!');
-            return;
-        }
-
-        const defaultLatLng = [-7.2758, 112.7963]; // Approximate center of Surabaya
-
-        map = L.map('map', {
-            zoomControl: false,
-            attributionControl: false
-        }).setView(defaultLatLng, 15);
-
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
-
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const pos = { lat: position.coords.latitude, lng: position.coords.longitude };
-                    currentLatLng = pos;
-                    map.setView([pos.lat, pos.lng], 16);
-                    addMarker([pos.lat, pos.lng]);
-                    reverseGeocode(pos);
-                },
-                (error) => {
-                    handleLocationError(true, map.getCenter(), error);
-                    currentLatLng = { lat: defaultLatLng[0], lng: defaultLatLng[1] };
-                    addMarker(defaultLatLng);
-                    reverseGeocode(currentLatLng);
-                }
-            );
-        } else {
-            handleLocationError(false, map.getCenter());
-            currentLatLng = { lat: defaultLatLng[0], lng: defaultLatLng[1] };
-            addMarker(defaultLatLng);
-            reverseGeocode(currentLatLng);
-        }
-
-        map.on('moveend', debounce(() => {
-            const newCenter = map.getCenter();
-            currentLatLng = { lat: newCenter.lat, lng: newCenter.lng };
-            if (marker) {
-                marker.setLatLng(newCenter);
-            } else {
-                 addMarker([newCenter.lat, newCenter.lng]);
-            }
-            reverseGeocode(currentLatLng);
-        }, 1000));
-    }
-
-    function addMarker(location) {
-        if (marker) {
-            marker.setLatLng(location);
-        } else {
-            marker = L.marker(location, { icon: customPinIcon, draggable: false }).addTo(map);
-        }
-    }
-
-    function handleLocationError(browserHasGeolocation, pos, error = null) {
-        let message = browserHasGeolocation
-            ? 'Error: Izin lokasi ditolak atau tidak tersedia.'
-            : 'Error: Browser Anda tidak mendukung geolokasi.';
-        if (error) {
-            console.error('Geolocation error:', error.message);
-        }
-        currentAddressText = message + " Menggunakan lokasi default.";
-        document.getElementById('mainAddress').textContent = currentAddressText;
-    }
-
-
-    document.addEventListener('DOMContentLoaded', initMap);
-
-    // --- Modal/Popup Control JavaScript ---
-    const locationModal = document.getElementById('locationModal');
-    const editLocationBtn = document.getElementById('editLocationBtn');
-    const closeModalBtn = document.getElementById('closeModalBtn');
-    const cancelModalBtn = document.getElementById('cancelModalBtn');
-    const confirmLocationBtn = document.getElementById('confirmLocationBtn');
-    const modalSearchInput = document.getElementById('modalSearchInput');
-
-    function openModal() {
-        locationModal.classList.add('active');
-        // Pre-fill search input with current address if available
-        if (currentAddressText && currentAddressText !== 'Mendapatkan lokasi...') {
-            modalSearchInput.value = currentAddressText;
-        } else {
-            modalSearchInput.value = '';
-        }
-        // Invalidate map size to ensure it renders correctly within the modal after being hidden
-        if (map) {
-             map.invalidateSize();
-             // Center map on current location when opening modal
-             if (currentLatLng) {
-                map.setView([currentLatLng.lat, currentLatLng.lng], map.getZoom());
-             }
-        }
-        modalSearchInput.focus(); // Focus the search input
-    }
-
-    function closeModal() {
-        locationModal.classList.remove('active');
-    }
-
-    editLocationBtn.addEventListener('click', openModal);
-    locationModal.addEventListener('click', (e) => { // Close modal by clicking overlay
-        if (e.target === locationModal) {
-            closeModal();
-        }
-    });
-    closeModalBtn.addEventListener('click', closeModal);
-    cancelModalBtn.addEventListener('click', closeModal);
-
-    confirmLocationBtn.addEventListener('click', () => {
-        // When confirm is clicked, the mainAddress should already be updated by search/drag
-        // We just close the modal.
-        closeModal();
-    });
-
-    // Debounced search for the modal input
-    modalSearchInput.addEventListener('input', debounce((e) => {
-        searchAddress(e.target.value);
-    }, 1500)); // 1.5 second debounce for search
-
-
-    // --- Existing JavaScript Logic (remaining) ---
-
-    let amount = 1.25;
-    function changeAmount(delta) {
-        let step = 0.25;
-        amount = Math.max(0.25, Math.round((amount + delta * step) * 100) / 100);
-        document.getElementById('amountValue').textContent = amount;
-        document.getElementById('amountSummary').textContent = amount.toLocaleString('id-ID', {minimumFractionDigits:2}) + ' Kg';
-        document.getElementById('pointSummary').textContent = Math.round(amount * 2000);
-    }
     changeAmount(0);
+};
 
-    document.addEventListener('DOMContentLoaded', function() {
-        const now = new Date();
-        document.getElementById('dateInput').value = now.toISOString().slice(0,10);
-        document.getElementById('timeInput').value = now.toTimeString().slice(0,5);
-    });
+document.getElementById('editBtn').addEventListener('click', () => {
+    document.getElementById('mapContainer').classList.add('z-[9999]');
+    document.getElementById('formSection').classList.add('hidden');
+    document.getElementById('mapPin').classList.remove('hidden');
+    document.getElementById('confirmButtonWrapper').classList.remove('hidden');
+    document.getElementById('mapSearchInputWrapper').classList.remove('hidden');
+    
+    setTimeout(() => { map.invalidateSize(); }, 100);
+});
 
+document.getElementById('confirmLocation').addEventListener('click', () => {
+    document.getElementById('mapContainer').classList.remove('z-[9999]');
+    document.getElementById('formSection').classList.remove('hidden');
+    document.getElementById('mapPin').classList.add('hidden');
+    document.getElementById('confirmButtonWrapper').classList.add('hidden');
+    document.getElementById('mapSearchInputWrapper').classList.add('hidden');
+    
+});
 
-    document.getElementById('pickupForm').addEventListener('submit', async function(e) {
+document.getElementById('mapSearchBtn').addEventListener('click', searchAddress);
+document.getElementById('mapSearchInput').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
         e.preventDefault();
-        const addressDetail = document.getElementById('addressDetail').value ? (', ' + document.getElementById('addressDetail').value) : '';
-        const finalAddress = currentAddressText + addressDetail; // Use currentAddressText from JS
-
-        const date = document.getElementById('dateInput').value;
-        const time = document.getElementById('timeInput').value;
-        const messageDiv = document.getElementById('message');
-        messageDiv.textContent = '';
-        messageDiv.className = '';
-
-        if (!currentLatLng) {
-            messageDiv.textContent = 'Tidak dapat menentukan lokasi. Mohon izinkan akses lokasi atau coba lagi.';
-            messageDiv.className = 'error';
-            return;
-        }
-        if (!date || !time || !amount) {
-            messageDiv.textContent = 'Tanggal, Pukul, dan Jumlah Sampah wajib diisi.';
-            messageDiv.className = 'error';
-            return;
-        }
-        document.getElementById('pickupBtn').disabled = true;
-        const token = localStorage.getItem('jwt');
-        try {
-            const res = await fetch('/api/pick-up', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': token ? `Bearer ${token}` : ''
-                },
-                body: JSON.stringify({
-                    address: finalAddress,
-                    latitude: currentLatLng.lat,
-                    longitude: currentLatLng.lng,
-                    amount: amount,
-                    date: date,
-                    time: time
-                })
-            });
-            const data = await res.json();
-            if (data.status) {
-                messageDiv.textContent = 'Pick-up berhasil dibuat!';
-                messageDiv.className = 'success';
-                setTimeout(() => window.location.href = '/dashboard', 1200);
-            } else {
-                messageDiv.textContent = data.message || 'Gagal membuat pick-up.';
-                messageDiv.className = 'error';
-            }
-        } catch (err) {
-            messageDiv.textContent = 'Terjadi kesalahan. Coba lagi.';
-            messageDiv.className = 'error';
-        }
-        document.getElementById('pickupBtn').disabled = false;
-    });
-    </script>
+        searchAddress();
+    }
+});
+</script>
 </body>
 </html>
