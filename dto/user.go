@@ -49,6 +49,10 @@ type (
 		Email       string `json:"email" form:"email"`
 		PhoneNumber string `json:"phone_number" form:"phone_number"`
 		Password    string `json:"password" form:"password" binding:"required"`
+		Username    string `json:"username,omitempty"`
+		Name        string `json:"name,omitempty"`
+		Gender      string `json:"gender,omitempty"`
+		Address     string `json:"address,omitempty"`
 	}
 
 	UserUpdateRequest struct {

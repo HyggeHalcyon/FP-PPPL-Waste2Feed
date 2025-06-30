@@ -3,135 +3,140 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <title>Dashboard Peternak - Waste2Feed</title>
     <style>
         body {
             margin: 0;
             padding: 0;
-            font-family: Arial, sans-serif;
-            background: #FFF9E1;
+            font-family: 'Poppins', sans-serif; /* Apply Poppins as the primary font */
+            background: #FFF9E1; /* Main background color */
             min-height: 100vh;
         }
+        /* Styles from the previous code, adjusted or retained */
         .header {
+            background-color: #2E7D32; /* Green background for the header */
+            color: white;
+            padding: 20px 20px 0px 20px; /* Adjusted padding to match new design */
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            padding: 24px 20px 0 20px;
+            align-items: center;
+            border-bottom-left-radius: 1rem; /* rounded-b-2xl in Tailwind */
+            border-bottom-right-radius: 1rem; /* rounded-b-2xl in Tailwind */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md in Tailwind */
+            position: relative;
+            z-index: 10;
         }
         .greeting {
-            font-size: 20px;
-            color: #5B7B3A;
-            font-weight: 500;
+            font-size: 20px; /* text-2xl in Tailwind */
+            font-weight: bold; /* font-bold in Tailwind */
+            color: white; /* text-white */
+            margin-bottom: 4px; /* mb-1 in Tailwind */
+            display: inline-block; /* To be side-by-side with Admin */
+            margin-right: 10px; /* Space between Hello and Admin */
         }
         .greeting b {
-            color: #2E7D32;
+            color: #C8E6C9; /* text-[#C8E6C9] */
         }
         .profile-img {
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
+            width: 40px; /* w-10 */
+            height: 40px; /* h-10 */
+            border-radius: 50%; /* rounded-full */
             object-fit: cover;
-            border: 2px solid #8CB97A;
+            border: 2px solid white; /* border-2 border-white */
             cursor: pointer;
         }
-        .main {
-            padding: 0 20px;
+
+        /* Container for the courier list, adjusted to be below the header */
+        .main-content-wrapper {
+            padding: 20px 20px 12px 20px; /* px-4 py-5 my-3 converted to pixels */
+            margin-top: 12px; /* my-3 converts to margin-top and margin-bottom 12px */
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 0;
         }
-        .main-img {
-            width: 100%;
-            max-width: 340px;
-            border-radius: 18px;
-            margin: 0 auto 18px auto;
-            display: block;
-            height: 120px;
-            object-fit: cover;
-        }
-        .menu {
-            display: flex;
-            gap: 18px;
-            margin-top: 10px;
-        }
-        .menu-item {
-            width: 140px;
-            height: 110px;
-            background: #8CB97A;
+
+        .card {
+            background: #FFF9E1;
             border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* Added shadow back as it was missing */
+            padding: 20px; /* px-4 converted to padding as it's a card, not just horizontal padding */
+        }
+        .section-title-container { /* New class for the flex container */
             display: flex;
-            flex-direction: column;
+            justify-content: space-between;
             align-items: center;
-            justify-content: center;
-            color: #234B1C;
-            font-size: 16px;
-            font-weight: 500;
-            cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-            transition: background 0.2s;
-        }
-        .menu-item:hover {
-            background: #A5D6A7;
-        }
-        .menu-item img {
-            width: 48px;
-            height: 48px;
-            margin-bottom: 10px;
         }
         .section-title {
-            font-size: 17px;
+            font-size: 20px; /* text-xl */
+            font-weight: bold; /* font-bold */
+            color: #2E7D32;
+        }
+        .add-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 16px; /* Adjusted padding for a smaller button */
+            background-color: #8BC34A; /* Tailwind's bg-[#8BC34A] */
+            color: white;
+            border-radius: 9999px; /* rounded-full in Tailwind */
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* shadow-md in Tailwind */
+            transition: background-color 0.2s ease-in-out;
+            cursor: pointer;
+            text-decoration: none; /* Remove underline for anchor tag */
+            font-size: 14px; /* Adjusted font size for button text */
+            gap: 4px; /* Space between plus and text */
+        }
+        .add-button:hover {
+            background-color: #7CB342; /* Tailwind's hover:bg-[#7CB342] */
+        }
+        .courier-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0; /* py-3 */
+            border-bottom: 1px solid #F0F4C3; /* border-b border-[#F0F4C3] */
+            color: #4CAF50; /* text-[#4CAF50] */
+            font-size: 18px; /* text-lg */
+        }
+        .courier-item:last-child {
+            border-bottom: none; /* last:border-b-0 */
+        }
+        .courier-info {
+            display: flex;
+            flex-direction: column;
+        }
+        .courier-username {
+            font-size: 18px;
             color: #234B1C;
-            font-weight: bold;
-            margin: 24px 0 10px 0;
+            font-weight: 500;
         }
-        .info-section {
-            width: 100%;
-            border-radius: 16px;
-            overflow: hidden;
-            margin-bottom: 18px;
-        }
-        .info-img {
-            width: 100%;
-            height: 70px;
-            object-fit: cover;
-            display: block;
-        }
-        .info-label {
-            position: absolute;
-            left: 0; right: 0; top: 50%;
-            transform: translateY(-50%);
-            text-align: center;
-            color: #fff;
-            font-size: 18px;
-            font-weight: bold;
-            text-shadow: 0 2px 8px rgba(0,0,0,0.18);
-        }
-        .info-link {
-            display: block;
-            position: relative;
-            width: 100%;
-            height: 70px;
-            border-radius: 16px;
-            overflow: hidden;
-            margin-bottom: 18px;
-            background: #eee;
-            text-decoration: none;
-        }
-        .info-link .info-label {
-            position: absolute;
-            left: 0; right: 0; top: 50%;
-            transform: translateY(-50%);
-            text-align: center;
-            color: #fff;
-            font-size: 18px;
-            font-weight: bold;
-            text-shadow: 0 2px 8px rgba(0,0,0,0.18);
-        }
-        .section-title-green {
-            font-size: 17px;
+        .courier-email, .courier-phone {
+            font-size: 14px;
             color: #5B7B3A;
-            font-weight: bold;
-            margin: 24px 0 10px 0;
         }
-        /* Sidebar styles (same as dashboard-user) */
+        .edit-btn {
+            background: #8CB97A;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 16px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .edit-btn:hover {
+            background: #7CB342; /* Hover background color */
+        }
+        .empty-state {
+            text-align: center;
+            color: gray; /* text-gray-500 */
+            padding: 12px 0; /* py-3 */
+        }
+        /* Sidebar styles (retained from previous code) */
         .sidebar {
             position: fixed;
             top: 0;
@@ -143,7 +148,7 @@
             box-shadow: -2px 0 16px rgba(0,0,0,0.08);
             z-index: 100;
             transition: right 0.3s cubic-bezier(.4,0,.2,1);
-            padding: 0 0 0 0;
+            padding: 0;
             overflow-y: auto;
         }
         .sidebar.open {
@@ -181,35 +186,8 @@
             font-weight: bold;
             margin: 28px 0 8px 24px;
         }
-        .sidebar-address-box {
-            background: #E6F2D6;
-            border-radius: 8px;
-            padding: 12px 16px;
-            margin: 0 24px 12px 24px;
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-        }
-        .sidebar-address-icon {
-            color: #E53935;
-            font-size: 22px;
-            margin-top: 2px;
-        }
-        .sidebar-address-content {
-            font-size: 14px;
-            color: #234B1C;
-        }
-        .sidebar-add-address {
-            background: #FFF9C4;
-            border-radius: 8px;
-            padding: 12px 16px;
-            margin: 0 24px 12px 24px;
-            color: #A5A500;
-            font-size: 15px;
-            cursor: pointer;
-        }
         .sidebar-menu {
-            margin: 0 0 0 0;
+            margin: 0;
             padding: 0;
             list-style: none;
         }
@@ -245,58 +223,25 @@
             cursor: pointer;
             z-index: 101;
         }
-        /* Courier list styles */
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        .courier-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #fff;
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-        }
-        .courier-info {
-            display: flex;
-            flex-direction: column;
-        }
-        .courier-name {
-            font-size: 18px;
-            color: #234B1C;
-            font-weight: 500;
-        }
-        .courier-email {
-            font-size: 14px;
-            color: #5B7B3A;
-        }
-        .edit-btn {
-            background: #8CB97A;
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            padding: 10px 16px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        .edit-btn:hover {
-            background: #A5D6A7;
-        }
     </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <div class="header">
-        <div class="greeting" id="greeting">Hallo! <b>User</b></div>
-        <img src="/static/tmp.png" alt="Profile" class="profile-img" id="profileBtn">
+        <div>
+            <div class="greeting p-4 text-2xl font-bold mb-1" id="greeting">Hallo! <b>User</b></div>
+        </div>
+        <div>
+            <img src="/static/tmp.png" alt="Profile" class="profile-img" id="profileBtn">
+        </div>
     </div>
-        <div class="container">
-            <h1>Daftar Kurir</h1>
+
+    <div class="main-content-wrapper">
+     <div class="section-title-container mx-4"> <div class="section-title">Kurir</div>
+        <a href="/add-courier" class="add-button"> <span>+</span>
+            <span>Tambah</span>
+        </a>
+            </div>
+        <div class="card">
             {{range .Users}}
             <div class="courier-item">
                 <div class="courier-info">
@@ -307,11 +252,14 @@
                 <button class="edit-btn" onclick="location.href='/courier?id={{.ID}}'">Edit Profil</button>
             </div>
             {{end}}
+
+            {{if not .Users}}
+            <div class="empty-state">Belum ada kurir terdaftar.</div>
+            {{end}}
         </div>
     </div>
-    <!-- Sidebar Overlay -->
+
     <div id="sidebarOverlay" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.08);z-index:99;"></div>
-    <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
         <div class="sidebar-close" id="sidebarClose"><i class="fa fa-arrow-left"></i></div>
         <div class="sidebar-header">
@@ -327,50 +275,68 @@
             <li onclick="logout()"><span class="sidebar-menu-icon"><i class="fa fa-sign-out-alt"></i></span> Logout</li>
         </ul>
     </div>
+
     <script>
-    // Sidebar logic
-    const sidebar = document.getElementById('sidebar');
-    const profileBtn = document.getElementById('profileBtn');
-    const sidebarClose = document.getElementById('sidebarClose');
-    const sidebarOverlay = document.getElementById('sidebarOverlay');
-    profileBtn.onclick = () => {
-        sidebar.classList.add('open');
-        sidebarOverlay.style.display = 'block';
-    };
-    sidebarClose.onclick = () => {
-        sidebar.classList.remove('open');
-        sidebarOverlay.style.display = 'none';
-    };
-    sidebarOverlay.onclick = () => {
-        sidebar.classList.remove('open');
-        sidebarOverlay.style.display = 'none';
-    };
-    // Fetch user data (reuse from dashboard-user)
-    function fetchUserData() {
-        const token = localStorage.getItem('jwt');
-        fetch('/api/user/me', {
-            headers: {
-                'Authorization': token ? `Bearer ${token}` : ''
-            }
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.status && data.data) {
-                document.getElementById('greeting').innerHTML = `Hallo! <b>${data.data.username || 'User'}</b>`;
-                document.getElementById('sidebarUserName').textContent = data.data.username || 'User';
-                let contact = data.data.email ? data.data.email : (data.data.phone_number ? data.data.phone_number : '-');
-                document.getElementById('sidebarUserPhone').textContent = contact;
-                document.getElementById('sidebarAddress').textContent = data.data.address || '-';
-            }
-        });
-    }
-    fetchUserData();
-    // Logout
-    function logout() {
-        localStorage.removeItem('jwt');
-        document.cookie = 'jwt=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-        window.location.href = '/';
-    }
+        // Sidebar logic
+        const sidebar = document.getElementById('sidebar');
+        const profileBtn = document.getElementById('profileBtn');
+        const sidebarClose = document.getElementById('sidebarClose');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+        profileBtn.onclick = () => {
+            sidebar.classList.add('open');
+            sidebarOverlay.style.display = 'block';
+        };
+
+        sidebarClose.onclick = () => {
+            sidebar.classList.remove('open');
+            sidebarOverlay.style.display = 'none';
+        };
+
+        sidebarOverlay.onclick = () => {
+            sidebar.classList.remove('open');
+            sidebarOverlay.style.display = 'none';
+        };
+
+        // Fetch user data
+        function fetchUserData() {
+            const token = localStorage.getItem('jwt');
+            fetch('/api/user/me', {
+                headers: {
+                    'Authorization': token ? `Bearer ${token}` : ''
+                }
+            })
+            .then(res => {
+                if (!res.ok) {
+                    // Handle unauthorized or other errors, maybe redirect to login
+                    if (res.status === 401) {
+                        console.log('Unauthorized, redirecting to login...');
+                        logout(); // Clear token and redirect
+                    }
+                    throw new Error(`HTTP error! status: ${res.status}`);
+                }
+                return res.json();
+            })
+            .then(data => {
+                if (data.status && data.data) {
+                    document.getElementById('greeting').innerHTML = `Hallo! <b>${data.data.username || 'User'}</b>`;
+                    document.getElementById('sidebarUserName').textContent = data.data.username || 'User';
+                    let contact = data.data.email ? data.data.email : (data.data.phone_number ? data.data.phone_number : '-');
+                    document.getElementById('sidebarUserPhone').textContent = contact;
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching user data:', error);
+            });
+        }
+        fetchUserData();
+
+        // Logout function
+        function logout() {
+            localStorage.removeItem('jwt');
+            document.cookie = 'jwt=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/';
+            window.location.href = '/';
+        }
     </script>
 </body>
 </html>
