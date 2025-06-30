@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Achievement</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    </head>
+    <body class="bg-yellow-100 min-h-screen font-sans relative">
+        <!-- Notifikasi klaim -->
+        <div
+            id="notification"
+            class="hidden fixed flex justify-center items-center w-3/5 top-4 left-1/2 transform -translate-x-1/2 bg-[#83AF7F] text-white px-4 py-2 rounded shadow z-50">
+            Pencapaian berhasil diklaim!
+        </div>
+
+        <!-- Kontainer utama -->
+        <div class="max-w-sm mx-auto p-4">
+            <!-- Tombol kembali -->
+            <button
+                id="backButton"
+                class="fixed left-6 top-6 text-[#2E7D32] w-12 h-12 text-xl bg-white p-2 rounded-full shadow flex justify-center items-center">
+                <i class="fa-solid fa-arrow-left"></i>
+            </button>
+
+            <h1 class="text-xl font-bold text-green-900 mb-4 text-right">
+                Pencapaianmu!
+            </h1>
+
+            <!-- Daftar pencapaian -->
+            <div id="achievements" class="space-y-4"></div>
+
+            <!-- Tombol utama -->
+            <div class="fixed bottom-20 w-full">
+                <button
+                    class="w-4/5 bg-green-800 text-white py-3 rounded-full font-bold mt-8">
+                    Mulai Pick-Up
+                </button>
+            </div>
+        </div>
+
+        <script>
+      const data = [
+        {
+          title: "Pahlawan Lingkungan",
+          desc: "Berhasil mengumpulkan 1000 kg sampah",
+          image: "/static/trash.png",
+          progress: 100,
+          claimed: 0
+        },
+        {
+          title: "Superhero Bumi",
+          desc: "Berhasil mengumpulkan 10.000 kg sampah",
+          image: "/static/trash bin.png",
+          progress: 20,
+          claimed: 0
+        },
+        {
+          title: "Sampah jadi Uang?!",
+          desc: "Berhasil menukar poin untuk pertama kalinya",
+          image: "/static/exchange-poin.png",
+          progress: 100,
+          claimed: 0
+        },
+        {
+          title: "Mulai aja dulu!",
+          desc: "Aksi pertamamu untuk menyelamatkan Bumi",
+          image: "/static/achievement-icon.png",
+          progress: 100,
+          claimed: 1
+        }
+      ];
+
+      const container = document.getElementById("achievements");
+
+      function renderAchievements() {
+        container.innerHTML = "";
+        data.forEach((item) => {
+          const wrapper = document.createElement("div");
+          wrapper.className =
+            "bg-white rounded-xl shadow p-4 flex items-center gap-4";
+
+          // Gambar pencapaian
+          const iconBox = document.createElement("div");
+          iconBox.className =
+            "w-12 h-12 flex items-center justify-center overflow-hidden rounded-full bg-gray-100";
+          const img = document.createElement("img");
+          img.src = item.image;
+          img.alt = item.title;
+          img.className = "w-full h-full object-cover";
+          iconBox.appendChild(img);
+
+          // Konten pencapaian
+          const content = document.createElement("div");
+          content.className = "flex-1";
+
+          const title = document.createElement("p");
+          title.className = "font-bold text-sm";
+          title.textContent = item.title;
+
+          const desc = document.createElement("p");
+          desc.className = "text-xs text-gray-600";
+          desc.textContent = item.desc;
+
+          const progressBar = document.createElement("div");
+          progressBar.className =
+            "w-full h-2 bg-[#83AF7F] rounded mt-2 overflow-hidden";
+          const progressFill = document.createElement("div");
+          progressFill.className = `h-2 rounded bg-[#FDC603]`;
+          progressFill.style.width = `${item.progress}%`;
+          progressBar.appendChild(progressFill);
+
+          // Tombol klaim
+          const claimBtn = document.createElement("button");
+          claimBtn.className = `text-xs px-2 py-1 rounded-full text-white font-semibold transition duration-200 ${
+            item.claimed
+              ? "bg-gray-400 cursor-default"
+              : item.progress === 100
+              ? "bg-[#0B4619] hover:opacity-90"
+              : "bg-gray-300 cursor-not-allowed"
+          }`;
+          claimBtn.textContent = item.claimed ? "Sudah Diklaim" : "Klaim";
+
+          if (!item.claimed && item.progress === 100) {
+            claimBtn.addEventListener("click", () => {
+              item.claimed = 1;
+              showNotification();
+              renderAchievements();
+            });
+          }
+
+          content.appendChild(title);
+          content.appendChild(desc);
+          content.appendChild(progressBar);
+
+          wrapper.appendChild(iconBox);
+          wrapper.appendChild(content);
+          wrapper.appendChild(claimBtn);
+
+          container.appendChild(wrapper);
+        });
+      }
+
+      function showNotification() {
+        const notif = document.getElementById("notification");
+        notif.classList.remove("hidden");
+        setTimeout(() => {
+          notif.classList.add("hidden");
+        }, 2000);
+      }
+
+      renderAchievements();
+    </script>
+    </body>
+</html>

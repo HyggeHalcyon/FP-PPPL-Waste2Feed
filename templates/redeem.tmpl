@@ -1,201 +1,296 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Redeem Poin - Waste2Feed</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            background: #FFF9E1;
-            min-height: 100vh;
-        }
-        .container {
-            max-width: 400px;
-            margin: 0 auto;
-            padding: 24px 16px 0 16px;
-        }
-        .point-box {
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-            padding: 16px 18px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 24px;
-        }
-        .point-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: #FFEB3B;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .point-icon img {
-            width: 32px;
-            height: 32px;
-        }
-        .point-label {
-            font-size: 16px;
-            color: #2E7D32;
-            font-weight: bold;
-        }
-        .point-value {
-            font-size: 20px;
-            color: #2E7D32;
-            font-weight: bold;
-        }
-        .form-label {
-            font-size: 15px;
-            color: #8B7B3A;
-            margin-bottom: 6px;
-            margin-top: 18px;
-            font-weight: bold;
-        }
-        .input {
-            width: 100%;
-            padding: 12px 14px;
-            border-radius: 8px;
-            border: none;
-            font-size: 16px;
-            margin-bottom: 10px;
-            background: #fff;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-        }
-        .button {
-            width: 100%;
-            padding: 14px;
-            background: #FFD600;
-            color: #2E7D32;
-            border: none;
-            border-radius: 8px;
-            font-size: 18px;
-            font-weight: bold;
-            margin-top: 12px;
-            cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-        }
-        .button:disabled {
-            background: #FFF9C4;
-            color: #BDB76B;
-            cursor: not-allowed;
-        }
-        .disclaimer-title {
-            color: #BCA100;
-            font-size: 16px;
-            font-weight: bold;
-            margin-top: 32px;
-            margin-bottom: 8px;
-        }
-        .disclaimer {
-            font-size: 14px;
-            color: #7B6F2A;
-            background: #FFFDE7;
-            border-radius: 8px;
-            padding: 16px;
-            margin-bottom: 24px;
-        }
-        .error, .success {
-            margin-top: 10px;
-            font-size: 15px;
-            text-align: center;
-        }
-        .error { color: #ff5252; }
-        .success { color: #2E7D32; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <a href="/dashboard" style="position:absolute;left:18px;top:18px;text-decoration:none;color:#2E7D32;font-size:24px;background:#fff;padding:4px 10px;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,0.08);z-index:10;"><span style="font-weight:bold;">&#8592;</span></a>
-        <div class="point-box">
-            <div class="point-icon"><img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Poin"></div>
-            <div>
-                <div class="point-label">Total Poin</div>
-                <div class="point-value" id="totalPoints">-</div>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Redeem Poin - Waste2Feed</title>
+        <link rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+    <body
+        class="bg-gradient-to-b from-[#FFF9E1] to-[#FFF3B0] min-h-screen font-sans">
+        <div class="max-w-sm mx-auto px-4 pt-6 pb-16 relative">
+            <a id="dashboardBackBtn" href="/dashboard"
+                class="fixed left-6 top-6 text-[#2E7D32] w-12 h-12 text-xl bg-white p-2 rounded-full shadow flex justify-center items-center">
+                <i class="fa-solid fa-arrow-left"></i>
+            </a>
+
+            <div id="redeemSection">
+                <div
+                    class="flex items-center bg-white shadow rounded-xl p-4 gap-4 mt-10">
+                    <div
+                        class="w-12 h-12 bg-yellow-300 rounded-full flex items-center justify-center">
+                        <img src="/static/coin.png" alt="Coin"
+                            class="w-12 h-12">
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-600 font-medium">Total
+                            Poin</p>
+                        <p class="text-xl font-bold text-[#2E7D32]"
+                            id="totalPoints">-</p>
+                    </div>
+                </div>
+
+                <form id="redeemForm" class="mt-6 space-y-3">
+                    <div>
+                        <label
+                            class="text-sm font-semibold text-[#8B7B3A]">Pilih
+                            Metode Redeem</label>
+                        <input type="text" id="bank" name="bank" value="BCA"
+                            placeholder="Transfer Bank - BCA"
+                            class="w-full mt-1 py-3 px-4 rounded-lg shadow text-sm placeholder:text-gray-400"
+                            required>
+                    </div>
+
+                    <input type="text" id="account" name="account"
+                        placeholder="masukan nomor rekening"
+                        class="w-full py-3 px-4 rounded-lg shadow text-sm placeholder:text-gray-400"
+                        required>
+
+                    <div>
+                        <label
+                            class="text-sm font-semibold text-[#8B7B3A]">Nominal
+                            Poin</label>
+                        <input type="number" id="nominal" name="nominal"
+                            placeholder="150.000" min="1"
+                            class="w-full mt-1 py-3 px-4 rounded-lg shadow text-sm placeholder:text-gray-400"
+                            required>
+                    </div>
+
+                    <button type="submit" id="redeemBtn"
+                        class="w-full py-3 rounded-lg bg-yellow-400 hover:bg-yellow-300 text-[#2E7D32] font-bold text-base shadow-md transition">Redeem</button>
+
+                    <div id="message" class="text-center text-sm mt-1"></div>
+                </form>
+
+                <div class="mt-6">
+                    <h2
+                        class="text-[#BCA100] text-base font-bold mb-2">Disclaimer
+                        Pencairan Poin</h2>
+                    <div class="text-gray-500 text-sm p-4">
+                        <ol class="list-decimal list-outside space-y-2">
+                            <li>Pencairan poin saat ini hanya dapat dilakukan
+                                melalui transfer bank, belum bisa melalui e-
+                                wallet.
+                                1 poin Anda setara dengan Rp 1,-. Pencairan poin
+                                Anda dapat dilakukan jika Anda telah memiliki
+                                minimal 10.500 poin atau setara dengan Rp
+                                10.500,-.
+                                Setiap Anda mencairkan poin maka akan selalu
+                                disisakan 500 poin pada aplikasi Waste2Feed Anda
+                                agar aplikasi Anda tetap berstatus aktif.</li>
+                            <li>Jika Anda memilih bank Mandiri, BNI, atau BCA,
+                                maka
+                                pencairan poin Anda bebas biaya transfer. Jika
+                                Anda
+                                memilih bank lain di luar ketiga bank tersebut
+                                maka
+                                pencairan poin Anda akan dikenakan biaya
+                                transfer
+                                bank sesuai aturan bank yang berlaku, yang
+                                biayanya
+                                akan ditanggung oleh Anda sendiri. Apabila
+                                setelah
+                                dipotong biaya transfer jumlah poin yang akan
+                                dicairkan tidak mencukupi, maka pencairan poin
+                                tidak
+                                dapat dilakukan.</li>
+                            <li>Pencairan poin yang dilakukan pada hari Senin s/
+                                d
+                                Jumat sebelum pukul 11.00 WIB maka akan
+                                ditransfer
+                                pada hari yang sama. Apabila pencairan poin
+                                dilakukan di hari Sabtu, Minggu, dan hari libur
+                                nasional yang ditetapkan resmi oleh Pemerintah
+                                RI
+                                dan/atau setelah pukul 11.00 WIB, maka
+                                pentransferan
+                                uang akan dilakukan pada hari kerja
+                                berikutnya.</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="flex justify-center items-center">
+                    <a id="toggleHowTo"
+                        class="text-xs text-center text-gray-500 mt-6 cursor-pointer">butuh
+                        bantuan?</a>
+                </div>
+            </div>
+
+            <div id="howToSection" class="hidden">
+                <div
+                    class="flex items-center bg-white shadow rounded-xl p-4 gap-4 mt-10">
+                    <div
+                        class="w-12 h-12 bg-yellow-300 rounded-full flex items-center justify-center">
+                        <img src="/static/coin.png" alt="Coin"
+                            class="w-12 h-12">
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-600 font-medium">Total
+                            Poin</p>
+                        <p class="text-xl font-bold text-[#2E7D32]">200.000</p>
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <h2 class="text-[#BCA100] text-base font-bold mb-2">Cara
+                        Tukar
+                        Poin</h2>
+                    <ol
+                        class="list-decimal list-outside text-sm text-gray-500 space-y-3 px-4">
+                        <li>Pastikan Anda telah mendownload aplikasi Waste2Feed
+                            dan
+                            telah mengisi data-data yang dibutuhkan dengan
+                            lengkap.</li>
+                        <li>Sebelum menukarkan poin, pastikan bahwa jumlah poin
+                            yang
+                            telah Anda kumpulkan dari penjualan sampah makanan
+                            telah
+                            mencukupi untuk dapat ditukarkan, sesuai dengan
+                            Disclaimer yang tercantum pada ikon
+                            "Tukar Poin".</li>
+                        <li>Setiap poin yang Anda kumpulkan nilainya setara
+                            dengan
+                            Rp 1. Artinya jika Anda punya 50.000 poin nilainya
+                            setara dengan Rp50.000,-.</li>
+                        <li>Saat ini kami hanya melayani penukaran poin Anda
+                            melalui
+                            transfer bank, belum bisa melalui e-wallet.</li>
+                        <li>Ketika Anda memilih ikon "Tukar Poin", perhatikan
+                            disclaimer yang ada di dalamnya dan pastikan bahwa
+                            Anda
+                            telah membaca, mengerti, dan memahami isi dari
+                            Disclaimer tersebut. Anda dapat memilih bank yang
+                            menurut Anda paling mudah dan cepat prosesnya, serta
+                            paling sedikit biaya transfernya sehingga memudahkan
+                            dan
+                            memuaskan Anda sebagai pelanggan Waste2Feed.</li>
+                        <li>Pilih metode redeem sesuai dengan bank yang telah
+                            Anda
+                            daftarkan, masukkan nominal poin yang ingin Anda
+                            cairkan, kemudian klik “Redeem”. Poin Anda di
+                            Aplikasi
+                            akan langsung terpotong dan akan ditransfer paling
+                            lambat dalam 2x24 jam.</li>
+                    </ol>
+                    <button id="backToRedeem"
+                        class="hidden fixed flex justify-center items-center w-12 h-12 text-xl left-8 bottom-16 py-3 rounded-full bg-white hover:bg-gray-100 text-gray-600 font-semibold text-sm shadow-md transition">
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </button>
+                </div>
             </div>
         </div>
-        <form id="redeemForm" autocomplete="off">
-            <div class="form-label">Pilih Metode Redeem</div>
-            <input class="input" type="text" id="bank" name="bank" placeholder="Transfer Bank - BCA" value="BCA" required>
-            <input class="input" type="text" id="account" name="account" placeholder="masukan nomor rekening" required>
-            <div class="form-label">Nominal Poin</div>
-            <input class="input" type="number" id="nominal" name="nominal" placeholder="150.000" min="1" required>
-            <button class="button" type="submit" id="redeemBtn">Redeem</button>
-            <div id="message"></div>
-        </form>
-        <div class="disclaimer-title">Disclaimer Pencairan Poin</div>
-        <div class="disclaimer">
-            <ol style="padding-left: 18px;">
-                <li>Pencairan poin saat ini hanya dapat dilakukan melalui transfer bank, belum bisa melalui e-wallet. 1 poin Anda setara dengan Rp 1,-. Pencairan poin Anda dapat dilakukan jika Anda telah memiliki minimal 10.500 poin atau setara dengan Rp 10.500,-. Setiap Anda mencairkan poin maka akan selalu disisakan 500 poin pada aplikasi Waste2Feed Anda agar aplikasi Anda tetap berstatus aktif.</li>
-                <li>Jika Anda memilih bank Mandiri, BNI, atau BCA, maka pencairan poin Anda bebas biaya transfer. Jika Anda memilih bank lain di luar ketiga bank tersebut maka pencairan poin Anda akan dikenakan biaya transfer sesuai aturan bank yang berlaku, yang biayanya akan ditanggung oleh Anda sendiri. Apabila setelah dipotong biaya transfer jumlah poin yang akan dicairkan tidak mencukupi, maka pencairan poin tidak dapat dilakukan.</li>
-                <li>Pencairan poin yang dilakukan pada hari Senin s/d Jumat sebelum pukul 15.00 WIB akan diproses di hari yang sama. Jika dilakukan di luar waktu tersebut, maka akan diproses di hari kerja berikutnya.</li>
-            </ol>
+
+        <div id="successModal"
+            class="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm flex justify-center items-center hidden z-50">
+            <div
+                class="bg-white rounded-xl p-6 w-11/12 max-w-sm shadow-lg text-center animate-fade-in">
+                <h2 class="text-lg font-bold mb-2 text-gray-800">Poin berhasil
+                    ditukarkan!</h2>
+                <p class="text-sm text-gray-500 mb-4">Terima kasih telah
+                    menukarkan poin anda! Anda dapat mengecek saldo bank anda.
+                    Hubungi help desk jika ada kekurangan.</p>
+                <button id="closeModalBtn"
+                    class="w-full py-2 mb-3 rounded-full bg-gray-100 text-gray-600 font-semibold text-sm shadow hover:bg-gray-200 transition">KEMBALI</button>
+                <p class="text-[#FDC603] font-bold text-lg"
+                    id="redeemAmount">+Rp0</p>
+            </div>
         </div>
-    </div>
-    <script>
-    // Fetch total points
+
+        <script>
     function fetchUserPoints() {
-        const token = localStorage.getItem('jwt');
-        fetch('/api/user/me', {
-            headers: {
-                'Authorization': token ? `Bearer ${token}` : ''
-            }
-        })
+      const token = localStorage.getItem('jwt');
+      fetch('/api/user/me', {
+        headers: {
+          'Authorization': token ? `Bearer ${token}` : ''
+        }
+      })
         .then(res => res.json())
         .then(data => {
-            if (data.status && data.data) {
-                document.getElementById('totalPoints').textContent = data.data.points?.toLocaleString('id-ID') || '0';
-            }
+          if (data.status && data.data) {
+            document.getElementById('totalPoints').textContent =
+              data.data.points?.toLocaleString('id-ID') || '0';
+          }
         });
     }
+
     fetchUserPoints();
 
-    // Redeem form
-    document.getElementById('redeemForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const bank = document.getElementById('bank').value.trim();
-        const account = document.getElementById('account').value.trim();
-        const nominal = parseInt(document.getElementById('nominal').value, 10);
-        const messageDiv = document.getElementById('message');
-        messageDiv.textContent = '';
-        messageDiv.className = '';
-        if (!bank || !account || !nominal || nominal < 1) {
-            messageDiv.textContent = 'Semua field harus diisi dengan benar.';
-            messageDiv.className = 'error';
-            return;
-        }
-        document.getElementById('redeemBtn').disabled = true;
-        const token = localStorage.getItem('jwt');
-        try {
-            const res = await fetch('/api/user/redeem', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': token ? `Bearer ${token}` : ''
-                },
-                body: JSON.stringify({ bank, account, nominal })
-            });
-            const data = await res.json();
-            if (data.status) {
-                messageDiv.textContent = 'Redeem berhasil!';
-                messageDiv.className = 'success';
-                fetchUserPoints();
-                document.getElementById('redeemForm').reset();
-            } else {
-                messageDiv.textContent = data.message || 'Redeem gagal.';
-                messageDiv.className = 'error';
-            }
-        } catch (err) {
-            messageDiv.textContent = 'Terjadi kesalahan. Coba lagi.';
-            messageDiv.className = 'error';
-        }
-        document.getElementById('redeemBtn').disabled = false;
+    document.getElementById('redeemForm').addEventListener('submit', async function (e) {
+  e.preventDefault();
+  const bank = document.getElementById('bank').value.trim();
+  const account = document.getElementById('account').value.trim();
+  const nominal = parseInt(document.getElementById('nominal').value, 10);
+  const messageDiv = document.getElementById('message');
+  messageDiv.textContent = '';
+  messageDiv.className = '';
+  if (!bank || !account || !nominal || nominal < 1) {
+    messageDiv.textContent = 'Semua field harus diisi dengan benar.';
+    messageDiv.className = 'text-red-500';
+    return;
+  }
+  document.getElementById('redeemBtn').disabled = true;
+  const token = localStorage.getItem('jwt');
+  try {
+    const res = await fetch('/api/user/redeem', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token ? `Bearer ${token}` : ''
+      },
+      body: JSON.stringify({ bank, account, nominal })
     });
-    </script>
-</body>
+    const data = await res.json();
+    if (data.status) {
+      fetchUserPoints();
+      document.getElementById('redeemForm').reset();
+
+      // Tampilkan Popup
+      document.getElementById('redeemAmount').textContent = `+Rp${nominal.toLocaleString('id-ID')},00`;
+      document.getElementById('successModal').classList.remove('hidden');
+    } else {
+      messageDiv.textContent = data.message || 'Redeem gagal.';
+      messageDiv.className = 'text-red-500';
+    }
+  } catch (err) {
+    messageDiv.textContent = 'Terjadi kesalahan. Coba lagi.';
+    messageDiv.className = 'text-red-500';
+  }
+  document.getElementById('redeemBtn').disabled = false;
+});
+
+// Event tombol tutup modal
+document.getElementById('closeModalBtn').addEventListener('click', function () {
+  document.getElementById('successModal').classList.add('hidden');
+});
+
+// Toggle ke halaman "Cara Tukar Poin"
+document.getElementById('toggleHowTo').addEventListener('click', function () {
+  document.getElementById('redeemSection').classList.add('hidden');
+  document.getElementById('howToSection').classList.remove('hidden');
+
+  // Sembunyikan tombol back ke dashboard
+  document.getElementById('dashboardBackBtn').classList.add('hidden');
+
+  // Tampilkan tombol kembali dari "butuh bantuan"
+  document.getElementById('backToRedeem').classList.remove('hidden');
+});
+
+document.getElementById('backToRedeem').addEventListener('click', function () {
+  document.getElementById('howToSection').classList.add('hidden');
+  document.getElementById('redeemSection').classList.remove('hidden');
+
+  // Tampilkan kembali tombol back ke dashboard
+  document.getElementById('dashboardBackBtn').classList.remove('hidden');
+
+  // Sembunyikan tombol kembali dari "butuh bantuan"
+  document.getElementById('backToRedeem').classList.add('hidden');
+});
+
+
+
+  </script>
+    </body>
 </html>
