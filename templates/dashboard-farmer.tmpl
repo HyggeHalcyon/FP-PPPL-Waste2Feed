@@ -1,351 +1,148 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <title>Dashboard Peternak - Waste2Feed</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            background: #FFF9E1;
-            min-height: 100vh;
-        }
-        .header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 24px 20px 0 20px;
-        }
-        .greeting {
-            font-size: 20px;
-            color: #5B7B3A;
-            font-weight: 500;
-        }
-        .greeting b {
-            color: #2E7D32;
-        }
-        .profile-img {
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid #8CB97A;
-            cursor: pointer;
-        }
-        .main {
-            padding: 0 20px;
-        }
-        .main-img {
-            width: 100%;
-            max-width: 340px;
-            border-radius: 18px;
-            margin: 0 auto 18px auto;
-            display: block;
-            height: 120px;
-            object-fit: cover;
-        }
-        .menu {
-            display: flex;
-            gap: 18px;
-            margin-top: 10px;
-        }
-        .menu-item {
-            width: 140px;
-            height: 110px;
-            background: #8CB97A;
-            border-radius: 12px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: #234B1C;
-            font-size: 16px;
-            font-weight: 500;
-            cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-            transition: background 0.2s;
-        }
-        .menu-item:hover {
-            background: #A5D6A7;
-        }
-        .menu-item img {
-            width: 48px;
-            height: 48px;
-            margin-bottom: 10px;
-        }
-        .section-title {
-            font-size: 17px;
-            color: #234B1C;
-            font-weight: bold;
-            margin: 24px 0 10px 0;
-        }
-        .info-section {
-            width: 100%;
-            border-radius: 16px;
-            overflow: hidden;
-            margin-bottom: 18px;
-        }
-        .info-img {
-            width: 100%;
-            height: 70px;
-            object-fit: cover;
-            display: block;
-        }
-        .info-label {
-            position: absolute;
-            left: 0; right: 0; top: 50%;
-            transform: translateY(-50%);
-            text-align: center;
-            color: #fff;
-            font-size: 18px;
-            font-weight: bold;
-            text-shadow: 0 2px 8px rgba(0,0,0,0.18);
-        }
-        .info-link {
-            display: block;
-            position: relative;
-            width: 100%;
-            height: 70px;
-            border-radius: 16px;
-            overflow: hidden;
-            margin-bottom: 18px;
-            background: #eee;
-            text-decoration: none;
-        }
-        .info-link .info-label {
-            position: absolute;
-            left: 0; right: 0; top: 50%;
-            transform: translateY(-50%);
-            text-align: center;
-            color: #fff;
-            font-size: 18px;
-            font-weight: bold;
-            text-shadow: 0 2px 8px rgba(0,0,0,0.18);
-        }
-        .section-title-green {
-            font-size: 17px;
-            color: #5B7B3A;
-            font-weight: bold;
-            margin: 24px 0 10px 0;
-        }
-        /* Sidebar styles (same as dashboard-user) */
-        .sidebar {
-            position: fixed;
-            top: 0;
-            right: -100vw;
-            width: 85vw;
-            max-width: 370px;
-            height: 100vh;
-            background: #fff;
-            box-shadow: -2px 0 16px rgba(0,0,0,0.08);
-            z-index: 100;
-            transition: right 0.3s cubic-bezier(.4,0,.2,1);
-            padding: 0 0 0 0;
-            overflow-y: auto;
-        }
-        .sidebar.open {
-            right: 0;
-        }
-        .sidebar-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 32px 24px 0 24px;
-        }
-        .sidebar-profile-img {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid #8CB97A;
-        }
-        .sidebar-user-info {
-            display: flex;
-            flex-direction: column;
-        }
-        .sidebar-user-name {
-            font-size: 18px;
-            color: #2E7D32;
-            font-weight: bold;
-        }
-        .sidebar-user-phone {
-            font-size: 15px;
-            color: #5B7B3A;
-        }
-        .sidebar-section-title {
-            font-size: 16px;
-            color: #2E7D32;
-            font-weight: bold;
-            margin: 28px 0 8px 24px;
-        }
-        .sidebar-address-box {
-            background: #E6F2D6;
-            border-radius: 8px;
-            padding: 12px 16px;
-            margin: 0 24px 12px 24px;
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-        }
-        .sidebar-address-icon {
-            color: #E53935;
-            font-size: 22px;
-            margin-top: 2px;
-        }
-        .sidebar-address-content {
-            font-size: 14px;
-            color: #234B1C;
-        }
-        .sidebar-add-address {
-            background: #FFF9C4;
-            border-radius: 8px;
-            padding: 12px 16px;
-            margin: 0 24px 12px 24px;
-            color: #A5A500;
-            font-size: 15px;
-            cursor: pointer;
-        }
-        .sidebar-menu {
-            margin: 0 0 0 0;
-            padding: 0;
-            list-style: none;
-        }
-        .sidebar-menu li {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            padding: 14px 24px;
-            font-size: 16px;
-            color: #234B1C;
-            border-bottom: 1px solid #F0F0F0;
-            cursor: pointer;
-        }
-        .sidebar-menu li:last-child {
-            border-bottom: none;
-        }
-        .sidebar-menu-icon {
-            font-size: 20px;
-            color: #2E7D32;
-        }
-        .sidebar-close {
-            position: absolute;
-            left: -18px;
-            top: 32px;
-            background: #fff;
-            border-radius: 50%;
-            width: 36px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            cursor: pointer;
-            z-index: 101;
-        }
-    </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
-<body>
-    <div class="header">
-        <div class="greeting" id="greeting">Hallo! <b>User</b></div>
-        <img src="/static/tmp.png" alt="Profile" class="profile-img" id="profileBtn">
-    </div>
-    <div class="main">
-        <img src="/static/wallpaper-2.jpg" alt="Fodder" class="main-img">
-        <div class="menu">
-            <div class="menu-item" onclick="location.href='/fodder'">
-                <img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" alt="Pesan Pakan Ternak">
-                Pesan Pakan Ternak
+<body class="bg-[#E8E8CC] min-h-screen font-[Poppins]">
+
+    <!-- Wrapper -->
+    <div class="relative w-full">
+        
+        <!-- Background Hijau Extend -->
+        <div class="absolute top-0 left-0 w-full h-[150px] bg-[#0B4619] z-0 rounded-b-xl"></div>
+
+        <!-- Header Konten -->
+        <div class="flex flex-1 items-center justify-between px-7 pt-6 w-full h-[50px] relative z-10">
+            <div class="text-lg text-white font-medium">
+                Hello! <b class="text-white">User</b>
             </div>
-            <div class="menu-item" onclick="location.href='/fodder/pending'">
-                <img src="https://cdn-icons-png.flaticon.com/512/3135/3135768.png" alt="Pembayaran">
-                Pembayaran
+            <img src="/static/tmp.png" alt="Profile" class="w-6 h-6 rounded-full border-2 border-[#8CB97A] object-cover cursor-pointer" id="profileBtn">
+        </div>
+
+    </div>
+
+    <!-- Main Content -->
+    <div class="relative z-10 px-5">
+
+        <img src="/static/peternak-wp.png" alt="Fodder" class="w-full mx-auto rounded-xl h-[120px] object-cover mt-4 mb-5 shadow-xl">
+
+        <!-- Menu -->
+        <div class="flex gap-4 mb-4 w-full justify-center">
+            <div class="flex flex-1 flex-col items-center" onclick="location.href='/fodder'">
+                <div class="flex justify-center items-center w-full h-full bg-[#83AF7F] rounded-lg cursor-pointer shadow-md hover:bg-[#A5D6A7]">
+                    <img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" alt="Pesan Pakan" class="w-14 h-14 my-2">
+                </div>
+                <div class="mb-2 mt-2 text-center text-[#0B4619] text-sm font-semibold">
+                    Pesan Pakan Ternak
+                </div>
+            </div>
+            <div class="flex flex-1 flex-col items-center" onclick="location.href='/fodder/pending'">
+                <div class="flex justify-center items-center w-full h-full bg-[#83AF7F] rounded-lg cursor-pointer shadow-md hover:bg-[#A5D6A7]">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3135/3135768.png" alt="Pembayaran" class="w-14 h-14 my-2">
+                </div>
+                <div class="mb-2 mt-2 text-center text-[#0B4619] text-sm font-semibold">
+                    Pembayaran
+                </div>
             </div>
         </div>
-        <div class="section-title">Pelajari Lebih Lanjut</div>
-        <a href="/fodder/information" class="info-link">
-            <img src="/static/wallpaper.jpg" class="info-img" alt="Informasi bahan pakan">
-            <span class="info-label">Informasi bahan pakan</span>
+
+        <!-- Pelajari Lebih Lanjut -->
+        <div class="text-[17px] text-[#0B4619] font-bold mb-3">Pelajari Lebih Lanjut</div>
+        <a href="/fodder/information" class="relative block w-full h-[100px] rounded-xl overflow-hidden mb-5">
+            <img src="/static/info-bahan-pakan.png" class="w-full h-full object-cover">
+            <span class="absolute inset-0 flex items-center justify-center text-white text-lg font-bold drop-shadow">Informasi bahan pakan</span>
         </a>
-        <div class="section-title-green">Tetap Terhubung</div>
-        <div class="menu" style="margin-bottom: 24px;">
-            <div class="menu-item" onclick="location.href='/community'">
-                <img src="https://cdn-icons-png.flaticon.com/512/1380/1380338.png" alt="Komunitas">
-                Komunitas
+
+        <!-- Tetap Terhubung -->
+        <div class="text-[17px] text-[#0B4619] font-bold mb-3">Tetap Terhubung</div>
+        <div class="flex mb-8">
+            <div class="flex flex-1 flex-col items-center" onclick="location.href='/community'">
+                <div class="flex justify-center items-center w-full h-full bg-[#F8E473] rounded-lg cursor-pointer shadow-md hover:bg-[#D2C15B]">
+                    <img src="https://cdn-icons-png.flaticon.com/512/1380/1380338.png" alt="Komunitas" class="w-14 h-14 my-2">
+                </div>
+                <div class="mb-2 mt-2 text-center text-[#234B1C] text-sm font-medium">
+                    Komunitas
+                </div>
             </div>
         </div>
+
     </div>
-    <!-- Sidebar Overlay -->
-    <div id="sidebarOverlay" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.08);z-index:99;"></div>
+
     <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-close" id="sidebarClose"><i class="fa fa-arrow-left"></i></div>
-        <div class="sidebar-header">
-            <img src="/static/tmp.png" alt="Profile" class="sidebar-profile-img" id="sidebarProfileImg">
-            <div class="sidebar-user-info">
-                <div class="sidebar-user-name" id="sidebarUserName">User</div>
-                <div class="sidebar-user-phone" id="sidebarUserPhone">+628xxxxxxxxxx</div>
+    <div id="sidebarOverlay" class="fixed inset-0 bg-black/10 hidden z-40"></div>
+    <div id="sidebar" class="fixed top-0 right-[-100vw] w-[85vw] max-w-[370px] h-screen bg-white shadow-lg z-50 transition-all">
+
+        <div class="relative">
+            <div id="sidebarClose" class="absolute -left-4 top-8 w-9 h-9 bg-white rounded-full flex items-center justify-center shadow cursor-pointer z-50">
+                <i class="fas fa-arrow-right"></i>
             </div>
         </div>
-        <div class="sidebar-section-title">Alamat</div>
-        <div class="sidebar-address-box">
-            <span class="sidebar-address-icon"><i class="fa fa-map-marker-alt"></i></span>
-            <div class="sidebar-address-content" id="sidebarAddress">-</div>
+
+        <div class="flex items-center gap-3 px-6 pt-8">
+            <img src="/static/tmp.png" alt="Profile" class="w-12 h-12 rounded-full border-2 border-[#8CB97A] object-cover">
+            <div>
+                <div id="sidebarUserName" class="text-lg font-bold text-[#2E7D32]">User</div>
+                <div id="sidebarUserPhone" class="text-sm text-[#5B7B3A]">+62xxxxxxxx</div>
+            </div>
         </div>
-        <div class="sidebar-add-address">+ Tambah Alamat</div>
-        <div class="sidebar-section-title">Pengaturan</div>
-        <ul class="sidebar-menu">
-            <li onclick="location.href='/profile'"><span class="sidebar-menu-icon"><i class="fa fa-user"></i></span> Profil Anda</li>
-            <li onclick="location.href='/faq'"><span class="sidebar-menu-icon"><i class="fa fa-question-circle"></i></span> FAQ</li>
-            <li onclick="logout()"><span class="sidebar-menu-icon"><i class="fa fa-sign-out-alt"></i></span> Logout</li>
+
+        <div class="text-[#2E7D32] font-bold text-base mt-7 mb-2 px-6">Alamat</div>
+        <div class="flex items-start gap-2 bg-[#E6F2D6] mx-6 p-3 rounded mb-3">
+            <i class="fas fa-map-marker-alt text-red-500 text-lg mt-1"></i>
+            <div id="sidebarAddress" class="text-sm text-[#234B1C]">-</div>
+        </div>
+        <div class="bg-yellow-100 text-yellow-700 mx-6 p-3 rounded cursor-pointer mb-5">+ Tambah Alamat</div>
+
+        <div class="text-[#2E7D32] font-bold text-base mb-2 px-6">Pengaturan</div>
+        <ul class="divide-y divide-gray-200">
+            <li class="flex items-center gap-3 px-6 py-3 text-[#234B1C] cursor-pointer hover:bg-gray-50" onclick="location.href='/profile'">
+                <i class="fas fa-user text-[#2E7D32]"></i> Profil Anda
+            </li>
+            <li class="flex items-center gap-3 px-6 py-3 text-[#234B1C] cursor-pointer hover:bg-gray-50" onclick="location.href='/ganti-password'">
+                <i class="fas fa-lock text-[#2E7D32]"></i> Ganti Kata Sandi
+            </li>
+            <li class="flex items-center gap-3 px-6 py-3 text-[#234B1C] cursor-pointer hover:bg-gray-50" onclick="location.href='/faq'">
+                <i class="fas fa-question-circle text-[#2E7D32]"></i> FAQ
+            </li>
+            <li class="flex items-center gap-3 px-6 py-3 text-[#234B1C] cursor-pointer hover:bg-gray-50" onclick="logout()">
+                <i class="fas fa-sign-out-alt text-[#2E7D32]"></i> Logout
+            </li>
         </ul>
+
     </div>
-    <script>
-    // Sidebar logic
-    const sidebar = document.getElementById('sidebar');
-    const profileBtn = document.getElementById('profileBtn');
-    const sidebarClose = document.getElementById('sidebarClose');
-    const sidebarOverlay = document.getElementById('sidebarOverlay');
-    profileBtn.onclick = () => {
-        sidebar.classList.add('open');
-        sidebarOverlay.style.display = 'block';
-    };
-    sidebarClose.onclick = () => {
-        sidebar.classList.remove('open');
-        sidebarOverlay.style.display = 'none';
-    };
-    sidebarOverlay.onclick = () => {
-        sidebar.classList.remove('open');
-        sidebarOverlay.style.display = 'none';
-    };
-    // Fetch user data (reuse from dashboard-user)
-    function fetchUserData() {
-        const token = localStorage.getItem('jwt');
-        fetch('/api/user/me', {
-            headers: {
-                'Authorization': token ? `Bearer ${token}` : ''
-            }
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.status && data.data) {
-                document.getElementById('greeting').innerHTML = `Hallo! <b>${data.data.username || 'User'}</b>`;
-                document.getElementById('sidebarUserName').textContent = data.data.username || 'User';
-                let contact = data.data.email ? data.data.email : (data.data.phone_number ? data.data.phone_number : '-');
-                document.getElementById('sidebarUserPhone').textContent = contact;
-                document.getElementById('sidebarAddress').textContent = data.data.address || '-';
-            }
-        });
-    }
-    fetchUserData();
-    // Logout
-    function logout() {
-        localStorage.removeItem('jwt');
-        document.cookie = 'jwt=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-        window.location.href = '/';
-    }
-    </script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+<script>
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('sidebarOverlay');
+document.getElementById('profileBtn').onclick = () => { sidebar.style.right = '0'; overlay.classList.remove('hidden'); };
+document.getElementById('sidebarClose').onclick = () => { sidebar.style.right = '-100vw'; overlay.classList.add('hidden'); };
+overlay.onclick = () => { sidebar.style.right = '-100vw'; overlay.classList.add('hidden'); };
+function fetchUserData() {
+    const token = localStorage.getItem('jwt');
+    fetch('/api/user/me', { headers: { 'Authorization': token ? `Bearer ${token}` : '' } })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status && data.data) {
+            document.getElementById('greeting').innerHTML = `Hallo! <b>${data.data.username || 'User'}</b>`;
+            document.getElementById('sidebarUserName').textContent = data.data.username || 'User';
+            document.getElementById('sidebarUserPhone').textContent = data.data.email || data.data.phone_number || '-';
+            document.getElementById('sidebarAddress').textContent = data.data.address || '-';
+        }
+    });
+}
+fetchUserData();
+function logout() {
+    localStorage.removeItem('jwt');
+    document.cookie = 'jwt=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    window.location.href = '/';
+}
+</script>
+
 </body>
 </html>

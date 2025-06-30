@@ -1,95 +1,49 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Waste2Feed</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            background-color: #4CAF50;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-        }
-        .container {
-            text-align: center;
-        }
-        .logo {
-            width: 150px;
-            height: 150px;
-            margin-bottom: 20px;
-        }
-        .title {
-            font-size: 24px;
-            color: white;
-            margin-bottom: 40px;
-        }
-        .input {
-            width: 90%;
-            max-width: 350px;
-            padding: 14px 16px;
-            margin: 10px auto;
-            border-radius: 10px;
-            border: none;
-            font-size: 16px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            display: block;
-        }
-        .button {
-            display: block;
-            width: 90%;
-            max-width: 350px;
-            padding: 12px;
-            margin: 20px auto 10px auto;
-            text-align: center;
-            text-decoration: none;
-            color: white;
-            background-color: #2E7D32;
-            border-radius: 25px;
-            font-size: 18px;
-            border: 2px solid white;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .button:disabled {
-            background: #A5D6A7;
-            cursor: not-allowed;
-        }
-        .footer {
-            font-size: 14px;
-            color: white;
-            margin-top: 20px;
-        }
-        .footer a {
-            color: #FFEB3B;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        .error, .success {
-            margin-top: 10px;
-            font-size: 15px;
-        }
-        .error { color: #ff5252; }
-        .success { color: #fffde7; }
-    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
-<body>
-    <div class="container">
-        <img src="/static/tmp.png" alt="Waste2Feed Logo" class="logo">
-        <div class="title">Waste2Feed</div>
-        <form id="loginForm" autocomplete="off">
-            <input class="input" type="text" id="identifier" name="identifier" placeholder="Email atau nomor handphone" required>
-            <input class="input" type="password" id="password" name="password" placeholder="Kata sandi" required>
-            <button class="button" type="submit" id="loginBtn">Masuk</button>
-            <div id="message"></div>
+<body class="[background-color:#93AF7C] flex flex-col items-center justify-center min-h-screen font-[Poppins]">
+
+    <div class="text-center w-full max-w-[300px] mx-auto mt-[-20px]">
+        
+        <img src="/static/tmp.png" alt="Waste2Feed Logo" class="w-[150px] h-[150px] mb-5 mx-auto rounded-full overflow-hidden">
+
+        <div class="text-2xl text-white mb-10 font-bold">Waste2Feed</div>
+
+        <form id="loginForm" autocomplete="off" class="w-full max-w-[350px] mx-auto flex flex-col items-center">
+
+            <input class="w-full max-w-[350px] p-2.5 px-4 mb-3 rounded-lg border-none text-base shadow-lg box-border" 
+                type="text" id="identifier" name="identifier" placeholder="Email atau nomor handphone" required>
+
+            <input class="w-full max-w-[350px] p-2.5 px-4 mb-3 rounded-lg border-none text-base shadow-lg box-border" 
+                type="password" id="password" name="password" placeholder="Kata sandi" required>
+
+            <button class="w-full max-w-[350px] p-2 mt-3 mb-3 text-center text-white bg-[#0B4619] rounded-full text-lg font-bold cursor-pointer hover:bg-[#03210A] transition disabled:cursor-not-allowed"
+                type="submit" id="loginBtn">MASUK</button>
+
+            <div id="message" class="mt-2 text-center text-sm w-full max-w-[350px] break-words mx-auto"></div>
+            
         </form>
-        <div class="footer">Belum punya akun? <a href="/register">Daftar Sekarang</a></div>
+
+
     </div>
+
+    <div class="fixed bottom-10 text-sm text-center text-white max-w-[300px] mx-auto space-y-2">
+        <div>
+            <a href="/forgot-password" class="text-white underline font-bold">Lupa kata sandi?</a>
+        </div>
+
+        <div>
+            Belum punya akun? 
+            <a href="/register" class="text-yellow-300 font-bold">Daftar Sekarang</a>
+        </div>
+    </div>
+
     <script>
     document.getElementById('loginForm').addEventListener('submit', async function(e) {
         e.preventDefault();
@@ -97,19 +51,23 @@
         const password = document.getElementById('password').value;
         const messageDiv = document.getElementById('message');
         messageDiv.textContent = '';
-        messageDiv.className = '';
+        messageDiv.className = 'mt-2 text-center text-sm w-full max-w-[350px] break-words mx-auto';
+
         let payload = { password };
         let url = '/api/user/login';
+        
         if (/^\d{8,}$/.test(identifier)) {
             payload.phone_number = identifier;
         } else if (/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(identifier)) {
             payload.email = identifier;
         } else {
             messageDiv.textContent = 'Masukkan email atau nomor handphone yang valid.';
-            messageDiv.className = 'error';
+            messageDiv.classList.add('text-red-500');
             return;
         }
+
         document.getElementById('loginBtn').disabled = true;
+
         try {
             const res = await fetch(url, {
                 method: 'POST',
@@ -124,18 +82,20 @@
                     localStorage.setItem('jwt', token);
                 }
                 messageDiv.textContent = 'Login berhasil!';
-                messageDiv.className = 'success';
+                messageDiv.classList.add('text-yellow-100');
                 setTimeout(() => { window.location.href = '/dashboard'; }, 1200);
             } else {
                 messageDiv.textContent = data.message || 'Login gagal.';
-                messageDiv.className = 'error';
+                messageDiv.classList.add('text-red-500');
             }
         } catch (err) {
             messageDiv.textContent = 'Terjadi kesalahan. Coba lagi.';
-            messageDiv.className = 'error';
+            messageDiv.classList.add('text-red-500');
         }
+
         document.getElementById('loginBtn').disabled = false;
     });
     </script>
+
 </body>
 </html>

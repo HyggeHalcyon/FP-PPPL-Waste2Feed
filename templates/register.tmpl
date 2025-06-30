@@ -1,97 +1,47 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register - Waste2Feed</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            background-color: #8CB97A;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-        }
-        .container {
-            text-align: center;
-        }
-        .logo {
-            width: 120px;
-            height: 120px;
-            margin-bottom: 20px;
-        }
-        .title {
-            font-size: 22px;
-            color: white;
-            margin-bottom: 32px;
-            font-weight: bold;
-        }
-        .input {
-            width: 90%;
-            max-width: 350px;
-            padding: 14px 16px;
-            margin: 10px auto;
-            border-radius: 10px;
-            border: none;
-            font-size: 16px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            display: block;
-        }
-        .button {
-            display: block;
-            width: 90%;
-            max-width: 350px;
-            padding: 12px;
-            margin: 20px auto 10px auto;
-            text-align: center;
-            text-decoration: none;
-            color: white;
-            background-color: #2E7D32;
-            border-radius: 25px;
-            font-size: 18px;
-            border: 2px solid white;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .button:disabled {
-            background: #A5D6A7;
-            cursor: not-allowed;
-        }
-        .footer {
-            font-size: 14px;
-            color: white;
-            margin-top: 40px;
-        }
-        .footer a {
-            color: #fff;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        .error, .success {
-            margin-top: 10px;
-            font-size: 15px;
-        }
-        .error { color: #ff5252; }
-        .success { color: #fffde7; }
+        body { font-family: 'Poppins', sans-serif; }
     </style>
 </head>
-<body>
-    <div class="container">
-        <img src="/static/tmp.png" alt="Waste2Feed Logo" class="logo">
-        <div class="title">Waste2Feed</div>
-        <form id="registerForm" autocomplete="off">
-            <input class="input" type="text" id="identifier" name="identifier" placeholder="Email atau nomor handphone" required>
-            <input class="input" type="password" id="password" name="password" placeholder="Kata sandi" required>
-            <input class="input" type="password" id="confirmPassword" name="confirmPassword" placeholder="Konfirmasi kata sandi" required>
-            <button class="button" type="submit" id="registerBtn">DAFTAR</button>
-            <div id="message"></div>
+<body class="[background-color:#93AF7C] flex flex-col items-center justify-center min-h-screen">
+
+    <div class="text-center w-full max-w-[300px] mx-auto mt-[-20px]">
+
+        <img src="/static/tmp.png" alt="Waste2Feed Logo" class="w-[150px] h-[150px] mb-5 mx-auto rounded-full shadow-md overflow-hidden">
+
+        <div class="text-2xl text-white mb-10 font-bold">Waste2Feed</div>
+
+        <form id="registerForm" autocomplete="off" class="w-full max-w-[350px] mx-auto flex flex-col items-center">
+
+            <input class="w-full max-w-[350px] p-2.5 px-4 mb-3 rounded-lg border-none text-base shadow-lg box-border" 
+                type="text" id="identifier" name="identifier" placeholder="Email atau nomor handphone" required>
+
+            <input class="w-full max-w-[350px] p-2.5 px-4 mb-3 rounded-lg border-none text-base shadow-lg box-border" 
+                type="password" id="password" name="password" placeholder="Kata sandi" required>
+
+            <input class="w-full max-w-[350px] p-2.5 px-4 mb-3 rounded-lg border-none text-base shadow-lg box-border" 
+                type="password" id="confirmPassword" name="confirmPassword" placeholder="Konfirmasi kata sandi" required>
+
+            <button class="w-full max-w-[350px] p-2 mt-3 mb-3 text-center text-white bg-[#0B4619] rounded-full text-lg font-bold cursor-pointer hover:bg-[#03210A] transition disabled:cursor-not-allowed"
+                type="submit" id="registerBtn">DAFTAR</button>
+
+            <div id="message" class="mt-2 text-center text-sm w-full max-w-[350px] break-words mx-auto"></div>
+
         </form>
-        <div class="footer">Sudah punya akun? <a href="/login">Masuk</a></div>
+
     </div>
+    <div class="fixed bottom-10 text-sm text-center text-white max-w-[300px] mx-auto">
+        Sudah punya akun? 
+        <a href="/login" class="text-white font-bold">Masuk</a>
+    </div>
+
     <script>
     document.getElementById('registerForm').addEventListener('submit', async function(e) {
         e.preventDefault();
@@ -100,25 +50,30 @@
         const confirmPassword = document.getElementById('confirmPassword').value;
         const messageDiv = document.getElementById('message');
         messageDiv.textContent = '';
-        messageDiv.className = '';
+        messageDiv.className = 'mt-2 text-center text-sm w-full max-w-[350px] break-words mx-auto';
+
         if (password !== confirmPassword) {
             messageDiv.textContent = 'Konfirmasi kata sandi tidak cocok.';
-            messageDiv.className = 'error';
+            messageDiv.classList.add('text-red-500');
             return;
         }
+
         let payload = { password };
-        role = new URLSearchParams(window.location.search).get('role');
-        let url = `/api/user/register?role=${role}`;
+        const role = new URLSearchParams(window.location.search).get('role');
+        const url = `/api/user/register?role=${role}`;
+
         if (/^\d{8,}$/.test(identifier)) {
             payload.phone_number = identifier;
         } else if (/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(identifier)) {
             payload.email = identifier;
         } else {
             messageDiv.textContent = 'Masukkan email atau nomor handphone yang valid.';
-            messageDiv.className = 'error';
+            messageDiv.classList.add('text-red-500');
             return;
         }
+
         document.getElementById('registerBtn').disabled = true;
+
         try {
             const res = await fetch(url, {
                 method: 'POST',
@@ -128,18 +83,20 @@
             const data = await res.json();
             if (data.status) {
                 messageDiv.textContent = 'Registrasi berhasil! Silakan login.';
-                messageDiv.className = 'success';
+                messageDiv.classList.add('text-yellow-100');
                 setTimeout(() => { window.location.href = '/login'; }, 1200);
             } else {
                 messageDiv.textContent = data.message || 'Registrasi gagal.';
-                messageDiv.className = 'error';
+                messageDiv.classList.add('text-red-500');
             }
         } catch (err) {
             messageDiv.textContent = 'Terjadi kesalahan. Coba lagi.';
-            messageDiv.className = 'error';
+            messageDiv.classList.add('text-red-500');
         }
+
         document.getElementById('registerBtn').disabled = false;
     });
     </script>
+
 </body>
 </html>
