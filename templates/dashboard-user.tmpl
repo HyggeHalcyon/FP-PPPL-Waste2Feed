@@ -126,6 +126,7 @@
             border-radius: 50%;
             object-fit: cover;
             border: 2px solid #8CB97A;
+            margin-left:48px;
         }
         .sidebar-user-info {
             display: flex;
@@ -197,7 +198,7 @@
         }
         .sidebar-close {
             position: absolute;
-            left: -18px;
+            left: 10px;
             top: 32px;
             background: #fff;
             border-radius: 50%;
@@ -247,10 +248,12 @@
             href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     </head>
     <body>
-        <div class="absolute top-0 align-center w-full h-36 bg-[#0B4619] z-0 rounded-b-2xl"/>
+        <div
+            class="absolute top-0 align-center w-full h-36 bg-[#0B4619] z-0 rounded-b-2xl" />
         <div class="relative z-10 mt-6">
             <div class="header">
-                <div class="text-white text-xl" id="greeting">Hallo! <b>User</b></div>
+                <div class="text-white text-xl" id="greeting">Hallo!
+                    <b>User</b></div>
                 <img src="/static/tmp.png" alt="Profile" class="profile-img"
                     id="profileBtn">
             </div>
@@ -285,10 +288,11 @@
                         style="width: 100%; max-width: 600px; height: 180px;"
                         id="swiperTarget"></swiper-container>
                 </div>
-    
+
                 <div class="menu">
                     <div>
-                        <div class="menu-item" onclick="location.href='/pick-up'">
+                        <div class="menu-item"
+                            onclick="location.href='/pick-up'">
                             <img
                                 src="/static/truck-kun.png"
                                 alt="Pick-Up Sampah">
@@ -298,7 +302,8 @@
                             Sampah</div>
                     </div>
                     <div>
-                        <div class="menu-item" onclick="location.href='/history'">
+                        <div class="menu-item"
+                            onclick="location.href='/history'">
                             <img
                                 src="/static/pick-up-history.png"
                                 alt="Komunitas"
@@ -309,7 +314,8 @@
                             Pick-Up</div>
                     </div>
                     <div>
-                        <div class="menu-item" onclick="location.href='/history'">
+                        <div class="menu-item"
+                            onclick="location.href='/history'">
                             <img
                                 src="/static/achievement-icon.png"
                                 alt="Komunitas"
@@ -320,7 +326,8 @@
                             Pick-Up</div>
                     </div>
                     <div>
-                        <div class="menu-item" onclick="location.href='/redeem'">
+                        <div class="menu-item"
+                            onclick="location.href='/redeem'">
                             <img
                                 src="/static/exchange-poin.png"
                                 alt="Komunitas"
@@ -330,7 +337,7 @@
                             class="text-sm text-[#0B4619] font-bold text-center">Tukar
                             Poin</div>
                     </div>
-    
+
                 </div>
             </div>
             <!-- Sidebar Overlay -->
@@ -340,21 +347,22 @@
             <div class="sidebar" id="sidebar">
                 <div class="sidebar-close" id="sidebarClose"><i
                         class="fa fa-arrow-left"></i></div>
-                <div class="sidebar-header">
-                    <img src="/static/tmp.png" alt="Profile"
-                        class="sidebar-profile-img" id="sidebarProfileImg">
-                    <div class="sidebar-user-info">
-                        <div class="sidebar-user-name"
-                            id="sidebarUserName">User</div>
-                        <div class="sidebar-user-phone"
-                            id="sidebarUserPhone">+628xxxxxxxxxx</div>
+                <div class>
+                    <div class="flex justify-between px-8 ml-8 mt-8">
+                        <div class="flex-col text-[#2B580C] text-md">
+                            <div class="font-bold" >User</div>
+                            <div class>+628xxxxxxxxxx</div>
+                        </div>
+                        <img src="/static/tmp.png" alt="Profile"
+                            class="w-10 h-10 rounded-full border-4 border-[#0B4619]">
                     </div>
                 </div>
                 <div class="sidebar-section-title">Alamat</div>
                 <div class="sidebar-address-box">
                     <span class="sidebar-address-icon"><i
                             class="fa fa-map-marker-alt"></i></span>
-                    <div class="sidebar-address-content" id="sidebarAddress">-</div>
+                    <div class="sidebar-address-content"
+                        id="sidebarAddress">-</div>
                 </div>
                 <div class="sidebar-add-address">+ Tambah Alamat</div>
                 <div class="sidebar-section-title">Pengaturan</div>
@@ -362,14 +370,15 @@
                     <li onclick="location.href='/profile'"><span
                             class="sidebar-menu-icon"><i
                                 class="fa fa-user"></i></span> Profil Anda</li>
-                    <li onclick="location.href='/history'"><span
+                    <li onclick="location.href='/'"><span
                             class="sidebar-menu-icon"><i
-                                class="fa fa-history"></i></span> Riwayat
-                        Penjemputan</li>
+                                class="fa fa-solid fa-lock"></i></span> Ganti Kata Sandi</li>
                     <li><span class="sidebar-menu-icon"><i
-                                class="fa fa-question-circle"></i></span> FAQ</li>
+                                class="fa fa-question-circle"></i></span>
+                        Frequently Asked Questions</li>
                     <li onclick="logout()"><span class="sidebar-menu-icon"><i
-                                class="fa fa-sign-out-alt"></i></span> Logout</li>
+                                class="fa fa-sign-out-alt"></i></span>
+                        Logout</li>
                 </ul>
             </div>
         </div>
