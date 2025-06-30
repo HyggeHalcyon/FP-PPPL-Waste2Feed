@@ -12,7 +12,6 @@
 </head>
 <body class="bg-[#FFF9E1] min-h-screen font-[Poppins]">
 
-    <!-- MAP AREA -->
     <div id="mapContainer" class="fixed inset-0 z-10">
         <div id="map" class="w-full h-full relative"></div>
 
@@ -21,7 +20,7 @@
             <button id="mapSearchBtn" class="ml-2 bg-[#2B580C] text-white px-4 py-2 rounded-md shadow-md text-sm">Cari</button>
         </div>
 
-        <img id="mapPin" src="https://cdn-icons-png.flaticon.com/512/684/684908.png" class="w-12 h-12 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-full z-[999] pointer-events-none hidden" alt="Pin">
+        <img id="mapPin" src="https://cdn-icons-png.flaticon.com/512/684/684908.png" class="w-12 h-12 absolute left-1/2 top-[50%] -translate-x-1/2 -translate-y-full z-[999] pointer-events-none" alt="Pin">
 
         <div id="confirmButtonWrapper" class="absolute bottom-6 w-full flex justify-center z-[999] hidden">
             <button id="confirmLocation" class="bg-[#2B580C] text-white px-5 py-2 rounded-md shadow-md">Terapkan Lokasi</button>
@@ -30,12 +29,11 @@
 
     <div class="max-w-[400px] mx-auto px-4 pb-6 relative z-30">
         <div class="text-center text-lg font-bold text-[#0B4619] mt-14 mb-5 flex items-center">
-            <a href="/dashboard" class="left-6 top-8 text-[#0B4619] text-2xl bg-white px-2 py-1 rounded-full shadow-md z-10">
+            <a href="/dashboard" class="fixed left-6 top-8 text-[#0B4619] text-2xl bg-white px-2 py-1 rounded-full shadow-md z-40">
                 <i class="fas fa-arrow-left"></i>
             </a>
         </div>
     </div>
-
     <div id="formSection" class="fixed z-20 w-full pt-40 bottom-0">    
         <form id="pickupForm" autocomplete="off">
             <div class="bg-white rounded-2xl shadow p-4 -mt-8">
@@ -105,12 +103,57 @@ function changeAmount(delta) {
     document.getElementById('amountValue').textContent = amount.toLocaleString('id-ID', {minimumFractionDigits:2});
     document.getElementById('pointSummary').textContent = Math.round(amount * 2000);
 }
-changeAmount(0);
+
+function updateAddress(lat, lng) {
+    fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById('mainAddress').textContent = data.display_name || 'Lokasi tidak ditemukan';
+    });
+}
+
+function searchAddress() {
+    const query = document.getElementById('mapSearchInput').value.trim();
+    if (!query) return;
+
+    fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1&viewbox=112.6,-7.35,112.85,-7.15&countrycodes=id`)
+    .then(res => res.json())
+    .then(data => {
+        if (data && data.length > 0) {
+            const lat = parseFloat(data[0].lat);
+            const lng = parseFloat(data[0].lon);
+            map.setView([lat, lng], 16);
+            currentLat = lat;
+            currentLng = lng;
+            updateAddress(currentLat, currentLng);
+        } else {
+            alert('Alamat tidak ditemukan.');
+        }
+    })
+    .catch(error => {
+        console.error('Error searching address:', error);
+        alert('Terjadi kesalahan saat mencari alamat.');
+    });
+}
 
 window.onload = function() {
     const now = new Date();
     document.getElementById('dateInput').value = now.toISOString().slice(0,10);
     document.getElementById('timeInput').value = now.toTimeString().slice(0,5);
+
+    map = L.map('map').setView([currentLat, currentLng], 16);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
+
+    updateAddress(currentLat, currentLng);
+
+    map.on('moveend', () => {
+        const center = map.getCenter();
+        currentLat = center.lat;
+        currentLng = center.lng;
+        updateAddress(currentLat, currentLng);
+    });
+
+    changeAmount(0);
 };
 
 document.getElementById('pickupForm').addEventListener('submit', async function(e) {
@@ -155,65 +198,9 @@ document.getElementById('pickupForm').addEventListener('submit', async function(
     document.getElementById('pickupBtn').disabled = false;
 });
 
-function updateAddress(lat, lng) {
-    fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
-    .then(res => res.json())
-    .then(data => {
-        document.getElementById('mainAddress').textContent = data.display_name || 'Lokasi tidak ditemukan';
-    });
-}
-
-function searchAddress() {
-    const query = document.getElementById('mapSearchInput').value.trim();
-    if (!query) return;
-
-    // Viewbox for Surabaya: min_lon,min_lat,max_lon,max_lat
-    // Approx coordinates for Surabaya region: 112.6,-7.35,112.85,-7.15
-    // Add countrycodes=id to bias results to Indonesia
-    fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1&viewbox=112.6,-7.35,112.85,-7.15&countrycodes=id`)
-    .then(res => res.json())
-    .then(data => {
-        if (data && data.length > 0) {
-            const lat = parseFloat(data[0].lat);
-            const lng = parseFloat(data[0].lon);
-            map.setView([lat, lng], 16);
-            currentLat = lat;
-            currentLng = lng;
-            updateAddress(currentLat, currentLng);
-        } else {
-            alert('Alamat tidak ditemukan.');
-        }
-    })
-    .catch(error => {
-        console.error('Error searching address:', error);
-        alert('Terjadi kesalahan saat mencari alamat.');
-    });
-}
-
-window.onload = function() {
-    const now = new Date();
-    document.getElementById('dateInput').value = now.toISOString().slice(0,10);
-    document.getElementById('timeInput').value = now.toTimeString().slice(0,5);
-
-    map = L.map('map').setView([currentLat, currentLng], 16);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
-
-    updateAddress(currentLat, currentLng);
-
-    map.on('moveend', () => {
-        const center = map.getCenter();
-        currentLat = center.lat;
-        currentLng = center.lng;
-        updateAddress(currentLat, currentLng);
-    });
-
-    changeAmount(0);
-};
-
 document.getElementById('editBtn').addEventListener('click', () => {
     document.getElementById('mapContainer').classList.add('z-[9999]');
     document.getElementById('formSection').classList.add('hidden');
-    document.getElementById('mapPin').classList.remove('hidden');
     document.getElementById('confirmButtonWrapper').classList.remove('hidden');
     document.getElementById('mapSearchInputWrapper').classList.remove('hidden');
     
@@ -223,7 +210,6 @@ document.getElementById('editBtn').addEventListener('click', () => {
 document.getElementById('confirmLocation').addEventListener('click', () => {
     document.getElementById('mapContainer').classList.remove('z-[9999]');
     document.getElementById('formSection').classList.remove('hidden');
-    document.getElementById('mapPin').classList.add('hidden');
     document.getElementById('confirmButtonWrapper').classList.add('hidden');
     document.getElementById('mapSearchInputWrapper').classList.add('hidden');
     
