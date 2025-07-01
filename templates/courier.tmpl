@@ -261,7 +261,7 @@
             const token = localStorage.getItem('jwt');
             try {
                 let id = '{{.Courier.ID}}';
-                const res = await fetch(`/api/courier/delete?id=${id}`, {
+                const res = await fetch(`/api/courier?id=${id}`, {
                     method: 'DELETE',
                     headers: {
                         'Authorization': token ? `Bearer ${token}` : ''
